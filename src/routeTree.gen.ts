@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CategoriesRouteImport } from './routes/categories'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ArticlesIndexRouteImport } from './routes/articles.index'
 import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
@@ -45,6 +46,11 @@ const AuthRoute = AuthRouteImport.update({
 const CategoriesRoute = CategoriesRouteImport.update({
   id: '/categories',
   path: '/categories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -97,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles/': typeof ArticlesIndexRoute
@@ -111,6 +118,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles': typeof ArticlesIndexRoute
   '/admin/articles': typeof AuthenticatedAdminArticlesRoute
@@ -126,6 +134,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles/': typeof ArticlesIndexRoute
@@ -142,6 +151,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/categories'
+    | '/sitemap.xml'
     | '/admin'
     | '/articles/$slug'
     | '/articles/'
@@ -156,6 +166,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/categories'
+    | '/sitemap.xml'
     | '/articles/$slug'
     | '/articles'
     | '/admin/articles'
@@ -170,6 +181,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/categories'
+    | '/sitemap.xml'
     | '/_authenticated/admin'
     | '/articles/$slug'
     | '/articles/'
@@ -186,6 +198,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
   CategoriesRoute: typeof CategoriesRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ArticlesSlugRoute: typeof ArticlesSlugRoute
   ArticlesIndexRoute: typeof ArticlesIndexRoute
 }
@@ -225,6 +238,13 @@ declare module '@tanstack/react-router' {
       path: '/categories'
       fullPath: '/categories'
       preLoaderRoute: typeof CategoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -322,6 +342,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
   CategoriesRoute: CategoriesRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   ArticlesSlugRoute: ArticlesSlugRoute,
   ArticlesIndexRoute: ArticlesIndexRoute,
 }
