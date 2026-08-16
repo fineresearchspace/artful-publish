@@ -153,13 +153,18 @@
 
 @utility pixel-frame {
   border: 2px solid var(--ink);
-  background: var(--paper);
+  background-color: var(--paper);
   box-shadow: var(--shadow-pixel);
 }
 
 @utility pixel-frame-sm {
   border: 2px solid var(--ink);
-  background: var(--paper);
+  box-shadow: var(--shadow-pixel-sm);
+}
+
+@utility pixel-panel {
+  border: 2px solid var(--ink);
+  background-color: var(--paper);
   box-shadow: var(--shadow-pixel-sm);
 }
 
