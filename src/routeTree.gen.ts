@@ -21,6 +21,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminArticlesRouteImport } from './routes/_authenticated/admin.articles'
 import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_authenticated/admin.categories'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
+import { Route as AuthenticatedAdminWriteIdRouteImport } from './routes/_authenticated/admin.write.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -84,6 +85,12 @@ const AuthenticatedAdminSettingsRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminWriteIdRoute =
+  AuthenticatedAdminWriteIdRouteImport.update({
+    id: '/write/$id',
+    path: '/write/$id',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/write/$id': typeof AuthenticatedAdminWriteIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -109,6 +117,7 @@ export interface FileRoutesByTo {
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/write/$id': typeof AuthenticatedAdminWriteIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -124,6 +133,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/write/$id': typeof AuthenticatedAdminWriteIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/admin/categories'
     | '/admin/settings'
     | '/admin/'
+    | '/admin/write/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/admin/categories'
     | '/admin/settings'
     | '/admin'
+    | '/admin/write/$id'
   id:
     | '__root__'
     | '/'
@@ -165,6 +177,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/categories'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/'
+    | '/_authenticated/admin/write/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -263,6 +276,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/write/$id': {
+      id: '/_authenticated/admin/write/$id'
+      path: '/write/$id'
+      fullPath: '/admin/write/$id'
+      preLoaderRoute: typeof AuthenticatedAdminWriteIdRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
@@ -271,6 +291,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCategoriesRoute: typeof AuthenticatedAdminCategoriesRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminWriteIdRoute: typeof AuthenticatedAdminWriteIdRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
@@ -278,6 +299,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminCategoriesRoute: AuthenticatedAdminCategoriesRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedAdminWriteIdRoute: AuthenticatedAdminWriteIdRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
