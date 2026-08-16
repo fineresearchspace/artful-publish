@@ -87,7 +87,7 @@ function AdminLayout() {
             <Link
               key={item.label}
               to={item.to}
-              params={"params" in item ? item.params : undefined}
+              params={("params" in item ? item.params : {}) as never}
               activeOptions={{ exact: "exact" in item ? item.exact : false }}
               activeProps={{ className: "bg-ink text-background" }}
               onClick={() => setOpen(false)}
