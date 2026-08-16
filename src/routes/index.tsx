@@ -87,7 +87,7 @@ function Home() {
               href={SITE.substackSubscribeUrl}
               target="_blank"
               rel="noreferrer"
-              className="pixel-frame-sm pixel-lift pixel-font px-4 py-3 text-[11px]"
+              className="pixel-frame-sm pixel-lift pixel-font bg-paper px-4 py-3 text-[11px]"
             >
               Newsletter →
             </a>
@@ -181,7 +181,7 @@ function Home() {
             <Link
               key={c.id}
               to="/categories"
-              className="pixel-font pixel-frame-sm pixel-lift px-3 py-2 text-[10px]"
+              className="pixel-font pixel-panel pixel-lift px-3 py-2 text-[10px]"
             >
               {c.name}
             </Link>

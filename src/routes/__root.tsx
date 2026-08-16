@@ -57,7 +57,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
           >
             Try again
           </button>
-          <a href="/" className="pixel-frame-sm pixel-lift pixel-font px-4 py-2 text-[11px]">
+          <a href="/" className="pixel-frame-sm pixel-lift pixel-font bg-paper px-4 py-2 text-[11px]">
             Go home
           </a>
         </div>

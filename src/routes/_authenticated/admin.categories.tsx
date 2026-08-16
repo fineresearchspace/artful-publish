@@ -119,7 +119,7 @@ function AdminCategories() {
               onClick={() => {
                 if (confirm(`Remove category "${c.name}"?`)) remove.mutate(c.id);
               }}
-              className="pixel-frame-sm p-2 text-destructive"
+              className="pixel-panel p-2 text-destructive"
             >
               <Trash2 className="size-3.5" />
             </button>

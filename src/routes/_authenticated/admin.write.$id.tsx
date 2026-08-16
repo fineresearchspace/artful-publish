@@ -203,14 +203,14 @@ function WritePage() {
         <div className="ml-auto flex flex-wrap gap-2">
           <button
             onClick={() => setShowPreview((v) => !v)}
-            className="pixel-frame-sm pixel-lift pixel-font flex items-center gap-2 px-3 py-2 text-[11px]"
+            className="pixel-frame-sm pixel-lift pixel-font flex items-center gap-2 bg-paper px-3 py-2 text-[11px]"
           >
             <Eye className="size-3.5" /> {showPreview ? "Editor" : "Preview"}
           </button>
           <button
             onClick={() => void save()}
             disabled={saving}
-            className="pixel-frame-sm pixel-lift pixel-font flex items-center gap-2 px-3 py-2 text-[11px] disabled:opacity-60"
+            className="pixel-frame-sm pixel-lift pixel-font flex items-center gap-2 bg-paper px-3 py-2 text-[11px] disabled:opacity-60"
           >
             <Save className="size-3.5" /> Save draft
           </button>
@@ -224,7 +224,7 @@ function WritePage() {
       </header>
 
       {publishError ? (
-        <div className="pixel-frame-sm mt-4 border-destructive bg-destructive/10 p-4 text-sm">
+        <div className="pixel-frame-sm mt-4 bg-paper border-destructive bg-destructive/10 p-4 text-sm">
           <p className="pixel-font text-[10px] text-destructive">Publishing failed</p>
           <p className="mt-2">{publishError}</p>
         </div>
@@ -269,7 +269,7 @@ function WritePage() {
                 {draft.reading_time || estimateReadingTime(draft.content ?? "")} min read ·{" "}
                 {formatDate(draft.published_at ?? new Date().toISOString())}
               </p>
-              <div className="crt pixel-frame-sm mt-5 aspect-[16/7] overflow-hidden">
+              <div className="crt pixel-panel mt-5 aspect-[16/7] overflow-hidden">
                 {draft.cover_image ? (
                   <img
                     src={draft.cover_image}
@@ -302,7 +302,7 @@ function WritePage() {
 
         {/* Sidebar */}
         <aside className="space-y-4">
-          <div className="pixel-frame-sm space-y-3 p-4">
+          <div className="pixel-panel space-y-3 p-4">
             <p className="pixel-font text-[10px] text-primary">Article details</p>
 
             <label className="block">
@@ -383,7 +383,7 @@ function WritePage() {
             </button>
           </div>
 
-          <div className="pixel-frame-sm space-y-3 p-4">
+          <div className="pixel-panel space-y-3 p-4">
             <p className="pixel-font text-[10px] text-primary">Artwork</p>
             <label className="block">
               <span className="pixel-font text-[9px] text-muted-foreground">
@@ -416,7 +416,7 @@ function WritePage() {
             </div>
           </div>
 
-          <div className="pixel-frame-sm space-y-2 p-4">
+          <div className="pixel-panel space-y-2 p-4">
             <p className="pixel-font text-[10px] text-primary">Publishing status</p>
             {(
               ["draft", "ready", "published_web", "published_substack"] as ArticleStatus[]

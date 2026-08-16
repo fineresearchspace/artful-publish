@@ -52,7 +52,7 @@ function Dashboard() {
 
       <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         {stats.map((s) => (
-          <div key={s.label} className="pixel-frame-sm p-4">
+          <div key={s.label} className="pixel-panel p-4">
             <p className="pixel-font text-xl text-ink">{s.value}</p>
             <p className="pixel-font mt-2 text-[9px] text-muted-foreground">{s.label}</p>
           </div>

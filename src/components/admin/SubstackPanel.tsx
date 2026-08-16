@@ -28,7 +28,7 @@ export function SubstackPanel({ draft }: { draft: Article }) {
   const slug = draft.slug || "article";
 
   return (
-    <div className="pixel-frame-sm space-y-3 p-4">
+    <div className="pixel-panel space-y-3 p-4">
       <p className="pixel-font text-[10px] text-primary">Export for Substack</p>
       <p className="text-xs text-muted-foreground">
         Substack has no official public publishing API, so Weekly Wonders prepares the post

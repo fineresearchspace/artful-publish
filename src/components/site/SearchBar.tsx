@@ -10,7 +10,7 @@ export function SearchBar({
   placeholder?: string;
 }) {
   return (
-    <label className="pixel-frame-sm flex items-center gap-3 px-3 py-2">
+    <label className="pixel-panel flex items-center gap-3 px-3 py-2">
       <Search className="size-4 shrink-0 text-muted-foreground" />
       <input
         value={value}

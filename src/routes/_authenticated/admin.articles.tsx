@@ -116,7 +116,7 @@ function AdminArticles() {
                     remove.mutate(a.id);
                   }
                 }}
-                className="pixel-frame-sm p-2 text-destructive"
+                className="pixel-panel p-2 text-destructive"
               >
                 <Trash2 className="size-3.5" />
               </button>

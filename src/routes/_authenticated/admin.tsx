@@ -66,7 +66,7 @@ function AdminLayout() {
             WW Studio
           </Link>
           <button
-            className="pixel-frame-sm ml-auto p-2 md:hidden"
+            className="pixel-panel ml-auto p-2 md:hidden"
             onClick={() => setOpen((v) => !v)}
             aria-label="Toggle studio menu"
           >

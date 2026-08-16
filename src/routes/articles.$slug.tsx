@@ -129,7 +129,7 @@ function ArticlePage() {
           {article.tags?.length ? (
             <div className="mt-10 flex flex-wrap gap-2">
               {article.tags.map((tag) => (
-                <span key={tag} className="pixel-font pixel-frame-sm px-2 py-1 text-[10px]">
+                <span key={tag} className="pixel-font pixel-panel px-2 py-1 text-[10px]">
                   #{tag}
                 </span>
               ))}

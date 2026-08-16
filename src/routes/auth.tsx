@@ -110,7 +110,7 @@ function AuthPage() {
           <button
             type="button"
             onClick={onGoogle}
-            className="pixel-frame-sm pixel-lift pixel-font mt-3 w-full px-4 py-3 text-[11px]"
+            className="pixel-frame-sm pixel-lift pixel-font mt-3 w-full bg-paper px-4 py-3 text-[11px]"
           >
             Continue with Google
           </button>

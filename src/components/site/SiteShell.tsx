@@ -47,7 +47,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
             type="button"
             aria-label="Toggle menu"
             onClick={() => setOpen((v) => !v)}
-            className="ml-auto md:hidden pixel-frame-sm p-2"
+            className="ml-auto md:hidden pixel-panel p-2"
           >
             {open ? <X className="size-4" /> : <Menu className="size-4" />}
           </button>
