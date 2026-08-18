@@ -47,7 +47,10 @@ function Home() {
     [articles],
   );
   const rest = useMemo(
-    () => articles.filter((a) => a.id !== featured?.id),
+    () =>
+      articles.length > 1
+        ? articles.filter((a) => a.id !== featured?.id)
+        : articles,
     [articles, featured],
   );
   const filtered = useMemo(
