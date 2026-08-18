@@ -176,6 +176,37 @@ function Home() {
         <div className="pixel-rule" />
       </div>
 
+      {/* Interactive pieces */}
+      <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+        <p className="pixel-font text-[11px] text-primary">[ Interactive Piece ]</p>
+        <a
+          href="/pieces/markowitz-portfolio-story.html"
+          className="pixel-frame pixel-lift group mt-5 grid gap-0 overflow-hidden md:grid-cols-[280px_1fr]"
+        >
+          <div className="crt aspect-[16/10] border-b-2 border-ink md:aspect-auto md:border-b-0 md:border-r-2">
+            <PixelArt variant="portfolio" className="size-full" />
+          </div>
+          <div className="flex flex-col justify-center gap-3 p-7 md:p-10">
+            <span className="pixel-font text-[10px] text-primary">Markets</span>
+            <h2 className="font-serif text-2xl leading-tight sm:text-3xl">
+              The Question That Changed the Portfolio
+            </h2>
+            <p className="font-serif text-lg text-muted-foreground">
+              A scrollable visual essay on Harry Markowitz, diversification and the birth of
+              modern portfolio theory.
+            </p>
+            <span className="pixel-font text-[11px]">
+              Open the piece <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
+            </span>
+          </div>
+        </a>
+      </section>
+
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="pixel-rule" />
+      </div>
+
+
       {/* Topics */}
       <section className="mx-auto max-w-6xl px-4 py-14 text-center sm:px-6">
         <h2 className="pixel-font text-sm">Explore by topic</h2>
