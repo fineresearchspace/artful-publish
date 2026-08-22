@@ -6,6 +6,7 @@ import { PixelArt } from "@/components/PixelArt";
 import { listPublishedArticles } from "@/lib/public-articles.functions";
 import { formatDate } from "@/lib/articles";
 import { SITE } from "@/lib/site";
+import { MarketPulse } from "@/components/site/MarketPulse";
 
 export const Route = createFileRoute("/")({
   loader: () => listPublishedArticles(),
@@ -96,9 +97,11 @@ function Home() {
             </a>
           </div>
         </div>
-      </section>
+           </section>
 
-      {/* Featured */}
+      <MarketPulse />
+
+            {/* Featured */}
       {featured ? (
         <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
           <p className="pixel-font text-[11px] text-primary">[ Featured Wonder ]</p>
