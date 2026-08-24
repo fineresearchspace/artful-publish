@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MarketPulseRouteImport } from './routes/Market-Pulse'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -27,6 +28,11 @@ import { Route as AuthenticatedAdminWriteIdRouteImport } from './routes/_authent
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketPulseRoute = MarketPulseRouteImport.update({
+  id: '/Market-Pulse',
+  path: '/Market-Pulse',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -100,6 +106,7 @@ const AuthenticatedAdminWriteIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/Market-Pulse': typeof MarketPulseRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
@@ -115,6 +122,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/Market-Pulse': typeof MarketPulseRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
@@ -131,6 +139,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/Market-Pulse': typeof MarketPulseRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
@@ -148,6 +157,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/Market-Pulse'
     | '/about'
     | '/auth'
     | '/categories'
@@ -163,6 +173,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/Market-Pulse'
     | '/about'
     | '/auth'
     | '/categories'
@@ -178,6 +189,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/Market-Pulse'
     | '/about'
     | '/auth'
     | '/categories'
@@ -195,6 +207,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  MarketPulseRoute: typeof MarketPulseRoute
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
   CategoriesRoute: typeof CategoriesRoute
@@ -210,6 +223,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/Market-Pulse': {
+      id: '/Market-Pulse'
+      path: '/Market-Pulse'
+      fullPath: '/Market-Pulse'
+      preLoaderRoute: typeof MarketPulseRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -339,6 +359,7 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  MarketPulseRoute: MarketPulseRoute,
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
   CategoriesRoute: CategoriesRoute,

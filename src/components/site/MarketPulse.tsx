@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = "https://weekly-wonders-market.onrender.com";
 
 const PULSE_SYMBOLS = ["^NSEI", "^GSPC", "^NDX", "^N225", "^STOXX50E", "^HSI"];
 
