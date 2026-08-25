@@ -5,6 +5,7 @@ import { SITE } from "@/lib/site";
 
 const NAV = [
   { to: "/", label: "Home" },
+  { to: "/market-pulse", label: "Market Pulse" },
   { to: "/articles", label: "Articles" },
   { to: "/categories", label: "Categories" },
   { to: "/about", label: "About" },
