@@ -1,3 +1,4 @@
+import { supabase } from "@/integrations/supabase/client";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -188,6 +189,55 @@ function WritePage() {
     });
   }
 
+  async function handlePaste(e: React.ClipboardEvent<HTMLTextAreaElement>) {
+    const items = e.clipboardData.items;
+
+    // Case 1: pasted an image (screenshot, copied image, etc.)
+    for (const item of items) {
+      if (item.type.startsWith("image/")) {
+        e.preventDefault();
+        const file = item.getAsFile();
+        if (!file) return;
+
+        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.png`;
+        const { data, error } = await supabase.storage
+          .from("article-images")
+          .upload(fileName, file);
+
+        if (error) {
+          toast.error(`Image upload failed: ${error.message}`);
+          return;
+        }
+
+        const { data: urlData } = supabase.storage
+          .from("article-images")
+          .getPublicUrl(data.path);
+
+        insert(`\n![image](${urlData.publicUrl})\n`);
+        return;
+      }
+    }
+
+    // Case 2: pasted tabular data (e.g. copied cells from Excel/Google Sheets)
+    const text = e.clipboardData.getData("text/plain");
+        if (text.includes("\t") && text.includes("\n")) {
+      e.preventDefault();
+      const rows = text.trim().split("\n").map((row) => row.split("\t"));
+      if (rows.length === 0) return;
+      const header = rows[0]!;
+      const separator = header.map(() => "---");
+      const body = rows.slice(1);
+
+      const table =
+        "\n| " + header.join(" | ") + " |\n" +
+        "| " + separator.join(" | ") + " |\n" +
+        body.map((row) => "| " + row.join(" | ") + " |").join("\n") +
+        "\n";
+
+      insert(table);
+    }
+  }
+
   const status = (draft.status ?? "draft") as ArticleStatus;
 
   return (
@@ -289,6 +339,7 @@ function WritePage() {
                 ref={textareaRef}
                 value={draft.content ?? ""}
                 onChange={(e) => set({ content: e.target.value })}
+                onPaste={handlePaste}
                 placeholder={"Write in Markdown…\n\n## A heading\n\nA paragraph."}
                 rows={26}
                 className="w-full border-2 border-t-0 border-ink bg-paper p-4 font-serif text-base leading-relaxed outline-none focus:border-primary"
