@@ -173,70 +173,8 @@ function WritePage() {
     }
   }
 
-  function insert(before: string, after = "", placeholder = "") {
-    const el = textareaRef.current;
-    if (!el) return;
-    const start = el.selectionStart;
-    const end = el.selectionEnd;
-    const value = draft.content ?? "";
-    const selected = value.slice(start, end) || placeholder;
-    const next = value.slice(0, start) + before + selected + after + value.slice(end);
-    set({ content: next });
-    requestAnimationFrame(() => {
-      el.focus();
-      el.selectionStart = start + before.length;
-      el.selectionEnd = start + before.length + selected.length;
-    });
-  }
+  const editorHtml = useMemo(() => renderMarkdown(draft.content ?? ""), [draft.content]);
 
-  async function handlePaste(e: React.ClipboardEvent<HTMLTextAreaElement>) {
-    const items = e.clipboardData.items;
-
-    // Case 1: pasted an image (screenshot, copied image, etc.)
-    for (const item of items) {
-      if (item.type.startsWith("image/")) {
-        e.preventDefault();
-        const file = item.getAsFile();
-        if (!file) return;
-
-        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.png`;
-        const { data, error } = await supabase.storage
-          .from("article-images")
-          .upload(fileName, file);
-
-        if (error) {
-          toast.error(`Image upload failed: ${error.message}`);
-          return;
-        }
-
-        const { data: urlData } = supabase.storage
-          .from("article-images")
-          .getPublicUrl(data.path);
-
-        insert(`\n![image](${urlData.publicUrl})\n`);
-        return;
-      }
-    }
-
-    // Case 2: pasted tabular data (e.g. copied cells from Excel/Google Sheets)
-    const text = e.clipboardData.getData("text/plain");
-        if (text.includes("\t") && text.includes("\n")) {
-      e.preventDefault();
-      const rows = text.trim().split("\n").map((row) => row.split("\t"));
-      if (rows.length === 0) return;
-      const header = rows[0]!;
-      const separator = header.map(() => "---");
-      const body = rows.slice(1);
-
-      const table =
-        "\n| " + header.join(" | ") + " |\n" +
-        "| " + separator.join(" | ") + " |\n" +
-        body.map((row) => "| " + row.join(" | ") + " |").join("\n") +
-        "\n";
-
-      insert(table);
-    }
-  }
 
   const status = (draft.status ?? "draft") as ArticleStatus;
 
