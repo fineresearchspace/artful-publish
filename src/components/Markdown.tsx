@@ -3,9 +3,17 @@ import { useMemo } from "react";
 
 marked.setOptions({ gfm: true, breaks: false });
 
-export function renderMarkdown(markdown: string): string {
-  return marked.parse(markdown ?? "", { async: false }) as string;
+/** True when the stored content is already rich HTML (produced by the editor). */
+export function isHtmlContent(value: string): boolean {
+  return /^\s*<(p|h[1-6]|ul|ol|blockquote|pre|table|img|figure|div|hr)\b/i.test(value ?? "");
 }
+
+export function renderMarkdown(markdown: string): string {
+  const value = markdown ?? "";
+  if (isHtmlContent(value)) return value;
+  return marked.parse(value, { async: false }) as string;
+}
+
 
 export function Markdown({
   content,

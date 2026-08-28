@@ -77,7 +77,9 @@ export function slugify(input: string): string {
     .slice(0, 80);
 }
 
-export function estimateReadingTime(markdown: string): number {
-  const words = markdown.trim().split(/\s+/).filter(Boolean).length;
+export function estimateReadingTime(content: string): number {
+  const text = (content ?? "").replace(/<[^>]+>/g, " ");
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
   return Math.max(1, Math.round(words / 220));
 }
+

@@ -1,4 +1,3 @@
-import { supabase } from "@/integrations/supabase/client";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -18,11 +17,12 @@ import {
   type Article,
   type ArticleStatus,
 } from "@/lib/articles";
-import { Markdown } from "@/components/Markdown";
+import { Markdown, renderMarkdown } from "@/components/Markdown";
 import { PixelArt, PIXEL_ART_KEYS, PIXEL_ART_LABELS } from "@/components/PixelArt";
 import { StatusBadge } from "@/components/admin/StatusBadge";
-import { EditorToolbar } from "@/components/admin/EditorToolbar";
+import { RichEditor } from "@/components/admin/RichEditor";
 import { SubstackPanel } from "@/components/admin/SubstackPanel";
+
 
 export const Route = createFileRoute("/_authenticated/admin/write/$id")({
   component: WritePage,
@@ -56,8 +56,8 @@ function WritePage() {
   const [saving, setSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<string | null>(null);
   const [publishError, setPublishError] = useState<string | null>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const dirtyRef = useRef(false);
+
 
   const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
@@ -173,70 +173,8 @@ function WritePage() {
     }
   }
 
-  function insert(before: string, after = "", placeholder = "") {
-    const el = textareaRef.current;
-    if (!el) return;
-    const start = el.selectionStart;
-    const end = el.selectionEnd;
-    const value = draft.content ?? "";
-    const selected = value.slice(start, end) || placeholder;
-    const next = value.slice(0, start) + before + selected + after + value.slice(end);
-    set({ content: next });
-    requestAnimationFrame(() => {
-      el.focus();
-      el.selectionStart = start + before.length;
-      el.selectionEnd = start + before.length + selected.length;
-    });
-  }
+  const editorHtml = useMemo(() => renderMarkdown(draft.content ?? ""), [draft.content]);
 
-  async function handlePaste(e: React.ClipboardEvent<HTMLTextAreaElement>) {
-    const items = e.clipboardData.items;
-
-    // Case 1: pasted an image (screenshot, copied image, etc.)
-    for (const item of items) {
-      if (item.type.startsWith("image/")) {
-        e.preventDefault();
-        const file = item.getAsFile();
-        if (!file) return;
-
-        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.png`;
-        const { data, error } = await supabase.storage
-          .from("article-images")
-          .upload(fileName, file);
-
-        if (error) {
-          toast.error(`Image upload failed: ${error.message}`);
-          return;
-        }
-
-        const { data: urlData } = supabase.storage
-          .from("article-images")
-          .getPublicUrl(data.path);
-
-        insert(`\n![image](${urlData.publicUrl})\n`);
-        return;
-      }
-    }
-
-    // Case 2: pasted tabular data (e.g. copied cells from Excel/Google Sheets)
-    const text = e.clipboardData.getData("text/plain");
-        if (text.includes("\t") && text.includes("\n")) {
-      e.preventDefault();
-      const rows = text.trim().split("\n").map((row) => row.split("\t"));
-      if (rows.length === 0) return;
-      const header = rows[0]!;
-      const separator = header.map(() => "---");
-      const body = rows.slice(1);
-
-      const table =
-        "\n| " + header.join(" | ") + " |\n" +
-        "| " + separator.join(" | ") + " |\n" +
-        body.map((row) => "| " + row.join(" | ") + " |").join("\n") +
-        "\n";
-
-      insert(table);
-    }
-  }
 
   const status = (draft.status ?? "draft") as ArticleStatus;
 
@@ -334,20 +272,15 @@ function WritePage() {
             </div>
           ) : (
             <div className="mt-4">
-              <EditorToolbar onInsert={insert} />
-              <textarea
-                ref={textareaRef}
-                value={draft.content ?? ""}
-                onChange={(e) => set({ content: e.target.value })}
-                onPaste={handlePaste}
-                placeholder={"Write in Markdown…\n\n## A heading\n\nA paragraph."}
-                rows={26}
-                className="w-full border-2 border-t-0 border-ink bg-paper p-4 font-serif text-base leading-relaxed outline-none focus:border-primary"
+              <RichEditor
+                content={editorHtml}
+                onChange={(html) => set({ content: html })}
               />
               <p className="pixel-font mt-2 text-[9px] text-muted-foreground">
-                Markdown mode · {estimateReadingTime(draft.content ?? "")} min read estimate
+                Rich text mode · {estimateReadingTime(draft.content ?? "")} min read estimate
               </p>
             </div>
+
           )}
         </div>
 
