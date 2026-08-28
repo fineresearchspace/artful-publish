@@ -56,8 +56,8 @@ function WritePage() {
   const [saving, setSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<string | null>(null);
   const [publishError, setPublishError] = useState<string | null>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const dirtyRef = useRef(false);
+
 
   const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
