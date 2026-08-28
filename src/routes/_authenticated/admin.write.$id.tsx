@@ -272,20 +272,15 @@ function WritePage() {
             </div>
           ) : (
             <div className="mt-4">
-              <EditorToolbar onInsert={insert} />
-              <textarea
-                ref={textareaRef}
-                value={draft.content ?? ""}
-                onChange={(e) => set({ content: e.target.value })}
-                onPaste={handlePaste}
-                placeholder={"Write in Markdown…\n\n## A heading\n\nA paragraph."}
-                rows={26}
-                className="w-full border-2 border-t-0 border-ink bg-paper p-4 font-serif text-base leading-relaxed outline-none focus:border-primary"
+              <RichEditor
+                content={editorHtml}
+                onChange={(html) => set({ content: html })}
               />
               <p className="pixel-font mt-2 text-[9px] text-muted-foreground">
-                Markdown mode · {estimateReadingTime(draft.content ?? "")} min read estimate
+                Rich text mode · {estimateReadingTime(draft.content ?? "")} min read estimate
               </p>
             </div>
+
           )}
         </div>
 
