@@ -1,6 +1,5 @@
-import { supabase } from "@/integrations/supabase/client";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Eye, Save, Upload, Star } from "lucide-react";
@@ -18,11 +17,12 @@ import {
   type Article,
   type ArticleStatus,
 } from "@/lib/articles";
-import { Markdown } from "@/components/Markdown";
+import { Markdown, renderMarkdown } from "@/components/Markdown";
 import { PixelArt, PIXEL_ART_KEYS, PIXEL_ART_LABELS } from "@/components/PixelArt";
 import { StatusBadge } from "@/components/admin/StatusBadge";
-import { EditorToolbar } from "@/components/admin/EditorToolbar";
+import { RichEditor } from "@/components/admin/RichEditor";
 import { SubstackPanel } from "@/components/admin/SubstackPanel";
+
 
 export const Route = createFileRoute("/_authenticated/admin/write/$id")({
   component: WritePage,
