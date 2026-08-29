@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 // API base URL is read from an env var so it can be set without touching code.
 // Add VITE_MARKET_NEWS_API to the project's environment variables (Vercel + local .env)
 // pointing at the deployed news backend, e.g. https://your-news-api.onrender.com/api
-const NEWS_API_BASE = import.meta.env.VITE_MARKET_NEWS_API ?? "";
+const NEWS_API_BASE = import.meta.env["VITE_MARKET_NEWS_API"] ?? "";
 
 type Article = {
   id: number;
