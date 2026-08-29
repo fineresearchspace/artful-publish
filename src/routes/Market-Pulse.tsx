@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { SiteShell } from "@/components/site/SiteShell";
+import MarketPulseNews from "@/components/MarketPulseNews";
+
 
 export const Route = createFileRoute("/Market-Pulse")({
   head: () => ({
@@ -110,9 +112,13 @@ function MarketPulsePage() {
           </div>
         )}
       </section>
+      <div className="py-14">
+        <MarketPulseNews />
+      </div>
     </SiteShell>
   );
 }
+
 
 function MarketCard({ data }: { data: MarketData }) {
   const yahooUrl = `https://finance.yahoo.com/quote/${encodeURIComponent(data.symbol)}/`;
