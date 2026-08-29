@@ -1,36 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
-
-// API base URL is read from an env var so it can be set without touching code.
-// Add VITE_MARKET_NEWS_API to the project's environment variables (Vercel + local .env)
-// pointing at the deployed news backend, e.g. https://your-news-api.onrender.com/api
-const NEWS_API_BASE = import.meta.env["VITE_MARKET_NEWS_API"] ?? "";
-
-type Article = {
-  id: number;
-  title: string;
-  summary: string;
-  source: string;
-  sourceUrl: string;
-  imageUrl: string | null;
-  publishedAt: string;
-  category: string;
-  impactLabel?: "HIGH" | "MEDIUM" | "LOW";
-};
-
-type NewsResponse = {
-  items: Article[];
-  total: number;
-};
-
-const CATEGORIES = [
-  "All Categories",
-  "Markets",
-  "Economy & Policy",
-  "Companies & Corporate",
-  "Industries",
-  "Global Business",
-  "Investing",
-];
+import { useServerFn } from "@tanstack/react-start";
+import { getMarketNews, type NewsItem } from "@/lib/news.functions";
+import { NEWS_CATEGORIES } from "@/lib/news/scoring";
 
 function formatDate(iso: string) {
   const date = new Date(iso);
@@ -42,29 +13,25 @@ function formatDate(iso: string) {
 }
 
 export default function MarketPulseNews() {
-  const [articles, setArticles] = useState<Article[]>([]);
+  const fetchNewsFn = useServerFn(getMarketNews);
+  const [articles, setArticles] = useState<NewsItem[]>([]);
   const [status, setStatus] = useState<"loading" | "ready" | "error" | "empty">("loading");
   const [category, setCategory] = useState("All Categories");
 
-  const fetchNews = useCallback(async (cat: string) => {
-    if (!NEWS_API_BASE) {
-      setStatus("error");
-      return;
-    }
-    setStatus("loading");
-    try {
-      const params = new URLSearchParams();
-      if (cat !== "All Categories") params.set("category", cat);
-      const res = await fetch(`${NEWS_API_BASE}/news?${params.toString()}`);
-      if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-      const data: NewsResponse = await res.json();
-      setArticles(data.items);
-      setStatus(data.items.length === 0 ? "empty" : "ready");
-    } catch (err) {
-      console.error("Failed to load market news:", err);
-      setStatus("error");
-    }
-  }, []);
+  const fetchNews = useCallback(
+    async (cat: string) => {
+      setStatus("loading");
+      try {
+        const data = await fetchNewsFn({ data: { category: cat, limit: 24 } });
+        setArticles(data.news);
+        setStatus(data.news.length === 0 ? "empty" : "ready");
+      } catch (err) {
+        console.error("Failed to load market news:", err);
+        setStatus("error");
+      }
+    },
+    [fetchNewsFn],
+  );
 
   useEffect(() => {
     fetchNews(category);
@@ -73,14 +40,14 @@ export default function MarketPulseNews() {
   return (
     <section className="mx-auto max-w-6xl px-4 sm:px-6">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="pixel-font text-2xl text-ink">Market Pulse</h2>
+        <h2 className="pixel-font text-2xl text-ink">Market News</h2>
         <div className="flex items-center gap-2">
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             className="border-2 border-ink bg-paper px-3 py-1.5 text-sm outline-none focus:border-primary"
           >
-            {CATEGORIES.map((c) => (
+            {NEWS_CATEGORIES.map((c) => (
               <option key={c} value={c}>{c}</option>
             ))}
           </select>
@@ -112,46 +79,37 @@ export default function MarketPulseNews() {
       )}
 
       {status === "ready" && (
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {articles.map((article) => (
-            <article
-              key={article.id}
-              className="pixel-frame-sm pixel-lift flex flex-col overflow-hidden bg-paper"
-            >
-              {article.imageUrl && (
-                <img
-                  src={article.imageUrl}
-                  alt=""
-                  className="h-40 w-full border-b-2 border-ink object-cover pixelated"
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-                />
-              )}
-              <div className="flex flex-1 flex-col gap-2 p-4">
-                <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-                  <span className="pixel-font uppercase">{article.source}</span>
-                  <span className="font-sans">{formatDate(article.publishedAt)}</span>
-                </div>
-                <h3 className="font-serif text-lg font-semibold leading-snug text-ink">
-                  {article.title}
+        <ul className="divide-y-2 divide-ink border-y-2 border-ink">
+          {articles.map((item) => (
+            <li key={item.id} className="py-4">
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group block"
+              >
+                <h3 className="font-serif text-lg font-semibold leading-snug text-ink group-hover:text-primary">
+                  {item.headline}
                 </h3>
-                <p className="flex-1 font-sans text-sm text-muted-foreground">{article.summary}</p>
-                <div className="mt-2 flex items-center justify-between">
+                <p className="mt-1 font-sans text-xs text-muted-foreground">
+                  <span className="pixel-font uppercase">{item.source}</span>
+                  {" · "}
+                  {formatDate(item.publishedAt)}
+                </p>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
                   <span className="pixel-font border border-ink px-2 py-0.5 text-[9px] uppercase">
-                    {article.category}
+                    {item.category}
                   </span>
-                  <a
-                    href={article.sourceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-sans text-sm font-medium text-primary underline underline-offset-2"
-                  >
-                    Read Original →
-                  </a>
+                  {item.tags.map((tag) => (
+                    <span key={tag} className="pixel-font text-[9px] uppercase text-muted-foreground">
+                      {tag}
+                    </span>
+                  ))}
                 </div>
-              </div>
-            </article>
+              </a>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </section>
   );

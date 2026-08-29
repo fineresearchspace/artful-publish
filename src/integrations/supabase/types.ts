@@ -110,6 +110,48 @@ export type Database = {
         }
         Relationships: []
       }
+      market_news: {
+        Row: {
+          canonical_key: string
+          category: string
+          created_at: string
+          headline: string
+          id: string
+          market_relevance_score: number
+          published_at: string
+          relevance_tags: string[]
+          source: string
+          source_url: string
+          updated_at: string
+        }
+        Insert: {
+          canonical_key: string
+          category?: string
+          created_at?: string
+          headline: string
+          id?: string
+          market_relevance_score?: number
+          published_at: string
+          relevance_tags?: string[]
+          source: string
+          source_url: string
+          updated_at?: string
+        }
+        Update: {
+          canonical_key?: string
+          category?: string
+          created_at?: string
+          headline?: string
+          id?: string
+          market_relevance_score?: number
+          published_at?: string
+          relevance_tags?: string[]
+          source?: string
+          source_url?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
