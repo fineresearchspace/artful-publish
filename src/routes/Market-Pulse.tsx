@@ -112,9 +112,13 @@ function MarketPulsePage() {
           </div>
         )}
       </section>
+      <div className="py-14">
+        <MarketPulseNews />
+      </div>
     </SiteShell>
   );
 }
+
 
 function MarketCard({ data }: { data: MarketData }) {
   const yahooUrl = `https://finance.yahoo.com/quote/${encodeURIComponent(data.symbol)}/`;
