@@ -6,7 +6,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const rssConfig = process.env.NEWS_RSS_URLS;
+  const rssConfig = process.env["NEWS_RSS_URLS"];
   if (!rssConfig) {
     return res.status(500).json({
       error: "NEWS_RSS_URLS environment variable is not configured on Vercel.",

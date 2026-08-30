@@ -114,7 +114,8 @@ const parseRss = (xml: string, source: string): (RssItem & { imageUrl: string | 
   }).filter((item) => item.title && /^https?:\/\//.test(item.link));
 
 export type NewsFilters = {
-  search?: string; category?: string; source?: string; minImpact?: number;
+  search?: string | undefined; category?: string | undefined;
+  source?: string | undefined; minImpact?: number | undefined;
 };
 
 export const fetchAndProcessNews = async (rssConfig: string, filters: NewsFilters = {}) => {
@@ -122,15 +123,16 @@ export const fetchAndProcessNews = async (rssConfig: string, filters: NewsFilter
   const results = await Promise.allSettled(
     feeds.map(async (config) => {
       const [source, url] = config.includes("|") ? config.split("|", 2) : ["Feed", config];
+      if (!url) throw new Error(`${source}: missing feed URL`);
       const response = await fetch(url, { signal: AbortSignal.timeout(8000) });
       if (!response.ok) throw new Error(`${source}: HTTP ${response.status}`);
-      return parseRss(await response.text(), source);
+      return parseRss(await response.text(), source ?? "Feed");
     })
   );
 
   const allItems = results.flatMap((r) => (r.status === "fulfilled" ? r.value : []));
   const failedSources = results
-    .map((r, i) => (r.status === "rejected" ? feeds[i].split("|")[0] : null))
+    .map((r, i) => (r.status === "rejected" ? (feeds[i]?.split("|")[0] ?? null) : null))
     .filter((s): s is string => s !== null);
 
   let articles: Article[] = [];
