@@ -43,7 +43,7 @@ function vercelApiShim(): Plugin {
           for await (const chunk of req) chunks.push(chunk as Buffer);
           try {
             const body = JSON.parse(Buffer.concat(chunks).toString("utf8")) as {
-              articles?: core.Article[];
+              articles?: Article[];
               title?: string;
             };
             if (!body.articles || body.articles.length === 0) throw new Error("empty");
