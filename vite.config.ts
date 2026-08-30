@@ -6,6 +6,7 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import type { Plugin } from "vite";
+import type { Article } from "./src/lib/news-core";
 
 // The repo root also contains Vercel-style serverless functions under /api
 // (api/news.ts, api/health.ts, api/newsletter/generate.ts). In the Vite dev
