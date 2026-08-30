@@ -184,3 +184,51 @@ export const fetchAndProcessNews = async (rssConfig: string, filters: NewsFilter
 
   return { articles, failedSources, sourcesTotal: feeds.length };
 };
+
+// Shared newsletter-draft builders (used by the same-origin API routes and the
+// dev middleware shim for the Vercel-style root api/ functions).
+type NewsletterArticle = Pick<Article, "category" | "title" | "summary" | "source" | "impactLabel" | "sourceUrl">;
+
+export const buildMarkdown = (title: string, articles: NewsletterArticle[]) => {
+  const grouped = new Map<string, NewsletterArticle[]>();
+  articles.forEach((a) => grouped.set(a.category, [...(grouped.get(a.category) ?? []), a]));
+
+  const lines = [`# ${title}`, "", "A focused briefing of today's most relevant finance stories.", ""];
+  for (const [category, items] of grouped) {
+    lines.push(`## ${category}`, "");
+    items.forEach((a, i) => {
+      lines.push(
+        `### ${i + 1}. ${a.title}`,
+        "",
+        a.summary,
+        "",
+        `**Source:** ${a.source} · **Impact:** ${a.impactLabel}`,
+        "",
+        `[Read Original Article →](${a.sourceUrl})`,
+        ""
+      );
+    });
+  }
+  return lines.join("\n");
+};
+
+export const buildHtml = (title: string, articles: NewsletterArticle[]) => {
+  const grouped = new Map<string, NewsletterArticle[]>();
+  articles.forEach((a) => grouped.set(a.category, [...(grouped.get(a.category) ?? []), a]));
+
+  const sections = [...grouped.entries()].map(([category, items]) => `
+    <section>
+      <h2>${category}</h2>
+      ${items.map((a) => `
+        <article>
+          <h3>${a.title}</h3>
+          <p>${a.summary}</p>
+          <p><strong>${a.source}</strong> · ${a.impactLabel}</p>
+          <a href="${a.sourceUrl}" rel="noreferrer">Read Original Article →</a>
+        </article>
+      `).join("")}
+    </section>
+  `).join("");
+
+  return `<article><h1>${title}</h1>${sections}</article>`;
+};
