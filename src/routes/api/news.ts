@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { fetchAndProcessNews } from "../../api/lib/news-core";
+import { fetchAndProcessNews } from "@/lib/news-core";
 
 const DEFAULT_RSS = [
   "Reuters|https://news.google.com/rss/search?q=when:2d+reuters.com+markets&hl=en-US&gl=US&ceid=US:en",

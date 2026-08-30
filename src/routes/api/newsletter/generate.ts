@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import type { Article } from "../../../api/lib/news-core";
+import type { Article } from "@/lib/news-core";
 
 type RequestBody = {
   articles: Article[];
