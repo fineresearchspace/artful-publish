@@ -17,14 +17,14 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CategoriesRouteImport } from './routes/categories'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as ApiNewsRouteImport } from './routes/api/news'
 import { Route as ArticlesIndexRouteImport } from './routes/articles.index'
 import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminArticlesRouteImport } from './routes/_authenticated/admin.articles'
 import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_authenticated/admin.categories'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
-import { Route as ApiPublicNewsRouteImport } from './routes/api/public/news'
-import { Route as ApiPublicNewsRefreshRouteImport } from './routes/api/public/news-refresh'
+import { Route as ApiNewsletterGenerateRouteImport } from './routes/api/newsletter/generate'
 import { Route as AuthenticatedAdminWriteIdRouteImport } from './routes/_authenticated/admin.write.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -66,6 +66,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiNewsRoute = ApiNewsRouteImport.update({
+  id: '/api/news',
+  path: '/api/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ArticlesIndexRoute = ArticlesIndexRouteImport.update({
   id: '/articles/',
   path: '/articles/',
@@ -99,14 +104,9 @@ const AuthenticatedAdminSettingsRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const ApiPublicNewsRoute = ApiPublicNewsRouteImport.update({
-  id: '/api/public/news',
-  path: '/api/public/news',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicNewsRefreshRoute = ApiPublicNewsRefreshRouteImport.update({
-  id: '/api/public/news-refresh',
-  path: '/api/public/news-refresh',
+const ApiNewsletterGenerateRoute = ApiNewsletterGenerateRouteImport.update({
+  id: '/api/newsletter/generate',
+  path: '/api/newsletter/generate',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminWriteIdRoute =
@@ -124,13 +124,13 @@ export interface FileRoutesByFullPath {
   '/categories': typeof CategoriesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/api/news': typeof ApiNewsRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles/': typeof ArticlesIndexRoute
   '/admin/articles': typeof AuthenticatedAdminArticlesRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
-  '/api/public/news': typeof ApiPublicNewsRoute
-  '/api/public/news-refresh': typeof ApiPublicNewsRefreshRoute
+  '/api/newsletter/generate': typeof ApiNewsletterGenerateRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/write/$id': typeof AuthenticatedAdminWriteIdRoute
 }
@@ -141,13 +141,13 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/news': typeof ApiNewsRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles': typeof ArticlesIndexRoute
   '/admin/articles': typeof AuthenticatedAdminArticlesRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
-  '/api/public/news': typeof ApiPublicNewsRoute
-  '/api/public/news-refresh': typeof ApiPublicNewsRefreshRoute
+  '/api/newsletter/generate': typeof ApiNewsletterGenerateRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/write/$id': typeof AuthenticatedAdminWriteIdRoute
 }
@@ -161,13 +161,13 @@ export interface FileRoutesById {
   '/categories': typeof CategoriesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/api/news': typeof ApiNewsRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles/': typeof ArticlesIndexRoute
   '/_authenticated/admin/articles': typeof AuthenticatedAdminArticlesRoute
   '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
-  '/api/public/news': typeof ApiPublicNewsRoute
-  '/api/public/news-refresh': typeof ApiPublicNewsRefreshRoute
+  '/api/newsletter/generate': typeof ApiNewsletterGenerateRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/write/$id': typeof AuthenticatedAdminWriteIdRoute
 }
@@ -181,13 +181,13 @@ export interface FileRouteTypes {
     | '/categories'
     | '/sitemap.xml'
     | '/admin'
+    | '/api/news'
     | '/articles/$slug'
     | '/articles/'
     | '/admin/articles'
     | '/admin/categories'
     | '/admin/settings'
-    | '/api/public/news'
-    | '/api/public/news-refresh'
+    | '/api/newsletter/generate'
     | '/admin/'
     | '/admin/write/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -198,13 +198,13 @@ export interface FileRouteTypes {
     | '/auth'
     | '/categories'
     | '/sitemap.xml'
+    | '/api/news'
     | '/articles/$slug'
     | '/articles'
     | '/admin/articles'
     | '/admin/categories'
     | '/admin/settings'
-    | '/api/public/news'
-    | '/api/public/news-refresh'
+    | '/api/newsletter/generate'
     | '/admin'
     | '/admin/write/$id'
   id:
@@ -217,13 +217,13 @@ export interface FileRouteTypes {
     | '/categories'
     | '/sitemap.xml'
     | '/_authenticated/admin'
+    | '/api/news'
     | '/articles/$slug'
     | '/articles/'
     | '/_authenticated/admin/articles'
     | '/_authenticated/admin/categories'
     | '/_authenticated/admin/settings'
-    | '/api/public/news'
-    | '/api/public/news-refresh'
+    | '/api/newsletter/generate'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/write/$id'
   fileRoutesById: FileRoutesById
@@ -236,10 +236,10 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CategoriesRoute: typeof CategoriesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ApiNewsRoute: typeof ApiNewsRoute
   ArticlesSlugRoute: typeof ArticlesSlugRoute
   ArticlesIndexRoute: typeof ArticlesIndexRoute
-  ApiPublicNewsRoute: typeof ApiPublicNewsRoute
-  ApiPublicNewsRefreshRoute: typeof ApiPublicNewsRefreshRoute
+  ApiNewsletterGenerateRoute: typeof ApiNewsletterGenerateRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -300,6 +300,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/news': {
+      id: '/api/news'
+      path: '/api/news'
+      fullPath: '/api/news'
+      preLoaderRoute: typeof ApiNewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/articles/': {
       id: '/articles/'
       path: '/articles'
@@ -342,18 +349,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/api/public/news': {
-      id: '/api/public/news'
-      path: '/api/public/news'
-      fullPath: '/api/public/news'
-      preLoaderRoute: typeof ApiPublicNewsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/news-refresh': {
-      id: '/api/public/news-refresh'
-      path: '/api/public/news-refresh'
-      fullPath: '/api/public/news-refresh'
-      preLoaderRoute: typeof ApiPublicNewsRefreshRouteImport
+    '/api/newsletter/generate': {
+      id: '/api/newsletter/generate'
+      path: '/api/newsletter/generate'
+      fullPath: '/api/newsletter/generate'
+      preLoaderRoute: typeof ApiNewsletterGenerateRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/write/$id': {
@@ -404,10 +404,10 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CategoriesRoute: CategoriesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ApiNewsRoute: ApiNewsRoute,
   ArticlesSlugRoute: ArticlesSlugRoute,
   ArticlesIndexRoute: ArticlesIndexRoute,
-  ApiPublicNewsRoute: ApiPublicNewsRoute,
-  ApiPublicNewsRefreshRoute: ApiPublicNewsRefreshRoute,
+  ApiNewsletterGenerateRoute: ApiNewsletterGenerateRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
