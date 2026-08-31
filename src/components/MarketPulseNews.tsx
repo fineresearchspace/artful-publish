@@ -28,7 +28,102 @@ const CATEGORIES = [
   "Industries",
   "Global Business",
   "Investing",
+  "Currency",
 ];
+
+type FxPair = { pair: string; rate: number; changePct: number | null };
+type FxResponse = { pairs: FxPair[]; asOf: string };
+
+// Consistent per-category fallback so every card has the same visual weight
+// when a feed ships no image.
+const CATEGORY_FALLBACK: Record<string, { icon: string; tone: string }> = {
+  Markets: { icon: "\u25B2", tone: "bg-primary/10" },
+  "Economy & Policy": { icon: "\u25C6", tone: "bg-accent/40" },
+  "Companies & Corporate": { icon: "\u25A0", tone: "bg-muted" },
+  Industries: { icon: "\u2699", tone: "bg-secondary" },
+  "Global Business": { icon: "\u25CF", tone: "bg-accent/25" },
+  Investing: { icon: "\u25B6", tone: "bg-primary/15" },
+  Currency: { icon: "\u20B9", tone: "bg-muted" },
+};
+
+function CardVisual({ article }: { article: Article }) {
+  const [failed, setFailed] = useState(false);
+  const fallback = CATEGORY_FALLBACK[article.category] ?? { icon: "\u25A0", tone: "bg-muted" };
+
+  if (article.imageUrl && !failed) {
+    return (
+      <img
+        src={article.imageUrl}
+        alt=""
+        loading="lazy"
+        className="pixelated h-40 w-full border-b-2 border-ink object-cover"
+        onError={() => setFailed(true)}
+      />
+    );
+  }
+
+  return (
+    <div
+      className={`flex h-40 w-full flex-col items-center justify-center gap-2 border-b-2 border-ink ${fallback.tone}`}
+      aria-hidden="true"
+    >
+      <span className="pixel-font text-3xl text-ink">{fallback.icon}</span>
+      <span className="pixel-font text-[9px] uppercase tracking-wide text-ink">
+        {article.category}
+      </span>
+    </div>
+  );
+}
+
+function CurrencyStrip() {
+  const [pairs, setPairs] = useState<FxPair[]>([]);
+  const [asOf, setAsOf] = useState<string>("");
+  const [failedFx, setFailedFx] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/fx")
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .then((data: FxResponse) => {
+        if (!active) return;
+        setPairs(data.pairs ?? []);
+        setAsOf(data.asOf ?? "");
+      })
+      .catch(() => active && setFailedFx(true));
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  if (failedFx || pairs.length === 0) return null;
+
+  return (
+    <div className="mb-6">
+      <div className="mb-2 flex items-baseline justify-between">
+        <h3 className="pixel-font text-[10px] uppercase text-ink">Live FX Rates</h3>
+        <span className="font-sans text-[10px] text-muted-foreground">
+          ECB reference{asOf ? ` \u00B7 ${asOf}` : ""}
+        </span>
+      </div>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+        {pairs.map((p) => {
+          const up = (p.changePct ?? 0) >= 0;
+          return (
+            <div key={p.pair} className="pixel-frame-sm bg-paper px-3 py-2">
+              <div className="pixel-font text-[9px] uppercase text-muted-foreground">{p.pair}</div>
+              <div className="font-serif text-lg font-semibold text-ink">{p.rate}</div>
+              <div
+                className={`font-sans text-xs ${p.changePct === null ? "text-muted-foreground" : up ? "text-primary" : "text-destructive"}`}
+              >
+                {p.changePct === null ? "\u2014" : `${up ? "\u25B2" : "\u25BC"} ${Math.abs(p.changePct)}%`}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 function formatDate(iso: string) {
   const date = new Date(iso);
@@ -121,6 +216,8 @@ export default function MarketPulseNews() {
         </div>
       </div>
 
+      {category === "Currency" && <CurrencyStrip />}
+
       {status === "loading" && (
         <div className="py-12 text-center font-serif text-sm text-muted-foreground">
           Loading latest market news…
@@ -145,14 +242,7 @@ export default function MarketPulseNews() {
                 key={article.id}
                 className="pixel-frame-sm pixel-lift flex flex-col overflow-hidden bg-paper"
               >
-                {article.imageUrl && (
-                  <img
-                    src={article.imageUrl}
-                    alt=""
-                    className="h-40 w-full border-b-2 border-ink object-cover pixelated"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-                  />
-                )}
+                <CardVisual article={article} />
                 <div className="flex flex-1 flex-col gap-2 p-4">
                   <div className="flex items-center justify-between text-[10px] text-muted-foreground">
                     <span className="pixel-font uppercase">{article.source}</span>
