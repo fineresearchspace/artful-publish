@@ -32,9 +32,10 @@ const financeKeywords = [
 
 const sourceScores: Record<string, number> = {
   RBI: 99, SEBI: 99, Reuters: 94, Bloomberg: 93, "Financial Times": 92,
-  "The Economic Times": 88, "Business Standard": 87, CNBC: 84,
-  MarketWatch: 82, "Yahoo Finance": 78, Nasdaq: 80,
+  "The Economic Times": 88, "Business Standard": 87, Mint: 86, CNBC: 84,
+  MarketWatch: 82, "Yahoo Finance": 78, Nasdaq: 80, "Investing.com": 74,
 };
+
 
 const stripHtml = (value: string) =>
   value.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
@@ -53,6 +54,98 @@ const similarity = (a: string, b: string) => {
   return intersection / Math.max(1, Math.min(left.size, right.size));
 };
 
+// --- Fuzzy cross-publisher deduplication -----------------------------------
+// Different outlets word the same story differently ("Fed signals rate cut" vs
+// "Federal Reserve hints at cut"), so we canonicalise common synonyms before
+// comparing word sets.
+const SYNONYMS: [RegExp, string][] = [
+  [/\bfederal reserve\b|\bus fed\b|\bfomc\b/g, "fed"],
+  [/\breserve bank of india\b/g, "rbi"],
+  [/\beuropean central bank\b/g, "ecb"],
+  [/\bbank of japan\b/g, "boj"],
+  [/\bhints?\b|\bsignals?\b|\bflags?\b|\bindicates?\b|\bsuggests?\b/g, "signal"],
+  [/\braises?\b|\bhikes?\b|\blifts?\b|\bboosts?\b/g, "raise"],
+  [/\bcuts?\b|\blowers?\b|\breduces?\b|\btrims?\b/g, "cut"],
+  [/\bsurges?\b|\bjumps?\b|\brallies\b|\bsoars?\b|\bclimbs?\b|\bgains?\b/g, "rise"],
+  [/\bplunges?\b|\bslumps?\b|\btumbles?\b|\bsinks?\b|\bdrops?\b|\bfalls?\b/g, "fall"],
+  [/\brupee\b|\binr\b/g, "rupee"],
+  [/\bshares?\b|\bstocks?\b|\bequities\b/g, "stock"],
+  [/\bprofits?\b|\bearnings\b/g, "earnings"],
+  [/\binterest rates?\b|\brates?\b/g, "rate"],
+];
+
+const STOPWORDS = new Set([
+  "the", "a", "an", "as", "to", "of", "and", "in", "on", "for", "at", "by",
+  "with", "from", "over", "after", "amid", "its", "is", "are", "be", "will",
+  "says", "said", "new", "up", "down", "vs",
+]);
+
+const fuzzyTerms = (value: string) => {
+  let text = ` ${value.toLowerCase()} `;
+  for (const [pattern, replacement] of SYNONYMS) text = text.replace(pattern, replacement);
+  return new Set(
+    text.replace(/[^a-z0-9\s]/g, " ").split(/\s+/).filter((t) => t && !STOPWORDS.has(t)),
+  );
+};
+
+const setSimilarity = (left: Set<string>, right: Set<string>) => {
+  if (left.size === 0 || right.size === 0) return 0;
+  let intersection = 0;
+  for (const term of left) if (right.has(term)) intersection += 1;
+  return intersection / Math.min(left.size, right.size);
+};
+
+const sourceQuality = (source: string) => sourceScores[source] ?? 65;
+
+const FUZZY_THRESHOLD = 0.65;
+
+/**
+ * Two-pass dedup within a single fetch batch:
+ *  1. exact canonical-title key
+ *  2. pairwise fuzzy word-overlap (intersection / smaller set)
+ * On a match the higher-quality source wins; missing fields are backfilled.
+ */
+export const dedupeArticles = (candidates: Article[]): Article[] => {
+  const byCanonical = new Map<string, Article>();
+  for (const candidate of candidates) {
+    const key = normalizeTitle(candidate.title);
+    const existing = byCanonical.get(key);
+    if (!existing) byCanonical.set(key, candidate);
+    else byCanonical.set(key, mergeDuplicates(existing, candidate));
+  }
+
+  const kept: { article: Article; terms: Set<string> }[] = [];
+  for (const candidate of byCanonical.values()) {
+    const terms = fuzzyTerms(candidate.title);
+    const match = kept.find((entry) => setSimilarity(entry.terms, terms) >= FUZZY_THRESHOLD);
+    if (match) {
+      const winner = mergeDuplicates(match.article, candidate);
+      match.article = winner;
+      match.terms = fuzzyTerms(winner.title);
+    } else {
+      kept.push({ article: candidate, terms });
+    }
+  }
+
+  return kept.map((entry) => entry.article);
+};
+
+const mergeDuplicates = (a: Article, b: Article): Article => {
+  const aWins =
+    sourceQuality(a.source) !== sourceQuality(b.source)
+      ? sourceQuality(a.source) > sourceQuality(b.source)
+      : a.importanceScore >= b.importanceScore;
+  const winner = aWins ? a : b;
+  const loser = aWins ? b : a;
+  return {
+    ...winner,
+    imageUrl: winner.imageUrl ?? loser.imageUrl,
+    description: winner.description ?? loser.description,
+    tags: [...new Set([...winner.tags, ...loser.tags])].slice(0, 5),
+  };
+};
+
+
 export const classifyRelevance = (title: string, description = "") => {
   const text = `${title} ${description}`.toLowerCase();
   const matches = financeKeywords.filter((k) => text.includes(k));
@@ -61,6 +154,7 @@ export const classifyRelevance = (title: string, description = "") => {
 
 export const classifyCategory = (title: string, description = "") => {
   const text = `${title} ${description}`.toLowerCase();
+  if (/\b(rupee|inr|forex|currency|currencies|exchange rate|dollar index|usd\/|eur\/|gbp\/|yen|euro|sterling|greenback)\b/.test(text)) return { category: "Currency", subcategory: "Foreign Exchange" };
   if (text.includes("rbi") || text.includes("central bank") || text.includes("rate")) return { category: "Economy & Policy", subcategory: "RBI / Monetary Policy" };
   if (text.includes("inflation") || text.includes("gdp")) return { category: "Economy & Policy", subcategory: "GDP / Economic Data" };
   if (text.includes("earnings") || text.includes("profit") || text.includes("revenue")) return { category: "Companies & Corporate", subcategory: "Earnings" };
@@ -70,6 +164,7 @@ export const classifyCategory = (title: string, description = "") => {
   if (text.includes("asia") || text.includes(" us ") || text.includes("europe")) return { category: "Global Business", subcategory: "Emerging Markets" };
   return { category: "Markets", subcategory: "Market Movements" };
 };
+
 
 export const summarizeArticle = (title: string, description: string | null) => {
   const sourceText = stripHtml(description ?? "");
@@ -93,12 +188,19 @@ const extractTag = (block: string, tag: string) => {
   return match?.[1] ? stripHtml(match[1]).replace(/<!\[CDATA\[|\]\]>/g, "").trim() : "";
 };
 
+// Priority: <media:content url> -> <enclosure url type="image/*"> -> <img src> in description
 const extractImage = (block: string) => {
-  const media = block.match(/<media:content[^>]*url="([^"]+)"/i) || block.match(/<enclosure[^>]*url="([^"]+)"[^>]*type="image/i);
+  const media = block.match(/<media:(?:content|thumbnail)[^>]*\burl="([^"]+)"/i);
   if (media?.[1]) return media[1];
-  const imgTag = block.match(/<img[^>]*src="([^"]+)"/i);
+  const enclosure = [...block.matchAll(/<enclosure\b[^>]*>/gi)]
+    .map((m) => m[0])
+    .find((tag) => /type="image\//i.test(tag) || /\.(jpe?g|png|webp|gif)(\?|")/i.test(tag));
+  const enclosureUrl = enclosure?.match(/\burl="([^"]+)"/i);
+  if (enclosureUrl?.[1]) return enclosureUrl[1];
+  const imgTag = block.match(/<img[^>]*\bsrc=["']([^"']+)["']/i);
   return imgTag?.[1] ?? null;
 };
+
 
 const parseRss = (xml: string, source: string): (RssItem & { imageUrl: string | null })[] =>
   [...xml.matchAll(/<item[\s\S]*?<\/item>/gi)].map((match) => {
@@ -135,13 +237,11 @@ export const fetchAndProcessNews = async (rssConfig: string, filters: NewsFilter
     .map((r, i) => (r.status === "rejected" ? (feeds[i]?.split("|")[0] ?? null) : null))
     .filter((s): s is string => s !== null);
 
-  let articles: Article[] = [];
+  // Build candidates first, then dedupe (canonical exact key, then fuzzy pass).
+  const candidates: Article[] = [];
   for (const item of allItems) {
     const relevance = classifyRelevance(item.title, item.description);
     if (!relevance.isRelevant) continue;
-
-    const isDuplicate = articles.some((existing) => similarity(existing.title, item.title) >= 0.72);
-    if (isDuplicate) continue;
 
     const publishedAt = item.pubDate && !Number.isNaN(new Date(item.pubDate).getTime())
       ? new Date(item.pubDate).toISOString()
@@ -150,7 +250,7 @@ export const fetchAndProcessNews = async (rssConfig: string, filters: NewsFilter
     const marketImpactScore = Math.min(95, 48 + relevance.matches.length * 7);
     const importanceScore = scoreImportance(publishedAt, item.source, relevance.score, marketImpactScore);
 
-    articles.push({
+    candidates.push({
       id: `${item.source}-${normalizeTitle(item.title).slice(0, 40)}`,
       title: item.title,
       description: item.description || null,
@@ -168,6 +268,9 @@ export const fetchAndProcessNews = async (rssConfig: string, filters: NewsFilter
       impactLabel: toImpactLabel(marketImpactScore),
     });
   }
+
+  let articles = dedupeArticles(candidates);
+
 
   const search = filters.search?.trim().toLowerCase();
   articles = articles.filter((a) => {

@@ -17,6 +17,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CategoriesRouteImport } from './routes/categories'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as ApiFxRouteImport } from './routes/api/fx'
 import { Route as ApiNewsRouteImport } from './routes/api/news'
 import { Route as ArticlesIndexRouteImport } from './routes/articles.index'
 import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
@@ -65,6 +66,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const ApiFxRoute = ApiFxRouteImport.update({
+  id: '/api/fx',
+  path: '/api/fx',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiNewsRoute = ApiNewsRouteImport.update({
   id: '/api/news',
@@ -124,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/categories': typeof CategoriesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/api/fx': typeof ApiFxRoute
   '/api/news': typeof ApiNewsRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles/': typeof ArticlesIndexRoute
@@ -141,6 +148,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/fx': typeof ApiFxRoute
   '/api/news': typeof ApiNewsRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles': typeof ArticlesIndexRoute
@@ -161,6 +169,7 @@ export interface FileRoutesById {
   '/categories': typeof CategoriesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/api/fx': typeof ApiFxRoute
   '/api/news': typeof ApiNewsRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles/': typeof ArticlesIndexRoute
@@ -181,6 +190,7 @@ export interface FileRouteTypes {
     | '/categories'
     | '/sitemap.xml'
     | '/admin'
+    | '/api/fx'
     | '/api/news'
     | '/articles/$slug'
     | '/articles/'
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/categories'
     | '/sitemap.xml'
+    | '/api/fx'
     | '/api/news'
     | '/articles/$slug'
     | '/articles'
@@ -217,6 +228,7 @@ export interface FileRouteTypes {
     | '/categories'
     | '/sitemap.xml'
     | '/_authenticated/admin'
+    | '/api/fx'
     | '/api/news'
     | '/articles/$slug'
     | '/articles/'
@@ -236,6 +248,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CategoriesRoute: typeof CategoriesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ApiFxRoute: typeof ApiFxRoute
   ApiNewsRoute: typeof ApiNewsRoute
   ArticlesSlugRoute: typeof ArticlesSlugRoute
   ArticlesIndexRoute: typeof ArticlesIndexRoute
@@ -299,6 +312,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/fx': {
+      id: '/api/fx'
+      path: '/api/fx'
+      fullPath: '/api/fx'
+      preLoaderRoute: typeof ApiFxRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/news': {
       id: '/api/news'
@@ -404,6 +424,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CategoriesRoute: CategoriesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ApiFxRoute: ApiFxRoute,
   ApiNewsRoute: ApiNewsRoute,
   ArticlesSlugRoute: ArticlesSlugRoute,
   ArticlesIndexRoute: ArticlesIndexRoute,
