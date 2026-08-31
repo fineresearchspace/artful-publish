@@ -7,7 +7,11 @@ const DEFAULT_RSS = [
   "Yahoo Finance|https://finance.yahoo.com/news/rssindex",
   "The Economic Times|https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms",
   "Business Standard|https://www.business-standard.com/rss/markets-106.rss",
+  "Mint|https://www.livemint.com/rss/markets",
+  "Investing.com|https://www.investing.com/rss/news_25.rss",
+  "Investing.com|https://www.investing.com/rss/news.rss",
 ].join(",");
+
 
 export const Route = createFileRoute("/api/news")({
   server: {
