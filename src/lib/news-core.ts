@@ -96,12 +96,19 @@ const extractTag = (block: string, tag: string) => {
   return match?.[1] ? stripHtml(match[1]).replace(/<!\[CDATA\[|\]\]>/g, "").trim() : "";
 };
 
+// Priority: <media:content url> -> <enclosure url type="image/*"> -> <img src> in description
 const extractImage = (block: string) => {
-  const media = block.match(/<media:content[^>]*url="([^"]+)"/i) || block.match(/<enclosure[^>]*url="([^"]+)"[^>]*type="image/i);
+  const media = block.match(/<media:(?:content|thumbnail)[^>]*\burl="([^"]+)"/i);
   if (media?.[1]) return media[1];
-  const imgTag = block.match(/<img[^>]*src="([^"]+)"/i);
+  const enclosure = [...block.matchAll(/<enclosure\b[^>]*>/gi)]
+    .map((m) => m[0])
+    .find((tag) => /type="image\//i.test(tag) || /\.(jpe?g|png|webp|gif)(\?|")/i.test(tag));
+  const enclosureUrl = enclosure?.match(/\burl="([^"]+)"/i);
+  if (enclosureUrl?.[1]) return enclosureUrl[1];
+  const imgTag = block.match(/<img[^>]*\bsrc=["']([^"']+)["']/i);
   return imgTag?.[1] ?? null;
 };
+
 
 const parseRss = (xml: string, source: string): (RssItem & { imageUrl: string | null })[] =>
   [...xml.matchAll(/<item[\s\S]*?<\/item>/gi)].map((match) => {
