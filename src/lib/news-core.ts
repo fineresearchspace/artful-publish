@@ -32,9 +32,10 @@ const financeKeywords = [
 
 const sourceScores: Record<string, number> = {
   RBI: 99, SEBI: 99, Reuters: 94, Bloomberg: 93, "Financial Times": 92,
-  "The Economic Times": 88, "Business Standard": 87, CNBC: 84,
-  MarketWatch: 82, "Yahoo Finance": 78, Nasdaq: 80,
+  "The Economic Times": 88, "Business Standard": 87, Mint: 86, CNBC: 84,
+  MarketWatch: 82, "Yahoo Finance": 78, Nasdaq: 80, "Investing.com": 74,
 };
+
 
 const stripHtml = (value: string) =>
   value.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
