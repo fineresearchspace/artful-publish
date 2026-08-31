@@ -145,13 +145,11 @@ export const fetchAndProcessNews = async (rssConfig: string, filters: NewsFilter
     .map((r, i) => (r.status === "rejected" ? (feeds[i]?.split("|")[0] ?? null) : null))
     .filter((s): s is string => s !== null);
 
-  let articles: Article[] = [];
+  // Build candidates first, then dedupe (canonical exact key, then fuzzy pass).
+  const candidates: Article[] = [];
   for (const item of allItems) {
     const relevance = classifyRelevance(item.title, item.description);
     if (!relevance.isRelevant) continue;
-
-    const isDuplicate = articles.some((existing) => similarity(existing.title, item.title) >= 0.72);
-    if (isDuplicate) continue;
 
     const publishedAt = item.pubDate && !Number.isNaN(new Date(item.pubDate).getTime())
       ? new Date(item.pubDate).toISOString()
@@ -160,7 +158,7 @@ export const fetchAndProcessNews = async (rssConfig: string, filters: NewsFilter
     const marketImpactScore = Math.min(95, 48 + relevance.matches.length * 7);
     const importanceScore = scoreImportance(publishedAt, item.source, relevance.score, marketImpactScore);
 
-    articles.push({
+    candidates.push({
       id: `${item.source}-${normalizeTitle(item.title).slice(0, 40)}`,
       title: item.title,
       description: item.description || null,
@@ -178,6 +176,9 @@ export const fetchAndProcessNews = async (rssConfig: string, filters: NewsFilter
       impactLabel: toImpactLabel(marketImpactScore),
     });
   }
+
+  let articles = dedupeArticles(candidates);
+
 
   const search = filters.search?.trim().toLowerCase();
   articles = articles.filter((a) => {
