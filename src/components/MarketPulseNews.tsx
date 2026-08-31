@@ -216,6 +216,8 @@ export default function MarketPulseNews() {
         </div>
       </div>
 
+      {category === "Currency" && <CurrencyStrip />}
+
       {status === "loading" && (
         <div className="py-12 text-center font-serif text-sm text-muted-foreground">
           Loading latest market news…
@@ -234,7 +236,6 @@ export default function MarketPulseNews() {
 
       {status === "ready" && (
         <>
-          {category === "Currency" && <CurrencyStrip />}
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
             {articles.map((article) => (
               <article
