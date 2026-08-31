@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 // Frankfurter: free, no API key, ECB reference rates.
-const API = "https://api.frankfurter.dev/v2";
+const API = "https://api.frankfurter.dev/v1";
 const CACHE_MS = 5 * 60_000;
 
 type RatePair = {
@@ -50,11 +50,12 @@ export const Route = createFileRoute("/api/fx")({
         }
 
         try {
-          const yesterday = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
-          const [latest, prior] = await Promise.all([
-            fetchRates("latest"),
-            fetchRates(yesterday).catch(() => null),
-          ]);
+          // Frankfurter resolves a date to the nearest prior business day.
+          const latest = await fetchRates("latest");
+          const prevDate = new Date(new Date(latest.date).getTime() - 86_400_000)
+            .toISOString()
+            .slice(0, 10);
+          const prior = await fetchRates(prevDate).catch(() => null);
 
           const current = derive(latest.rates);
           const previous = prior ? derive(prior.rates) : {};
