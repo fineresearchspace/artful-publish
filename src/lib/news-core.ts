@@ -62,6 +62,7 @@ export const classifyRelevance = (title: string, description = "") => {
 
 export const classifyCategory = (title: string, description = "") => {
   const text = `${title} ${description}`.toLowerCase();
+  if (/\b(rupee|inr|forex|currency|currencies|exchange rate|dollar index|usd\/|eur\/|gbp\/|yen|euro|sterling|greenback)\b/.test(text)) return { category: "Currency", subcategory: "Foreign Exchange" };
   if (text.includes("rbi") || text.includes("central bank") || text.includes("rate")) return { category: "Economy & Policy", subcategory: "RBI / Monetary Policy" };
   if (text.includes("inflation") || text.includes("gdp")) return { category: "Economy & Policy", subcategory: "GDP / Economic Data" };
   if (text.includes("earnings") || text.includes("profit") || text.includes("revenue")) return { category: "Companies & Corporate", subcategory: "Earnings" };
@@ -71,6 +72,7 @@ export const classifyCategory = (title: string, description = "") => {
   if (text.includes("asia") || text.includes(" us ") || text.includes("europe")) return { category: "Global Business", subcategory: "Emerging Markets" };
   return { category: "Markets", subcategory: "Market Movements" };
 };
+
 
 export const summarizeArticle = (title: string, description: string | null) => {
   const sourceText = stripHtml(description ?? "");
