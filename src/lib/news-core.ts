@@ -54,6 +54,98 @@ const similarity = (a: string, b: string) => {
   return intersection / Math.max(1, Math.min(left.size, right.size));
 };
 
+// --- Fuzzy cross-publisher deduplication -----------------------------------
+// Different outlets word the same story differently ("Fed signals rate cut" vs
+// "Federal Reserve hints at cut"), so we canonicalise common synonyms before
+// comparing word sets.
+const SYNONYMS: [RegExp, string][] = [
+  [/\bfederal reserve\b|\bus fed\b|\bfomc\b/g, "fed"],
+  [/\breserve bank of india\b/g, "rbi"],
+  [/\beuropean central bank\b/g, "ecb"],
+  [/\bbank of japan\b/g, "boj"],
+  [/\bhints?\b|\bsignals?\b|\bflags?\b|\bindicates?\b|\bsuggests?\b/g, "signal"],
+  [/\braises?\b|\bhikes?\b|\blifts?\b|\bboosts?\b/g, "raise"],
+  [/\bcuts?\b|\blowers?\b|\breduces?\b|\btrims?\b/g, "cut"],
+  [/\bsurges?\b|\bjumps?\b|\brallies\b|\bsoars?\b|\bclimbs?\b|\bgains?\b/g, "rise"],
+  [/\bplunges?\b|\bslumps?\b|\btumbles?\b|\bsinks?\b|\bdrops?\b|\bfalls?\b/g, "fall"],
+  [/\brupee\b|\binr\b/g, "rupee"],
+  [/\bshares?\b|\bstocks?\b|\bequities\b/g, "stock"],
+  [/\bprofits?\b|\bearnings\b/g, "earnings"],
+  [/\binterest rates?\b|\brates?\b/g, "rate"],
+];
+
+const STOPWORDS = new Set([
+  "the", "a", "an", "as", "to", "of", "and", "in", "on", "for", "at", "by",
+  "with", "from", "over", "after", "amid", "its", "is", "are", "be", "will",
+  "says", "said", "new", "up", "down", "vs",
+]);
+
+const fuzzyTerms = (value: string) => {
+  let text = ` ${value.toLowerCase()} `;
+  for (const [pattern, replacement] of SYNONYMS) text = text.replace(pattern, replacement);
+  return new Set(
+    text.replace(/[^a-z0-9\s]/g, " ").split(/\s+/).filter((t) => t && !STOPWORDS.has(t)),
+  );
+};
+
+const setSimilarity = (left: Set<string>, right: Set<string>) => {
+  if (left.size === 0 || right.size === 0) return 0;
+  let intersection = 0;
+  for (const term of left) if (right.has(term)) intersection += 1;
+  return intersection / Math.min(left.size, right.size);
+};
+
+const sourceQuality = (source: string) => sourceScores[source] ?? 65;
+
+const FUZZY_THRESHOLD = 0.65;
+
+/**
+ * Two-pass dedup within a single fetch batch:
+ *  1. exact canonical-title key
+ *  2. pairwise fuzzy word-overlap (intersection / smaller set)
+ * On a match the higher-quality source wins; missing fields are backfilled.
+ */
+export const dedupeArticles = (candidates: Article[]): Article[] => {
+  const byCanonical = new Map<string, Article>();
+  for (const candidate of candidates) {
+    const key = normalizeTitle(candidate.title);
+    const existing = byCanonical.get(key);
+    if (!existing) byCanonical.set(key, candidate);
+    else byCanonical.set(key, mergeDuplicates(existing, candidate));
+  }
+
+  const kept: { article: Article; terms: Set<string> }[] = [];
+  for (const candidate of byCanonical.values()) {
+    const terms = fuzzyTerms(candidate.title);
+    const match = kept.find((entry) => setSimilarity(entry.terms, terms) >= FUZZY_THRESHOLD);
+    if (match) {
+      const winner = mergeDuplicates(match.article, candidate);
+      match.article = winner;
+      match.terms = fuzzyTerms(winner.title);
+    } else {
+      kept.push({ article: candidate, terms });
+    }
+  }
+
+  return kept.map((entry) => entry.article);
+};
+
+const mergeDuplicates = (a: Article, b: Article): Article => {
+  const aWins =
+    sourceQuality(a.source) !== sourceQuality(b.source)
+      ? sourceQuality(a.source) > sourceQuality(b.source)
+      : a.importanceScore >= b.importanceScore;
+  const winner = aWins ? a : b;
+  const loser = aWins ? b : a;
+  return {
+    ...winner,
+    imageUrl: winner.imageUrl ?? loser.imageUrl,
+    description: winner.description ?? loser.description,
+    tags: [...new Set([...winner.tags, ...loser.tags])].slice(0, 5),
+  };
+};
+
+
 export const classifyRelevance = (title: string, description = "") => {
   const text = `${title} ${description}`.toLowerCase();
   const matches = financeKeywords.filter((k) => text.includes(k));
