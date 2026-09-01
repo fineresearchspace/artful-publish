@@ -1,109 +1,123 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
+import { ClientOnly } from "@tanstack/react-router";
 
-const API_BASE_URL = "https://weekly-wonders-market.onrender.com";
-
-const PULSE_SYMBOLS = ["^NSEI", "^GSPC", "^NDX", "^N225", "^STOXX50E", "^HSI"];
-
-type MarketData = {
-  name: string;
-  symbol: string;
-  region: string;
-  latest_price: number | null;
-  change: number | null;
-  change_percent: number | null;
-  market_status: string;
-  available: boolean;
-  error: string | null;
+// TradingView's free, no-API-key "Market Overview" embed. Client-side only:
+// the script injects an iframe, so it must never run during SSR.
+const WIDGET_CONFIG = {
+  colorTheme: "light",
+  dateRange: "1D",
+  showChart: true,
+  locale: "en",
+  largeChartUrl: "",
+  isTransparent: true,
+  showSymbolLogo: true,
+  showFloatingTooltip: true,
+  width: "100%",
+  height: 500,
+  plotLineColorGrowing: "rgba(41, 98, 255, 1)",
+  plotLineColorFalling: "rgba(41, 98, 255, 1)",
+  gridLineColor: "rgba(42, 46, 57, 0.06)",
+  scaleFontColor: "rgba(19, 23, 34, 1)",
+  belowLineFillColorGrowing: "rgba(41, 98, 255, 0.12)",
+  belowLineFillColorFalling: "rgba(41, 98, 255, 0.12)",
+  belowLineFillColorGrowingBottom: "rgba(41, 98, 255, 0)",
+  belowLineFillColorFallingBottom: "rgba(41, 98, 255, 0)",
+  symbolActiveColor: "rgba(41, 98, 255, 0.12)",
+  tabs: [
+    {
+      title: "Indices",
+      symbols: [
+        { s: "BSE:SENSEX", d: "Sensex" },
+        { s: "NSE:NIFTY", d: "Nifty 50" },
+        { s: "FOREXCOM:SPXUSD", d: "S&P 500" },
+        { s: "FOREXCOM:NSXUSD", d: "Nasdaq 100" },
+        { s: "FOREXCOM:DJI", d: "Dow 30" },
+        { s: "INDEX:NKY", d: "Nikkei 225" },
+        { s: "INDEX:DEU40", d: "DAX" },
+        { s: "FOREXCOM:UKXGBP", d: "FTSE 100" },
+      ],
+      originalTitle: "Indices",
+    },
+    {
+      title: "Futures",
+      symbols: [
+        { s: "CME_MINI:ES1!", d: "S&P 500" },
+        { s: "COMEX:GC1!", d: "Gold" },
+        { s: "NYMEX:CL1!", d: "WTI Crude" },
+        { s: "COMEX:SI1!", d: "Silver" },
+        { s: "NYMEX:NG1!", d: "Natural Gas" },
+      ],
+      originalTitle: "Futures",
+    },
+    {
+      title: "Bonds",
+      symbols: [
+        { s: "TVC:US10Y", d: "US 10Y" },
+        { s: "TVC:US02Y", d: "US 02Y" },
+        { s: "TVC:IN10Y", d: "India 10Y" },
+        { s: "TVC:DE10Y", d: "Germany 10Y" },
+      ],
+      originalTitle: "Bonds",
+    },
+    {
+      title: "Forex",
+      symbols: [
+        { s: "FX_IDC:USDINR", d: "USD/INR" },
+        { s: "FX:EURUSD", d: "EUR/USD" },
+        { s: "FX:GBPUSD", d: "GBP/USD" },
+        { s: "FX:USDJPY", d: "USD/JPY" },
+      ],
+      originalTitle: "Forex",
+    },
+  ],
 };
 
-export function MarketPulse() {
-  const [markets, setMarkets] = useState<MarketData[] | null>(null);
-  const [loadError, setLoadError] = useState<string | null>(null);
+function TradingViewMarketOverview() {
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/markets`)
-      .then((res) => {
-        if (!res.ok) throw new Error(`Server responded with ${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
-        const pulse = data.data.filter((m: MarketData) =>
-          PULSE_SYMBOLS.includes(m.symbol),
-        );
-        setMarkets(pulse);
-      })
-      .catch((err) => {
-        console.error("Market Pulse fetch error:", err);
-        setLoadError("Could not load market data. Is the backend running?");
-      });
+    const container = containerRef.current;
+    if (!container) return;
+    container.innerHTML = "";
+
+    const widget = document.createElement("div");
+    widget.className = "tradingview-widget-container__widget";
+    container.appendChild(widget);
+
+    const script = document.createElement("script");
+    script.src =
+      "https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js";
+    script.async = true;
+    script.type = "text/javascript";
+    script.innerHTML = JSON.stringify(WIDGET_CONFIG);
+    container.appendChild(script);
+
+    return () => {
+      container.innerHTML = "";
+    };
   }, []);
 
+  return <div ref={containerRef} className="tradingview-widget-container" />;
+}
+
+export function MarketPulse() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
       <p className="pixel-font text-[11px] text-primary">[ Market Today ]</p>
       <h2 className="pixel-font mt-3 text-sm text-ink">Global Market Pulse</h2>
 
-      {loadError ? (
-        <p className="mt-6 font-serif text-sm text-muted-foreground">{loadError}</p>
-      ) : !markets ? (
-        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {PULSE_SYMBOLS.map((s) => (
-            <div key={s} className="pixel-frame-sm animate-pulse bg-paper p-5">
-              <div className="h-3 w-24 bg-accent" />
-              <div className="mt-4 h-6 w-32 bg-accent" />
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {markets.map((m) => (
-            <MarketCard key={m.symbol} data={m} />
-          ))}
-        </div>
-      )}
-    </section>
-  );
-}
-
-function MarketCard({ data }: { data: MarketData }) {
-  // Yahoo Finance URLs use the exact same symbol format we already fetch with -
-  // no separate mapping needed, unlike TradingView.
-  const yahooUrl = `https://finance.yahoo.com/quote/${encodeURIComponent(data.symbol)}/`;
-
-  if (!data.available) {
-    return (
-      <div className="pixel-frame-sm bg-paper p-5">
-        <p className="pixel-font text-[10px] text-muted-foreground">{data.region}</p>
-        <p className="mt-1 font-serif text-lg">{data.name}</p>
-        <p className="mt-3 font-serif text-sm text-muted-foreground">
-          Data temporarily unavailable
-        </p>
+      <div className="pixel-frame-sm mt-6 bg-paper p-3">
+        <ClientOnly
+          fallback={
+            <div className="h-[500px] animate-pulse bg-accent/30" aria-hidden="true" />
+          }
+        >
+          <TradingViewMarketOverview />
+        </ClientOnly>
       </div>
-    );
-  }
-
-  const isUp = (data.change ?? 0) >= 0;
-
-   return (
-    <a
-      href={yahooUrl}
-      target="_blank"
-      rel="noreferrer"
-      className="pixel-frame-sm pixel-lift block bg-paper p-5 transition-opacity hover:opacity-90"
-    >
-      <p className="pixel-font text-[10px] text-muted-foreground">{data.region}</p>
-      <p className="mt-1 font-serif text-lg">{data.name}</p>
-      <p className="pixel-font mt-3 text-lg text-ink">
-        {data.latest_price?.toLocaleString()}
+      <p className="mt-2 font-sans text-[10px] text-muted-foreground">
+        Live quotes by TradingView.
       </p>
-      <p
-        className={`pixel-font mt-2 text-[11px] ${
-          isUp ? "text-green-700" : "text-red-700"
-        }`}
-      >
-        {isUp ? "▲" : "▼"} {data.change?.toFixed(2)} ({data.change_percent?.toFixed(2)}%)
-      </p>
-      <p className="mt-2 text-[10px] text-muted-foreground">{data.market_status}</p>
-    </a>
+    </section>
   );
 }
