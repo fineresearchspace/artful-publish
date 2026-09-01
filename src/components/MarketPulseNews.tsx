@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 
 const NEWS_API_BASE = "/api";
 
@@ -34,7 +34,7 @@ const CATEGORIES = [
 type FxPair = { pair: string; rate: number; changePct: number | null };
 type FxResponse = { pairs: FxPair[]; asOf: string };
 
-// Consistent per-category fallback so every card has the same visual weight
+// Consistent per-category fallback so every entry has the same visual weight
 // when a feed ships no image.
 const CATEGORY_FALLBACK: Record<string, { icon: string; tone: string }> = {
   Markets: { icon: "\u25B2", tone: "bg-primary/10" },
@@ -46,7 +46,7 @@ const CATEGORY_FALLBACK: Record<string, { icon: string; tone: string }> = {
   Currency: { icon: "\u20B9", tone: "bg-muted" },
 };
 
-function CardVisual({ article }: { article: Article }) {
+function Thumbnail({ article }: { article: Article }) {
   const [failed, setFailed] = useState(false);
   const fallback = CATEGORY_FALLBACK[article.category] ?? { icon: "\u25A0", tone: "bg-muted" };
 
@@ -56,7 +56,7 @@ function CardVisual({ article }: { article: Article }) {
         src={article.imageUrl}
         alt=""
         loading="lazy"
-        className="pixelated h-40 w-full border-b-2 border-ink object-cover"
+        className="pixelated size-24 shrink-0 border-2 border-ink object-cover sm:size-28"
         onError={() => setFailed(true)}
       />
     );
@@ -64,11 +64,11 @@ function CardVisual({ article }: { article: Article }) {
 
   return (
     <div
-      className={`flex h-40 w-full flex-col items-center justify-center gap-2 border-b-2 border-ink ${fallback.tone}`}
+      className={`flex size-24 shrink-0 flex-col items-center justify-center gap-1 border-2 border-ink sm:size-28 ${fallback.tone}`}
       aria-hidden="true"
     >
-      <span className="pixel-font text-3xl text-ink">{fallback.icon}</span>
-      <span className="pixel-font text-[9px] uppercase tracking-wide text-ink">
+      <span className="pixel-font text-xl text-ink">{fallback.icon}</span>
+      <span className="pixel-font px-1 text-center text-[7px] uppercase leading-tight text-ink">
         {article.category}
       </span>
     </div>
@@ -125,12 +125,122 @@ function CurrencyStrip() {
   );
 }
 
-function formatDate(iso: string) {
+type ChatMessage = { role: "user" | "assistant"; text: string };
+
+function NewsChat({ articles }: { articles: Article[] }) {
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [input, setInput] = useState("");
+  const [busy, setBusy] = useState(false);
+  const listRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    listRef.current?.scrollTo({ top: listRef.current.scrollHeight });
+  }, [messages, busy]);
+
+  const send = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const question = input.trim();
+    if (!question || busy) return;
+    setInput("");
+    setMessages((prev) => [...prev, { role: "user", text: question }]);
+    setBusy(true);
+    try {
+      const res = await fetch(`${NEWS_API_BASE}/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question,
+          articles: articles.map((a) => ({
+            title: a.title,
+            summary: a.summary,
+            source: a.source,
+            sourceUrl: a.sourceUrl,
+            publishedAt: a.publishedAt,
+            category: a.category,
+          })),
+        }),
+      });
+      const data = (await res.json()) as { answer?: string; error?: string };
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", text: data.answer ?? data.error ?? "No answer returned." },
+      ]);
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", text: "Couldn't reach the assistant. Try again in a moment." },
+      ]);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="pixel-frame-sm mb-8 bg-paper p-4">
+      <h3 className="pixel-font text-[10px] uppercase text-ink">Ask the news</h3>
+      <p className="mt-1 font-sans text-xs text-muted-foreground">
+        Questions are answered only from the {articles.length} stories loaded below.
+      </p>
+
+      {messages.length > 0 && (
+        <div ref={listRef} className="mt-3 max-h-72 space-y-3 overflow-y-auto pr-1">
+          {messages.map((m, i) => (
+            <div
+              key={i}
+              className={`border-2 border-ink px-3 py-2 ${
+                m.role === "user" ? "bg-accent/40" : "bg-background"
+              }`}
+            >
+              <div className="pixel-font text-[8px] uppercase text-muted-foreground">
+                {m.role === "user" ? "You" : "Assistant"}
+              </div>
+              <p className="mt-1 whitespace-pre-wrap font-sans text-sm text-ink">{m.text}</p>
+            </div>
+          ))}
+          {busy && (
+            <p className="font-sans text-xs text-muted-foreground">Reading the feed…</p>
+          )}
+        </div>
+      )}
+
+      <form onSubmit={send} className="mt-3 flex gap-2">
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="What's driving the market today?"
+          className="flex-1 border-2 border-ink bg-background px-3 py-2 font-sans text-sm text-ink outline-none focus:border-primary"
+        />
+        <button
+          type="submit"
+          disabled={busy || input.trim().length === 0}
+          className="pixel-font border-2 border-ink bg-ink px-4 py-2 text-[10px] uppercase text-background disabled:opacity-50"
+        >
+          {busy ? "…" : "Send"}
+        </button>
+      </form>
+    </div>
+  );
+}
+
+function formatTime(iso: string) {
   const date = new Date(iso);
-  const diffHours = Math.round((Date.now() - date.getTime()) / 3_600_000);
-  if (diffHours < 1) return "Just now";
-  if (diffHours < 24) return `${diffHours}h ago`;
-  return date.toLocaleDateString("en-IN", { month: "short", day: "numeric" });
+  if (Number.isNaN(date.getTime())) return "--:--";
+  return date.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: false });
+}
+
+function dayKey(iso: string) {
+  const date = new Date(iso);
+  return Number.isNaN(date.getTime()) ? "unknown" : date.toDateString();
+}
+
+function formatDay(iso: string) {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "Undated";
+  const today = new Date().toDateString();
+  const yesterday = new Date(Date.now() - 86_400_000).toDateString();
+  if (date.toDateString() === today) return "Today";
+  if (date.toDateString() === yesterday) return "Yesterday";
+  return date.toLocaleDateString("en-IN", { weekday: "long", month: "short", day: "numeric" });
 }
 
 export default function MarketPulseNews() {
@@ -149,8 +259,11 @@ export default function MarketPulseNews() {
       const res = await fetch(`${NEWS_API_BASE}/news?${params.toString()}`);
       if (!res.ok) throw new Error(`Request failed: ${res.status}`);
       const data: NewsResponse = await res.json();
-      setArticles(data.items);
-      setStatus(data.items.length === 0 ? "empty" : "ready");
+      const sorted = [...data.items].sort(
+        (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
+      );
+      setArticles(sorted);
+      setStatus(sorted.length === 0 ? "empty" : "ready");
       if (data.sourcesFailed?.length) {
         console.warn("Some news sources failed to load:", data.sourcesFailed);
       }
@@ -194,7 +307,7 @@ export default function MarketPulseNews() {
   };
 
   return (
-    <section className="mx-auto w-full max-w-6xl px-4 sm:px-6">
+    <section className="mx-auto w-full max-w-4xl px-4 sm:px-6">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <h2 className="pixel-font text-2xl text-ink">Market Pulse</h2>
         <div className="flex items-center gap-2">
@@ -218,6 +331,8 @@ export default function MarketPulseNews() {
 
       {category === "Currency" && <CurrencyStrip />}
 
+      {status === "ready" && <NewsChat articles={articles} />}
+
       {status === "loading" && (
         <div className="py-12 text-center font-serif text-sm text-muted-foreground">
           Loading latest market news…
@@ -236,47 +351,71 @@ export default function MarketPulseNews() {
 
       {status === "ready" && (
         <>
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {articles.map((article) => (
-              <article
-                key={article.id}
-                className="pixel-frame-sm pixel-lift flex flex-col overflow-hidden bg-paper"
-              >
-                <CardVisual article={article} />
-                <div className="flex flex-1 flex-col gap-2 p-4">
-                  <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-                    <span className="pixel-font uppercase">{article.source}</span>
-                    <span className="font-sans">{formatDate(article.publishedAt)}</span>
-                  </div>
-                  <h3 className="font-serif text-lg font-semibold leading-snug text-ink">
-                    {article.title}
-                  </h3>
-                  <p className="flex-1 font-sans text-sm text-muted-foreground">{article.summary}</p>
-                  <div className="mt-2 flex items-center justify-between">
-                    <span className="pixel-font border border-ink px-2 py-0.5 text-[9px] uppercase">
-                      {article.category}
-                    </span>
-                    <a
-                      href={article.sourceUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-sans text-sm font-medium text-primary underline underline-offset-2"
-                    >
-                      Read Original →
-                    </a>
-                  </div>
-                  <label className="mt-2 flex cursor-pointer items-center gap-2 font-sans text-xs text-ink">
-                    <input
-                      type="checkbox"
-                      checked={selected.has(article.id)}
-                      onChange={() => toggleSelect(article.id)}
-                      className="size-3.5 accent-current"
-                    />
-                    Add to Daily Wonder
-                  </label>
+          {/* Chronological timeline: vertical rail, newest first, grouped by day. */}
+          <div className="relative border-l-2 border-ink pl-6 sm:pl-8">
+            {articles.map((article, index) => {
+              const showDay =
+                index === 0 || dayKey(article.publishedAt) !== dayKey(articles[index - 1]!.publishedAt);
+              return (
+                <div key={article.id}>
+                  {showDay && (
+                    <div className="relative mb-4 mt-8 first:mt-0">
+                      <span className="absolute -left-[calc(1.5rem+9px)] top-1 size-4 border-2 border-ink bg-ink sm:-left-[calc(2rem+9px)]" />
+                      <h3 className="pixel-font text-[11px] uppercase tracking-wide text-ink">
+                        {formatDay(article.publishedAt)}
+                      </h3>
+                    </div>
+                  )}
+
+                  <article className="relative mb-8">
+                    <span className="absolute -left-[calc(1.5rem+7px)] top-2 size-3 border-2 border-ink bg-paper sm:-left-[calc(2rem+7px)]" />
+                    <div className="flex items-baseline gap-3 text-[10px] text-muted-foreground">
+                      <time className="pixel-font text-ink">{formatTime(article.publishedAt)}</time>
+                      <span className="pixel-font uppercase">{article.source}</span>
+                    </div>
+
+                    <div className="mt-2 flex gap-4">
+                      <div className="min-w-0 flex-1">
+                        <h4 className="font-serif text-xl font-semibold leading-snug text-ink sm:text-2xl">
+                          {article.title}
+                        </h4>
+                        <p className="mt-2 font-sans text-sm text-muted-foreground">
+                          {article.summary}
+                        </p>
+                        <div className="mt-3 flex flex-wrap items-center gap-3">
+                          <span className="pixel-font border border-ink px-2 py-0.5 text-[9px] uppercase">
+                            {article.category}
+                          </span>
+                          {article.impactLabel && (
+                            <span className="pixel-font text-[9px] uppercase text-muted-foreground">
+                              {article.impactLabel} impact
+                            </span>
+                          )}
+                          <a
+                            href={article.sourceUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-sans text-sm font-medium text-primary underline underline-offset-2"
+                          >
+                            Read Original →
+                          </a>
+                          <label className="flex cursor-pointer items-center gap-2 font-sans text-xs text-ink">
+                            <input
+                              type="checkbox"
+                              checked={selected.has(article.id)}
+                              onChange={() => toggleSelect(article.id)}
+                              className="size-3.5 accent-current"
+                            />
+                            Add to Daily Wonder
+                          </label>
+                        </div>
+                      </div>
+                      <Thumbnail article={article} />
+                    </div>
+                  </article>
                 </div>
-              </article>
-            ))}
+              );
+            })}
           </div>
 
           {selected.size > 0 && (
