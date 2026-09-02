@@ -42,9 +42,9 @@ export const PUBLIC_STATUSES: ArticleStatus[] = [
 
 export const STATUS_LABELS: Record<ArticleStatus, string> = {
   draft: "Draft",
-  ready: "Ready",
+  ready: "Ready to publish",
   published_web: "Published to website",
-  exported_substack: "Published to Substack",
+  exported_substack: "Exported for Substack",
   failed: "Failed",
 };
 
@@ -52,7 +52,7 @@ export const STATUS_SHORT: Record<ArticleStatus, string> = {
   draft: "Draft",
   ready: "Ready",
   published_web: "Website",
-  exported_substack: "Substack",
+  exported_substack: "Exported",
   failed: "Failed",
 };
 

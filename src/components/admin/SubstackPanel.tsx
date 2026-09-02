@@ -40,7 +40,7 @@ export function SubstackPanel({ draft }: { draft: Article }) {
           onClick={() => void copy("Formatted article", exported.html)}
           className="pixel-font flex items-center gap-2 border-2 border-ink bg-accent px-3 py-2 text-[10px] text-accent-foreground"
         >
-          <Copy className="size-3.5" /> Copy formatted article
+          <Copy className="size-3.5" /> Copy for Substack
         </button>
         <button
           onClick={() => void copy("Markdown", exported.markdown)}
@@ -53,13 +53,13 @@ export function SubstackPanel({ draft }: { draft: Article }) {
             onClick={() => download(`${slug}.md`, exported.markdown, "text/markdown")}
             className="pixel-font flex items-center gap-1 border-2 border-ink px-2 py-2 text-[10px]"
           >
-            <Download className="size-3.5" /> .md
+            <Download className="size-3.5" /> Markdown
           </button>
           <button
             onClick={() => download(`${slug}.html`, exported.html, "text/html")}
             className="pixel-font flex items-center gap-1 border-2 border-ink px-2 py-2 text-[10px]"
           >
-            <Download className="size-3.5" /> .html
+            <Download className="size-3.5" /> HTML
           </button>
         </div>
         <div className="grid grid-cols-2 gap-2">
@@ -99,8 +99,8 @@ export function SubstackPanel({ draft }: { draft: Article }) {
       </div>
 
       <p className="text-[11px] text-muted-foreground">
-        After posting, paste the Substack link above and set the status to “Published to
-        Substack”.
+        After pasting into Substack, save the post link above and set the status to
+        “Exported for Substack”.
       </p>
     </div>
   );
