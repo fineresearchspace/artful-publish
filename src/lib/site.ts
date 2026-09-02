@@ -3,8 +3,8 @@ export const SITE = {
   tagline:
     "Curious ideas about markets, money, business and the world around them.",
   /** Update these in Admin → Settings if your Substack address changes. */
-  substackUrl: "https://weeklywonders.substack.com",
-  substackSubscribeUrl: "https://weeklywonders.substack.com/subscribe",
+  substackUrl: "https://survivingthe20s.substack.com",
+  substackSubscribeUrl: "https://survivingthe20s.substack.com/subscribe",
 } as const;
 
 const SETTINGS_KEY = "weekly-wonders-settings";
