@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 const NEWS_API_BASE = "/api";
 
@@ -125,103 +125,6 @@ function CurrencyStrip() {
   );
 }
 
-type ChatMessage = { role: "user" | "assistant"; text: string };
-
-function NewsChat({ articles }: { articles: Article[] }) {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [input, setInput] = useState("");
-  const [busy, setBusy] = useState(false);
-  const listRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    listRef.current?.scrollTo({ top: listRef.current.scrollHeight });
-  }, [messages, busy]);
-
-  const send = async (event: React.FormEvent) => {
-    event.preventDefault();
-    const question = input.trim();
-    if (!question || busy) return;
-    setInput("");
-    setMessages((prev) => [...prev, { role: "user", text: question }]);
-    setBusy(true);
-    try {
-      const res = await fetch(`${NEWS_API_BASE}/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          question,
-          articles: articles.map((a) => ({
-            title: a.title,
-            summary: a.summary,
-            source: a.source,
-            sourceUrl: a.sourceUrl,
-            publishedAt: a.publishedAt,
-            category: a.category,
-          })),
-        }),
-      });
-      const data = (await res.json()) as { answer?: string; error?: string };
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", text: data.answer ?? data.error ?? "No answer returned." },
-      ]);
-    } catch {
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", text: "Couldn't reach the assistant. Try again in a moment." },
-      ]);
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  return (
-    <div className="pixel-frame-sm mb-8 bg-paper p-4">
-      <h3 className="pixel-font text-[10px] uppercase text-ink">Ask the news</h3>
-      <p className="mt-1 font-sans text-xs text-muted-foreground">
-        Questions are answered only from the {articles.length} stories loaded below.
-      </p>
-
-      {messages.length > 0 && (
-        <div ref={listRef} className="mt-3 max-h-72 space-y-3 overflow-y-auto pr-1">
-          {messages.map((m, i) => (
-            <div
-              key={i}
-              className={`border-2 border-ink px-3 py-2 ${
-                m.role === "user" ? "bg-accent/40" : "bg-background"
-              }`}
-            >
-              <div className="pixel-font text-[8px] uppercase text-muted-foreground">
-                {m.role === "user" ? "You" : "Assistant"}
-              </div>
-              <p className="mt-1 whitespace-pre-wrap font-sans text-sm text-ink">{m.text}</p>
-            </div>
-          ))}
-          {busy && (
-            <p className="font-sans text-xs text-muted-foreground">Reading the feed…</p>
-          )}
-        </div>
-      )}
-
-      <form onSubmit={send} className="mt-3 flex gap-2">
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="What's driving the market today?"
-          className="flex-1 border-2 border-ink bg-background px-3 py-2 font-sans text-sm text-ink outline-none focus:border-primary"
-        />
-        <button
-          type="submit"
-          disabled={busy || input.trim().length === 0}
-          className="pixel-font border-2 border-ink bg-ink px-4 py-2 text-[10px] uppercase text-background disabled:opacity-50"
-        >
-          {busy ? "…" : "Send"}
-        </button>
-      </form>
-    </div>
-  );
-}
-
 function formatTime(iso: string) {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return "--:--";
@@ -330,8 +233,6 @@ export default function MarketPulseNews() {
       </div>
 
       {category === "Currency" && <CurrencyStrip />}
-
-      {status === "ready" && <NewsChat articles={articles} />}
 
       {status === "loading" && (
         <div className="py-12 text-center font-serif text-sm text-muted-foreground">

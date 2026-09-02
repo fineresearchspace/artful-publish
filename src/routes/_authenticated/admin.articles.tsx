@@ -19,9 +19,9 @@ const FILTERS: { key: string; label: string; match: (s: ArticleStatus) => boolea
   {
     key: "published",
     label: "Published",
-    match: (s) => s === "published_web" || s === "published_substack",
+    match: (s) => s === "published_web" || s === "exported_substack",
   },
-  { key: "substack", label: "Substack", match: (s) => s === "published_substack" },
+  { key: "substack", label: "Substack", match: (s) => s === "exported_substack" },
 ];
 
 function AdminArticles() {

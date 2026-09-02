@@ -30,7 +30,7 @@ export const listPublishedArticles = createServerFn({ method: "GET" }).handler(
       supabase
         .from("articles")
         .select(ARTICLE_LIST_FIELDS)
-        .in("status", ["published_web", "published_substack"])
+        .in("status", ["published_web", "exported_substack"])
         .order("published_at", { ascending: false }),
       supabase.from("categories").select("*").order("sort_order"),
     ]);
@@ -53,7 +53,7 @@ export const getPublishedArticle = createServerFn({ method: "GET" })
         .from("articles")
         .select("*")
         .eq("slug", data.slug)
-        .in("status", ["published_web", "published_substack"])
+        .in("status", ["published_web", "exported_substack"])
         .maybeSingle();
 
       if (!article) return { article: null, related: [] };
@@ -61,7 +61,7 @@ export const getPublishedArticle = createServerFn({ method: "GET" })
       const { data: related } = await supabase
         .from("articles")
         .select(ARTICLE_LIST_FIELDS)
-        .in("status", ["published_web", "published_substack"])
+        .in("status", ["published_web", "exported_substack"])
         .eq("category", (article as Article).category)
         .neq("slug", data.slug)
         .order("published_at", { ascending: false })
