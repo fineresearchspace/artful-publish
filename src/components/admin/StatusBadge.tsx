@@ -5,7 +5,7 @@ const STYLES: Record<ArticleStatus, string> = {
   draft: "bg-muted text-muted-foreground",
   ready: "bg-accent text-accent-foreground",
   published_web: "bg-primary text-primary-foreground",
-  published_substack: "bg-ink text-background",
+  exported_substack: "bg-ink text-background",
   failed: "bg-destructive text-destructive-foreground",
 };
 

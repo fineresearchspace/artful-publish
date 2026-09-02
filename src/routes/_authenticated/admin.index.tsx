@@ -17,9 +17,9 @@ function Dashboard() {
   const drafts = articles.filter((a) => a.status === "draft");
   const ready = articles.filter((a) => a.status === "ready");
   const published = articles.filter((a) =>
-    ["published_web", "published_substack"].includes(a.status),
+    ["published_web", "exported_substack"].includes(a.status),
   );
-  const onSubstack = articles.filter((a) => a.status === "published_substack");
+  const onSubstack = articles.filter((a) => a.status === "exported_substack");
   const views = articles.reduce((sum, a) => sum + a.view_count, 0);
   const mostRead = [...articles].sort((a, b) => b.view_count - a.view_count)[0];
 

@@ -156,7 +156,7 @@ function WritePage() {
     try {
       const extra: Partial<Article> = { status };
       if (
-        (status === "published_web" || status === "published_substack") &&
+        (status === "published_web" || status === "exported_substack") &&
         !draft.published_at
       ) {
         extra.published_at = new Date().toISOString();
@@ -403,7 +403,7 @@ function WritePage() {
           <div className="pixel-panel space-y-2 p-4">
             <p className="pixel-font text-[10px] text-primary">Publishing status</p>
             {(
-              ["draft", "ready", "published_web", "published_substack"] as ArticleStatus[]
+              ["draft", "ready", "published_web", "exported_substack"] as ArticleStatus[]
             ).map((s) => (
               <button
                 key={s}
