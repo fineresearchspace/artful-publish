@@ -1,94 +1,126 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-// US Treasury par yield curve — free, no API key, updated each business day.
-const FEED =
-  "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value=";
+// Live government bond yields (2Y / 10Y / 30Y) for major economies.
+// Source: worldgovernmentbonds.com public JSON endpoint — free, no API key.
+const ENDPOINT = "https://www.worldgovernmentbonds.com/wp-json/country/v1/main";
 const CACHE_MS = 30 * 60_000;
 
-type BondRate = { label: string; yield: number; previous: number | null; changeBps: number | null };
-type BondPayload = { rates: BondRate[]; asOf: string; previousDate: string | null };
+const COUNTRIES: Array<{ symbol: string; name: string; slug: string; flag: string }> = [
+  { symbol: "8", name: "India", slug: "india", flag: "in" },
+  { symbol: "6", name: "United States", slug: "united-states", flag: "us" },
+  { symbol: "2", name: "Germany", slug: "germany", flag: "de" },
+  { symbol: "5", name: "United Kingdom", slug: "united-kingdom", flag: "gb" },
+  { symbol: "11", name: "Japan", slug: "japan", flag: "jp" },
+  { symbol: "9", name: "China", slug: "china", flag: "cn" },
+];
+
+const MATURITIES = ["2-years", "10-years", "30-years"] as const;
+type MaturityKey = "2Y" | "10Y" | "30Y";
+const LABELS: Record<(typeof MATURITIES)[number], MaturityKey> = {
+  "2-years": "2Y",
+  "10-years": "10Y",
+  "30-years": "30Y",
+};
+
+type Point = { yield: number; changeBps: number | null };
+type CountryBonds = {
+  country: string;
+  flag: string;
+  rates: Partial<Record<MaturityKey, Point>>;
+};
+type BondPayload = { countries: CountryBonds[]; asOf: string };
 
 let cache: { at: number; payload: BondPayload } | null = null;
 
-const FIELDS: Array<{ tag: string; label: string }> = [
-  { tag: "BC_3MONTH", label: "US 3M" },
-  { tag: "BC_2YEAR", label: "US 2Y" },
-  { tag: "BC_5YEAR", label: "US 5Y" },
-  { tag: "BC_10YEAR", label: "US 10Y" },
-  { tag: "BC_30YEAR", label: "US 30Y" },
-];
-
-type Row = { date: string; values: Record<string, number> };
-
-function parseFeed(xml: string): Row[] {
-  const rows: Row[] = [];
-  const entries = xml.split("<m:properties>").slice(1);
-  for (const chunk of entries) {
-    const dateMatch = chunk.match(/<d:NEW_DATE[^>]*>([^<]+)</);
-    if (!dateMatch) continue;
-    const values: Record<string, number> = {};
-    for (const { tag } of FIELDS) {
-      const m = chunk.match(new RegExp(`<d:${tag}[^>]*>([^<]+)<`));
-      const n = m ? Number(m[1]) : NaN;
-      if (Number.isFinite(n)) values[tag] = n;
-    }
-    rows.push({ date: (dateMatch[1] ?? "").slice(0, 10), values });
+function parseCurveTable(html: string, slug: string): CountryBonds["rates"] {
+  const rates: CountryBonds["rates"] = {};
+  for (const row of html.split("<tr").slice(1)) {
+    const m = row.match(
+      new RegExp(`bond-historical-data/${slug}/([0-9]+-(?:year|years|month|months))/`),
+    );
+    if (!m) continue;
+    const key = LABELS[(m[1] ?? "") as (typeof MATURITIES)[number]];
+    if (!key || rates[key]) continue;
+    const y = row.match(/([0-9]+\.[0-9]+)%/);
+    if (!y) continue;
+    const bp = row.match(/([+-][0-9]+(?:\.[0-9]+)?)\s*bp/);
+    rates[key] = {
+      yield: Number(Number(y[1]).toFixed(2)),
+      changeBps: bp ? Math.round(Number(bp[1])) : null,
+    };
   }
-  return rows;
+  return rates;
 }
 
-async function fetchYear(year: number): Promise<Row[]> {
-  const res = await fetch(`${FEED}${year}`, { signal: AbortSignal.timeout(10000) });
-  if (!res.ok) throw new Error(`Treasury HTTP ${res.status}`);
-  return parseFeed(await res.text());
+async function fetchCountry(c: (typeof COUNTRIES)[number]) {
+  const res = await fetch(ENDPOINT, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      origin: "https://www.worldgovernmentbonds.com",
+      referer: `https://www.worldgovernmentbonds.com/country/${c.slug}/`,
+      "user-agent": "Mozilla/5.0",
+    },
+    body: JSON.stringify({
+      GLOBALVAR: {
+        JS_VARIABLE: "jsGlobalVars",
+        FUNCTION: "Country",
+        DOMESTIC: true,
+        ENDPOINT: "https://www.worldgovernmentbonds.com/wp-json/country/v1/historical",
+        DATE_RIF: "2099-12-31",
+        OBJ: null,
+        COUNTRY1: {
+          SYMBOL: c.symbol,
+          PAESE: c.name,
+          PAESE_UPPERCASE: c.name.toUpperCase(),
+          BANDIERA: c.flag,
+          URL_PAGE: c.slug,
+        },
+        COUNTRY2: null,
+        OBJ1: null,
+        OBJ2: null,
+      },
+    }),
+    signal: AbortSignal.timeout(15000),
+  });
+  if (!res.ok) throw new Error(`WGB HTTP ${res.status}`);
+  const data = (await res.json()) as { mainTable?: string; lastDataValDesc?: string };
+  return {
+    entry: {
+      country: c.name,
+      flag: c.flag,
+      rates: parseCurveTable(data.mainTable ?? "", c.slug),
+    } satisfies CountryBonds,
+    asOf: data.lastDataValDesc ?? "",
+  };
 }
 
 export const Route = createFileRoute("/api/bonds")({
   server: {
     handlers: {
       GET: async () => {
+        const headers = {
+          "cache-control": "s-maxage=1800, stale-while-revalidate=3600",
+        };
         if (cache && Date.now() - cache.at < CACHE_MS) {
-          return Response.json(cache.payload, {
-            headers: { "cache-control": "s-maxage=1800, stale-while-revalidate=3600" },
-          });
+          return Response.json(cache.payload, { headers });
         }
 
         try {
-          const now = new Date();
-          let rows = await fetchYear(now.getUTCFullYear());
-          // Early January: the current-year feed can be empty or hold one row.
-          if (rows.length < 2) {
-            const prior = await fetchYear(now.getUTCFullYear() - 1).catch(() => []);
-            rows = [...prior, ...rows];
+          const results = await Promise.allSettled(COUNTRIES.map(fetchCountry));
+          const countries: CountryBonds[] = [];
+          let asOf = "";
+          for (const r of results) {
+            if (r.status !== "fulfilled") continue;
+            if (Object.keys(r.value.entry.rates).length === 0) continue;
+            countries.push(r.value.entry);
+            if (!asOf) asOf = r.value.asOf;
           }
-          rows.sort((a, b) => a.date.localeCompare(b.date));
-          const latest = rows[rows.length - 1];
-          const previous = rows[rows.length - 2] ?? null;
-          if (!latest) throw new Error("No yield rows returned");
+          if (countries.length === 0) throw new Error("No bond rows returned");
 
-          const rates: BondRate[] = FIELDS.filter((f) => latest.values[f.tag] !== undefined).map(
-            (f) => {
-              const y = latest.values[f.tag] as number;
-              const prev = previous?.values[f.tag] ?? null;
-              return {
-                label: f.label,
-                yield: Number(y.toFixed(2)),
-                previous: prev === null ? null : Number(prev.toFixed(2)),
-                changeBps: prev === null ? null : Math.round((y - prev) * 100),
-              };
-            },
-          );
-
-          const payload: BondPayload = {
-            rates,
-            asOf: latest.date,
-            previousDate: previous?.date ?? null,
-          };
+          const payload: BondPayload = { countries, asOf };
           cache = { at: Date.now(), payload };
-
-          return Response.json(payload, {
-            headers: { "cache-control": "s-maxage=1800, stale-while-revalidate=3600" },
-          });
+          return Response.json(payload, { headers });
         } catch (err) {
           console.error("[/api/bonds] failed:", err);
           if (cache) return Response.json(cache.payload);
