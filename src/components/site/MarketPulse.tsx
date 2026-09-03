@@ -81,16 +81,41 @@ function TradingViewMarketOverview() {
   return <div ref={containerRef} className="tradingview-widget-container" />;
 }
 
-type BondRate = {
-  label: string;
-  yield: number;
-  previous: number | null;
-  changeBps: number | null;
+type Point = { yield: number; changeBps: number | null };
+type CountryBonds = {
+  country: string;
+  flag: string;
+  rates: Partial<Record<"2Y" | "10Y" | "30Y", Point>>;
 };
-type BondPayload = { rates: BondRate[]; asOf: string };
+type BondPayload = { countries: CountryBonds[]; asOf: string };
+
+const MATURITIES = ["2Y", "10Y", "30Y"] as const;
+
+function BondCell({ point }: { point?: Point | undefined }) {
+  if (!point) {
+    return (
+      <div className="pixel-frame-sm bg-paper px-3 py-2">
+        <div className="font-serif text-lg text-muted-foreground">—</div>
+      </div>
+    );
+  }
+  const up = (point.changeBps ?? 0) >= 0;
+  return (
+    <div className="pixel-frame-sm bg-paper px-3 py-2">
+      <div className="font-serif text-lg font-semibold text-ink">{point.yield}%</div>
+      <div
+        className={`font-sans text-xs ${point.changeBps === null ? "text-muted-foreground" : up ? "text-primary" : "text-destructive"}`}
+      >
+        {point.changeBps === null
+          ? "\u2014"
+          : `${up ? "\u25B2" : "\u25BC"} ${Math.abs(point.changeBps)} bps 1M`}
+      </div>
+    </div>
+  );
+}
 
 function BondStrip() {
-  const [rates, setRates] = useState<BondRate[]>([]);
+  const [countries, setCountries] = useState<CountryBonds[]>([]);
   const [asOf, setAsOf] = useState("");
   const [failed, setFailed] = useState(false);
 
@@ -100,7 +125,7 @@ function BondStrip() {
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
       .then((data: BondPayload) => {
         if (!active) return;
-        setRates(data.rates ?? []);
+        setCountries(data.countries ?? []);
         setAsOf(data.asOf ?? "");
       })
       .catch(() => active && setFailed(true));
@@ -120,38 +145,38 @@ function BondStrip() {
   return (
     <div className="mt-8">
       <div className="mb-2 flex items-baseline justify-between">
-        <h3 className="pixel-font text-[10px] uppercase text-ink">Bonds — US Treasury Yields</h3>
+        <h3 className="pixel-font text-[10px] uppercase text-ink">
+          Bonds — Government Yields (2Y / 10Y / 30Y)
+        </h3>
         <span className="font-sans text-[10px] text-muted-foreground">
-          US Treasury par curve{asOf ? ` \u00B7 ${asOf}` : ""}
+          Sovereign bond yields{asOf ? ` \u00B7 ${asOf}` : ""}
         </span>
       </div>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
-        {rates.length === 0
-          ? Array.from({ length: 5 }).map((_, i) => (
+      <div className="space-y-3">
+        {countries.length === 0
+          ? Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="pixel-frame-sm h-[74px] animate-pulse bg-accent/30" />
             ))
-          : rates.map((r) => {
-              const up = (r.changeBps ?? 0) >= 0;
-              return (
-                <div key={r.label} className="pixel-frame-sm bg-paper px-3 py-2">
-                  <div className="pixel-font text-[9px] uppercase text-muted-foreground">
-                    {r.label}
-                  </div>
-                  <div className="font-serif text-lg font-semibold text-ink">{r.yield}%</div>
-                  <div
-                    className={`font-sans text-xs ${r.changeBps === null ? "text-muted-foreground" : up ? "text-primary" : "text-destructive"}`}
-                  >
-                    {r.changeBps === null
-                      ? "\u2014"
-                      : `${up ? "\u25B2" : "\u25BC"} ${Math.abs(r.changeBps)} bps`}
-                  </div>
+          : countries.map((c) => (
+              <div key={c.country} className="grid grid-cols-1 gap-2 sm:grid-cols-4">
+                <div className="pixel-font flex items-center bg-accent/40 px-3 py-2 text-[10px] uppercase text-ink">
+                  {c.country}
                 </div>
-              );
-            })}
+                {MATURITIES.map((m) => (
+                  <div key={m}>
+                    <div className="pixel-font mb-1 text-[9px] uppercase text-muted-foreground">
+                      {m}
+                    </div>
+                    <BondCell point={c.rates[m]} />
+                  </div>
+                ))}
+              </div>
+            ))}
       </div>
     </div>
   );
 }
+
 
 export function MarketPulse() {
   return (
