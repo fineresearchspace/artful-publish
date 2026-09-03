@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ClientOnly } from "@tanstack/react-router";
+
 
 // TradingView's free, no-API-key "Market Overview" embed. Client-side only:
 // the script injects an iframe, so it must never run during SSR.
