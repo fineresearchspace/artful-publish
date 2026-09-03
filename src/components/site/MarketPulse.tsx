@@ -40,17 +40,7 @@ const WIDGET_CONFIG = {
       originalTitle: "Indices",
     },
     {
-      title: "Bonds",
-      symbols: [
-        { s: "TVC:US10Y", d: "US 10Y" },
-        { s: "TVC:US02Y", d: "US 02Y" },
-        { s: "TVC:DE10Y", d: "Germany 10Y" },
-        { s: "TVC:GB10Y", d: "UK 10Y" },
-        { s: "TVC:JP10Y", d: "Japan 10Y" },
-      ],
-      originalTitle: "Bonds",
-    },
-    {
+
       title: "Forex",
       symbols: [
         { s: "FX_IDC:USDINR", d: "USD/INR" },
