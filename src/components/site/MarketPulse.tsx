@@ -40,8 +40,8 @@ const WIDGET_CONFIG = {
       originalTitle: "Indices",
     },
     {
-
       title: "Forex",
+
       symbols: [
         { s: "FX_IDC:USDINR", d: "USD/INR" },
         { s: "FX:EURUSD", d: "EUR/USD" },
