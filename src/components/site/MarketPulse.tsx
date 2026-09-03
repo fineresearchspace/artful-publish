@@ -91,7 +91,7 @@ type BondPayload = { countries: CountryBonds[]; asOf: string };
 
 const MATURITIES = ["2Y", "10Y", "30Y"] as const;
 
-function BondCell({ point }: { point?: Point }) {
+function BondCell({ point }: { point?: Point | undefined }) {
   if (!point) {
     return (
       <div className="pixel-frame-sm bg-paper px-3 py-2">
