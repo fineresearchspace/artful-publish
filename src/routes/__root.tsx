@@ -17,8 +17,8 @@ function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="pixel-frame max-w-md p-10 text-center">
-        <h1 className="pixel-font text-4xl text-ink">404</h1>
-        <h2 className="pixel-font mt-4 text-sm">Page not found</h2>
+        <h1 className="display-font text-6xl text-ink">404</h1>
+        <h2 className="display-font mt-3 text-2xl">Page not found</h2>
         <p className="mt-3 text-sm text-muted-foreground">
           This corner of the archive doesn't exist.
         </p>
