@@ -68,36 +68,64 @@ function Home() {
     <SiteShell>
       {/* Hero */}
       <section className="border-b border-border bg-paper">
-        <div className="mx-auto flex max-w-6xl flex-col items-center gap-8 px-4 py-16 text-center sm:px-6 md:py-24">
-          <div className="flex items-end gap-4">
-            <PixelArt variant="coin" className="pixel-bob size-14 border border-border" />
-            <h1 className="pixel-font text-3xl leading-tight text-ink sm:text-5xl">
-              Weekly Wonders
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 sm:px-6 md:py-24 lg:grid-cols-[1.05fr_0.95fr]">
+          <div>
+            <p className="pixel-font flex items-center gap-3 text-[10px] text-primary">
+              <span className="inline-block h-px w-8 bg-primary" />A market-aware newsletter
+            </p>
+            <h1 className="display-font mt-6 text-5xl leading-[0.98] text-ink sm:text-7xl">
+              The week,
+              <br />
+              <span className="italic text-primary">made legible.</span>
             </h1>
-            <PixelArt variant="chart" className="pixel-bob size-14 border border-border" />
+            <p className="mt-7 max-w-xl text-lg leading-relaxed text-muted-foreground">
+              {SITE.tagline}
+            </p>
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+              <Link
+                to="/articles"
+                className="pixel-font inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-[10px] text-background transition-opacity hover:opacity-85"
+              >
+                Read the latest <span aria-hidden="true">→</span>
+              </Link>
+              <a
+                href={SITE.substackSubscribeUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="pixel-font inline-flex items-center gap-2 rounded-full border border-border bg-paper px-6 py-3 text-[10px] text-ink transition-colors hover:border-primary hover:text-primary"
+              >
+                Newsletter →
+              </a>
+            </div>
           </div>
-          <div className="pixel-rule w-40" />
-          <p className="max-w-xl font-serif text-lg text-muted-foreground sm:text-xl">
-            {SITE.tagline}
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
+
+          {featured ? (
             <Link
-              to="/articles"
-              className="pixel-frame-sm pixel-lift pixel-font bg-primary px-4 py-3 text-[11px] text-primary-foreground"
+              to="/articles/$slug"
+              params={{ slug: featured.slug }}
+              className="group rounded-3xl bg-ink p-8 text-background shadow-[0_30px_60px_-30px_rgba(15,32,56,0.6)] transition-transform duration-300 hover:-translate-y-1 sm:p-10"
             >
-              Browse the archive →
+              <p className="pixel-font text-[10px] text-background/60">This week in brief</p>
+              <div className="mt-5 h-px w-full bg-background/20" />
+              <p className="pixel-font mt-6 text-[10px] text-background/60">
+                {featured.category} · {formatDate(featured.published_at)}
+              </p>
+              <h2 className="display-font mt-3 text-3xl leading-tight sm:text-4xl">
+                {featured.title}
+              </h2>
+              {featured.subtitle || featured.excerpt ? (
+                <p className="mt-4 text-base leading-relaxed text-background/70">
+                  {featured.subtitle ?? featured.excerpt}
+                </p>
+              ) : null}
+              <span className="pixel-font mt-8 inline-flex items-center gap-2 text-[10px]">
+                Read {featured.reading_time} min{" "}
+                <span className="transition-transform group-hover:translate-x-1">→</span>
+              </span>
             </Link>
-            <a
-              href={SITE.substackSubscribeUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="pixel-frame-sm pixel-lift pixel-font bg-paper px-4 py-3 text-[11px]"
-            >
-              Newsletter →
-            </a>
-          </div>
+          ) : null}
         </div>
-           </section>
+      </section>
 
       <MarketPulse />
 
