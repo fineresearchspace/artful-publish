@@ -182,7 +182,7 @@ export function MarketPulse() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
       <p className="pixel-font text-[11px] text-primary">[ Market Today ]</p>
-      <h2 className="pixel-font mt-3 text-sm text-ink">Global Market Pulse</h2>
+      <h2 className="display-font mt-3 text-3xl text-ink">Global Market Pulse</h2>
 
       <div className="pixel-frame-sm mt-6 bg-paper p-3">
         <ClientOnly

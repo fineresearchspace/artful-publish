@@ -38,26 +38,26 @@ export function SubstackPanel({ draft }: { draft: Article }) {
       <div className="grid gap-2">
         <button
           onClick={() => void copy("Formatted article", exported.html)}
-          className="pixel-font flex items-center gap-2 border-2 border-ink bg-accent px-3 py-2 text-[10px] text-accent-foreground"
+          className="pixel-font flex items-center gap-2 border border-border bg-accent px-3 py-2 text-[10px] text-accent-foreground"
         >
           <Copy className="size-3.5" /> Copy for Substack
         </button>
         <button
           onClick={() => void copy("Markdown", exported.markdown)}
-          className="pixel-font flex items-center gap-2 border-2 border-ink px-3 py-2 text-[10px]"
+          className="pixel-font flex items-center gap-2 border border-border px-3 py-2 text-[10px]"
         >
           <Copy className="size-3.5" /> Copy Markdown
         </button>
         <div className="grid grid-cols-2 gap-2">
           <button
             onClick={() => download(`${slug}.md`, exported.markdown, "text/markdown")}
-            className="pixel-font flex items-center gap-1 border-2 border-ink px-2 py-2 text-[10px]"
+            className="pixel-font flex items-center gap-1 border border-border px-2 py-2 text-[10px]"
           >
             <Download className="size-3.5" /> Markdown
           </button>
           <button
             onClick={() => download(`${slug}.html`, exported.html, "text/html")}
-            className="pixel-font flex items-center gap-1 border-2 border-ink px-2 py-2 text-[10px]"
+            className="pixel-font flex items-center gap-1 border border-border px-2 py-2 text-[10px]"
           >
             <Download className="size-3.5" /> HTML
           </button>
@@ -65,25 +65,25 @@ export function SubstackPanel({ draft }: { draft: Article }) {
         <div className="grid grid-cols-2 gap-2">
           <button
             onClick={() => void copy("Title", exported.title)}
-            className="pixel-font border-2 border-ink px-2 py-2 text-[10px]"
+            className="pixel-font border border-border px-2 py-2 text-[10px]"
           >
             Copy title
           </button>
           <button
             onClick={() => void copy("Subtitle", exported.subtitle)}
-            className="pixel-font border-2 border-ink px-2 py-2 text-[10px]"
+            className="pixel-font border border-border px-2 py-2 text-[10px]"
           >
             Copy subtitle
           </button>
           <button
             onClick={() => void copy("Excerpt", exported.excerpt)}
-            className="pixel-font border-2 border-ink px-2 py-2 text-[10px]"
+            className="pixel-font border border-border px-2 py-2 text-[10px]"
           >
             Copy excerpt
           </button>
           <button
             onClick={() => void copy("Tags", exported.tags)}
-            className="pixel-font border-2 border-ink px-2 py-2 text-[10px]"
+            className="pixel-font border border-border px-2 py-2 text-[10px]"
           >
             Copy tags
           </button>
@@ -92,7 +92,7 @@ export function SubstackPanel({ draft }: { draft: Article }) {
           href={`${loadSettings().substackUrl}/publish/post?type=newsletter`}
           target="_blank"
           rel="noreferrer"
-          className="pixel-font flex items-center gap-2 border-2 border-ink px-3 py-2 text-[10px]"
+          className="pixel-font flex items-center gap-2 border border-border px-3 py-2 text-[10px]"
         >
           <ExternalLink className="size-3.5" /> Open Substack editor
         </a>

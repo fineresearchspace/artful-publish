@@ -74,7 +74,7 @@ function Dashboard() {
         {isLoading ? (
           <p className="mt-4 text-sm text-muted-foreground">Loading…</p>
         ) : (
-          <ul className="mt-4 divide-y-2 divide-ink border-2 border-ink bg-paper">
+          <ul className="mt-4 divide-y-2 divide-ink border border-border bg-paper">
             {articles.slice(0, 8).map((a) => (
               <li key={a.id}>
                 <Link

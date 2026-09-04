@@ -56,7 +56,7 @@ function Thumbnail({ article }: { article: Article }) {
         src={article.imageUrl}
         alt=""
         loading="lazy"
-        className="pixelated size-24 shrink-0 border-2 border-ink object-cover sm:size-28"
+        className="pixelated size-24 shrink-0 border border-border object-cover sm:size-28"
         onError={() => setFailed(true)}
       />
     );
@@ -64,7 +64,7 @@ function Thumbnail({ article }: { article: Article }) {
 
   return (
     <div
-      className={`flex size-24 shrink-0 flex-col items-center justify-center gap-1 border-2 border-ink sm:size-28 ${fallback.tone}`}
+      className={`flex size-24 shrink-0 flex-col items-center justify-center gap-1 border border-border sm:size-28 ${fallback.tone}`}
       aria-hidden="true"
     >
       <span className="pixel-font text-xl text-ink">{fallback.icon}</span>
@@ -217,7 +217,7 @@ export default function MarketPulseNews() {
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="border-2 border-ink bg-paper px-3 py-1.5 text-sm outline-none focus:border-primary"
+            className="border border-border bg-paper px-3 py-1.5 text-sm outline-none focus:border-primary"
           >
             {CATEGORIES.map((c) => (
               <option key={c} value={c}>{c}</option>
@@ -225,7 +225,7 @@ export default function MarketPulseNews() {
           </select>
           <button
             onClick={() => fetchNews(category)}
-            className="pixel-font border-2 border-ink bg-paper px-3 py-1.5 text-[10px] uppercase transition-colors hover:bg-accent"
+            className="pixel-font border border-border bg-paper px-3 py-1.5 text-[10px] uppercase transition-colors hover:bg-accent"
           >
             Refresh
           </button>
@@ -253,7 +253,7 @@ export default function MarketPulseNews() {
       {status === "ready" && (
         <>
           {/* Chronological timeline: vertical rail, newest first, grouped by day. */}
-          <div className="relative border-l-2 border-ink pl-6 sm:pl-8">
+          <div className="relative border-l border-border pl-6 sm:pl-8">
             {articles.map((article, index) => {
               const showDay =
                 index === 0 || dayKey(article.publishedAt) !== dayKey(articles[index - 1]!.publishedAt);
@@ -261,7 +261,7 @@ export default function MarketPulseNews() {
                 <div key={article.id}>
                   {showDay && (
                     <div className="relative mb-4 mt-8 first:mt-0">
-                      <span className="absolute -left-[calc(1.5rem+9px)] top-1 size-4 border-2 border-ink bg-ink sm:-left-[calc(2rem+9px)]" />
+                      <span className="absolute -left-[calc(1.5rem+9px)] top-1 size-4 border border-border bg-ink sm:-left-[calc(2rem+9px)]" />
                       <h3 className="pixel-font text-[11px] uppercase tracking-wide text-ink">
                         {formatDay(article.publishedAt)}
                       </h3>
@@ -269,7 +269,7 @@ export default function MarketPulseNews() {
                   )}
 
                   <article className="relative mb-8">
-                    <span className="absolute -left-[calc(1.5rem+7px)] top-2 size-3 border-2 border-ink bg-paper sm:-left-[calc(2rem+7px)]" />
+                    <span className="absolute -left-[calc(1.5rem+7px)] top-2 size-3 border border-border bg-paper sm:-left-[calc(2rem+7px)]" />
                     <div className="flex items-baseline gap-3 text-[10px] text-muted-foreground">
                       <time className="pixel-font text-ink">{formatTime(article.publishedAt)}</time>
                       <span className="pixel-font uppercase">{article.source}</span>
@@ -284,7 +284,7 @@ export default function MarketPulseNews() {
                           {article.summary}
                         </p>
                         <div className="mt-3 flex flex-wrap items-center gap-3">
-                          <span className="pixel-font border border-ink px-2 py-0.5 text-[9px] uppercase">
+                          <span className="pixel-font border border-border px-2 py-0.5 text-[9px] uppercase">
                             {article.category}
                           </span>
                           {article.impactLabel && (
@@ -324,7 +324,7 @@ export default function MarketPulseNews() {
               <button
                 onClick={generateNewsletter}
                 disabled={generating}
-                className="pixel-font border-2 border-ink bg-ink px-6 py-2 text-[10px] uppercase text-background shadow-[4px_4px_0_0_var(--color-ink)] disabled:opacity-50"
+                className="pixel-font border border-border bg-ink px-6 py-2 text-[10px] uppercase text-background shadow-[4px_4px_0_0_var(--color-ink)] disabled:opacity-50"
               >
                 {generating ? "Generating…" : `Generate Daily Wonder (${selected.size} selected)`}
               </button>
