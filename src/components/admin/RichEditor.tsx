@@ -76,8 +76,8 @@ function ToolbarButton({
       aria-pressed={active ? true : undefined}
       onMouseDown={(e) => e.preventDefault()}
       onClick={onClick}
-      className={`border-2 p-1.5 hover:border-ink hover:bg-paper ${
-        active ? "border-ink bg-paper" : "border-transparent"
+      className={`border-2 p-1.5 hover:border-border hover:bg-paper ${
+        active ? "border-border bg-paper" : "border-transparent"
       }`}
     >
       <Icon className="size-3.5" />
@@ -111,7 +111,7 @@ export function RichEditor({
     editorProps: {
       attributes: {
         class:
-          "article-prose min-h-[520px] max-w-none border-2 border-t-0 border-ink bg-paper p-4 outline-none",
+          "article-prose min-h-[520px] max-w-none border-2 border-t-0 border-border bg-paper p-4 outline-none",
       },
       handlePaste: (view, event) => {
         const clipboard = event.clipboardData;
@@ -163,7 +163,7 @@ export function RichEditor({
 
   if (!editor) {
     return (
-      <div className="min-h-[560px] border-2 border-ink bg-paper p-4 text-sm text-muted-foreground">
+      <div className="min-h-[560px] border border-border bg-paper p-4 text-sm text-muted-foreground">
         Loading editor…
       </div>
     );
@@ -182,7 +182,7 @@ export function RichEditor({
 
   return (
     <div className="relative">
-      <div className="relative flex flex-wrap gap-1 border-2 border-ink bg-muted p-2">
+      <div className="relative flex flex-wrap gap-1 border border-border bg-muted p-2">
         <ToolbarButton
           icon={Heading1}
           label="Heading 1"
@@ -309,7 +309,7 @@ export function RichEditor({
         />
 
         {sizeOpen ? (
-          <div className="absolute left-0 top-full z-10 mt-1 flex flex-wrap gap-1 border-2 border-ink bg-paper p-2">
+          <div className="absolute left-0 top-full z-10 mt-1 flex flex-wrap gap-1 border border-border bg-paper p-2">
             {FONT_SIZES.map((size) => (
               <button
                 key={size}
@@ -319,7 +319,7 @@ export function RichEditor({
                   editor.chain().focus().setFontSize(`${size}px`).run();
                   setSizeOpen(false);
                 }}
-                className="border-2 border-transparent px-2 py-1 text-xs hover:border-ink hover:bg-muted"
+                className="border-2 border-transparent px-2 py-1 text-xs hover:border-border hover:bg-muted"
               >
                 {size}px
               </button>
@@ -331,7 +331,7 @@ export function RichEditor({
                 editor.chain().focus().unsetFontSize().run();
                 setSizeOpen(false);
               }}
-              className="border-2 border-transparent px-2 py-1 text-xs hover:border-ink hover:bg-muted"
+              className="border-2 border-transparent px-2 py-1 text-xs hover:border-border hover:bg-muted"
             >
               Reset
             </button>

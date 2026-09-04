@@ -60,7 +60,7 @@ function AdminLayout() {
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
-      <aside className="border-b-2 border-ink bg-paper md:w-60 md:shrink-0 md:border-b-0 md:border-r-2">
+      <aside className="border-b border-border bg-paper md:w-60 md:shrink-0 md:border-b-0 md:border-r-2">
         <div className="flex items-center gap-3 p-4">
           <Link to="/" className="pixel-font text-xs text-ink">
             WW Studio

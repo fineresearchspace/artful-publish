@@ -16,7 +16,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-40 border-b-2 border-ink bg-background/95 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 sm:px-6">
           <Link to="/" className="pixel-font text-base sm:text-lg text-ink">
             Weekly Wonders
@@ -55,7 +55,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
         </div>
 
         {open ? (
-          <nav className="flex flex-col gap-1 border-t-2 border-ink bg-paper px-4 py-3 md:hidden">
+          <nav className="flex flex-col gap-1 border-t border-border bg-paper px-4 py-3 md:hidden">
             {NAV.map((item) => (
               <Link
                 key={item.to}
@@ -80,7 +80,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
 
       <main className="flex-1">{children}</main>
 
-      <footer className="mt-20 border-t-2 border-ink bg-paper">
+      <footer className="mt-20 border-t border-border bg-paper">
         <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 sm:px-6 md:flex-row md:items-start md:justify-between">
           <div className="max-w-sm">
             <p className="pixel-font text-sm text-ink">Weekly Wonders</p>
@@ -114,7 +114,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
             </a>
           </div>
         </div>
-        <div className="border-t-2 border-ink px-4 py-4 text-center sm:px-6">
+        <div className="border-t border-border px-4 py-4 text-center sm:px-6">
           <p className="pixel-font text-[10px] text-muted-foreground">
             © {new Date().getFullYear()} Weekly Wonders ·{" "}
             <Link to="/admin" className="hover:text-primary">

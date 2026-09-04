@@ -93,7 +93,7 @@ function ArticlePage() {
   return (
     <SiteShell>
       <article>
-        <header className="border-b-2 border-ink bg-paper">
+        <header className="border-b border-border bg-paper">
           <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
             <Link to="/articles" className="pixel-font text-[10px] text-muted-foreground">
               ← Archive

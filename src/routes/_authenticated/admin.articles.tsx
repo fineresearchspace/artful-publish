@@ -80,7 +80,7 @@ function AdminArticles() {
           <button
             key={f.key}
             onClick={() => setFilter(f.key)}
-            className={`pixel-font border-2 border-ink px-3 py-1.5 text-[10px] ${
+            className={`pixel-font border border-border px-3 py-1.5 text-[10px] ${
               filter === f.key ? "bg-ink text-background" : "bg-paper hover:bg-accent"
             }`}
           >
@@ -92,7 +92,7 @@ function AdminArticles() {
       {isLoading ? (
         <p className="mt-8 text-sm text-muted-foreground">Loading…</p>
       ) : (
-        <ul className="mt-6 divide-y-2 divide-ink border-2 border-ink bg-paper">
+        <ul className="mt-6 divide-y-2 divide-ink border border-border bg-paper">
           {rows.map((a) => (
             <li key={a.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
               <Link

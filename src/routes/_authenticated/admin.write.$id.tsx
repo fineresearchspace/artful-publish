@@ -225,20 +225,20 @@ function WritePage() {
             value={draft.title ?? ""}
             onChange={(e) => set({ title: e.target.value })}
             placeholder="Article title"
-            className="w-full border-2 border-ink bg-paper px-4 py-3 font-serif text-2xl outline-none focus:border-primary"
+            className="w-full border border-border bg-paper px-4 py-3 font-serif text-2xl outline-none focus:border-primary"
           />
           <input
             value={draft.subtitle ?? ""}
             onChange={(e) => set({ subtitle: e.target.value })}
             placeholder="Subtitle / deck"
-            className="mt-3 w-full border-2 border-ink bg-paper px-4 py-2 font-serif text-lg outline-none focus:border-primary"
+            className="mt-3 w-full border border-border bg-paper px-4 py-2 font-serif text-lg outline-none focus:border-primary"
           />
           <textarea
             value={draft.excerpt ?? ""}
             onChange={(e) => set({ excerpt: e.target.value })}
             placeholder="Short excerpt shown on cards and in previews"
             rows={2}
-            className="mt-3 w-full border-2 border-ink bg-paper px-4 py-2 text-sm outline-none focus:border-primary"
+            className="mt-3 w-full border border-border bg-paper px-4 py-2 text-sm outline-none focus:border-primary"
           />
 
           {showPreview ? (
@@ -294,7 +294,7 @@ function WritePage() {
               <select
                 value={draft.category ?? "Ideas"}
                 onChange={(e) => set({ category: e.target.value })}
-                className="mt-1 w-full border-2 border-ink bg-paper px-2 py-2 text-sm"
+                className="mt-1 w-full border border-border bg-paper px-2 py-2 text-sm"
               >
                 {categories.map((c) => (
                   <option key={c.id} value={c.name}>
@@ -310,7 +310,7 @@ function WritePage() {
                 value={draft.slug ?? ""}
                 onChange={(e) => set({ slug: slugify(e.target.value) })}
                 placeholder={slugify(draft.title ?? "")}
-                className="mt-1 w-full border-2 border-ink bg-paper px-2 py-1.5 text-sm"
+                className="mt-1 w-full border border-border bg-paper px-2 py-1.5 text-sm"
               />
             </label>
 
@@ -324,7 +324,7 @@ function WritePage() {
                   dirtyRef.current = true;
                   setTagInput(e.target.value);
                 }}
-                className="mt-1 w-full border-2 border-ink bg-paper px-2 py-1.5 text-sm"
+                className="mt-1 w-full border border-border bg-paper px-2 py-1.5 text-sm"
               />
             </label>
 
@@ -336,7 +336,7 @@ function WritePage() {
                   min={1}
                   value={draft.reading_time ?? 1}
                   onChange={(e) => set({ reading_time: Number(e.target.value) })}
-                  className="mt-1 w-full border-2 border-ink bg-paper px-2 py-1.5 text-sm"
+                  className="mt-1 w-full border border-border bg-paper px-2 py-1.5 text-sm"
                 />
               </label>
               <label className="block">
@@ -351,7 +351,7 @@ function WritePage() {
                         : null,
                     })
                   }
-                  className="mt-1 w-full border-2 border-ink bg-paper px-2 py-1.5 text-sm"
+                  className="mt-1 w-full border border-border bg-paper px-2 py-1.5 text-sm"
                 />
               </label>
             </div>
@@ -359,7 +359,7 @@ function WritePage() {
             <button
               type="button"
               onClick={() => set({ featured: !draft.featured })}
-              className={`pixel-font flex w-full items-center justify-center gap-2 border-2 border-ink px-3 py-2 text-[10px] ${
+              className={`pixel-font flex w-full items-center justify-center gap-2 border border-border px-3 py-2 text-[10px] ${
                 draft.featured ? "bg-accent text-accent-foreground" : "bg-paper"
               }`}
             >
@@ -377,7 +377,7 @@ function WritePage() {
                 value={draft.cover_image ?? ""}
                 onChange={(e) => set({ cover_image: e.target.value })}
                 placeholder="https://…"
-                className="mt-1 w-full border-2 border-ink bg-paper px-2 py-1.5 text-sm"
+                className="mt-1 w-full border border-border bg-paper px-2 py-1.5 text-sm"
               />
             </label>
             <span className="pixel-font text-[9px] text-muted-foreground">
@@ -391,7 +391,7 @@ function WritePage() {
                   title={PIXEL_ART_LABELS[key]}
                   onClick={() => set({ pixel_art_image: key })}
                   className={`border-2 p-1 ${
-                    draft.pixel_art_image === key ? "border-primary" : "border-ink"
+                    draft.pixel_art_image === key ? "border-primary" : "border-border"
                   }`}
                 >
                   <PixelArt variant={key} className="aspect-square w-full" />
@@ -408,7 +408,7 @@ function WritePage() {
               <button
                 key={s}
                 onClick={() => void setStatus(s)}
-                className={`pixel-font block w-full border-2 border-ink px-3 py-2 text-left text-[10px] ${
+                className={`pixel-font block w-full border border-border px-3 py-2 text-left text-[10px] ${
                   status === s ? "bg-ink text-background" : "bg-paper hover:bg-accent"
                 }`}
               >
@@ -423,7 +423,7 @@ function WritePage() {
                 value={draft.substack_url ?? ""}
                 onChange={(e) => set({ substack_url: e.target.value })}
                 placeholder="https://…substack.com/p/…"
-                className="mt-1 w-full border-2 border-ink bg-paper px-2 py-1.5 text-sm"
+                className="mt-1 w-full border border-border bg-paper px-2 py-1.5 text-sm"
               />
             </label>
           </div>

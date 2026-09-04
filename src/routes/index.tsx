@@ -67,14 +67,14 @@ function Home() {
   return (
     <SiteShell>
       {/* Hero */}
-      <section className="border-b-2 border-ink bg-paper">
+      <section className="border-b border-border bg-paper">
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-8 px-4 py-16 text-center sm:px-6 md:py-24">
           <div className="flex items-end gap-4">
-            <PixelArt variant="coin" className="pixel-bob size-14 border-2 border-ink" />
+            <PixelArt variant="coin" className="pixel-bob size-14 border border-border" />
             <h1 className="pixel-font text-3xl leading-tight text-ink sm:text-5xl">
               Weekly Wonders
             </h1>
-            <PixelArt variant="chart" className="pixel-bob size-14 border-2 border-ink" />
+            <PixelArt variant="chart" className="pixel-bob size-14 border border-border" />
           </div>
           <div className="pixel-rule w-40" />
           <p className="max-w-xl font-serif text-lg text-muted-foreground sm:text-xl">
@@ -110,7 +110,7 @@ function Home() {
             params={{ slug: featured.slug }}
             className="pixel-frame pixel-lift mt-5 grid gap-0 overflow-hidden md:grid-cols-2"
           >
-            <div className="crt aspect-[16/10] border-b-2 border-ink md:aspect-auto md:border-b-0 md:border-r-2">
+            <div className="crt aspect-[16/10] border-b border-border md:aspect-auto md:border-b-0 md:border-r-2">
               {featured.cover_image ? (
                 <img
                   src={featured.cover_image}
@@ -150,7 +150,7 @@ function Home() {
                 key={name}
                 type="button"
                 onClick={() => setActiveCategory(name)}
-                className={`pixel-font border-2 border-ink px-3 py-1.5 text-[10px] transition-colors ${
+                className={`pixel-font border border-border px-3 py-1.5 text-[10px] transition-colors ${
                   activeCategory === name
                     ? "bg-ink text-background"
                     : "bg-paper hover:bg-accent"
@@ -186,7 +186,7 @@ function Home() {
           href="/pieces/markowitz-portfolio-story.html"
           className="pixel-frame pixel-lift group mt-5 grid gap-0 overflow-hidden md:grid-cols-[280px_1fr]"
         >
-          <div className="crt aspect-[16/10] border-b-2 border-ink md:aspect-auto md:border-b-0 md:border-r-2">
+          <div className="crt aspect-[16/10] border-b border-border md:aspect-auto md:border-b-0 md:border-r-2">
             <PixelArt variant="portfolio" className="size-full" />
           </div>
           <div className="flex flex-col justify-center gap-3 p-7 md:p-10">

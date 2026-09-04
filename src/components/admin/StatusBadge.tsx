@@ -12,7 +12,7 @@ const STYLES: Record<ArticleStatus, string> = {
 export function StatusBadge({ status }: { status: ArticleStatus }) {
   return (
     <span
-      className={`pixel-font border-2 border-ink px-2 py-1 text-[9px] ${STYLES[status]}`}
+      className={`pixel-font border border-border px-2 py-1 text-[9px] ${STYLES[status]}`}
     >
       {STATUS_SHORT[status]}
     </span>

@@ -29,7 +29,7 @@ function AboutPage() {
   return (
     <SiteShell>
       <section className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
-        <PixelArt variant="thinking" className="size-16 border-2 border-ink" />
+        <PixelArt variant="thinking" className="size-16 border border-border" />
         <h1 className="pixel-font mt-8 text-2xl text-ink">About</h1>
         <div className="pixel-rule mt-6 w-32" />
 

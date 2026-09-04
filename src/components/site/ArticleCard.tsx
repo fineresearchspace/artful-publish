@@ -10,7 +10,7 @@ export function ArticleCard({ article }: { article: ArticleListItem }) {
       params={{ slug: article.slug }}
       className="pixel-frame pixel-lift group flex flex-col overflow-hidden"
     >
-      <div className="crt relative aspect-[16/10] overflow-hidden border-b-2 border-ink">
+      <div className="crt relative aspect-[16/10] overflow-hidden border-b border-border">
         {article.cover_image ? (
           <img
             src={article.cover_image}

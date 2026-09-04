@@ -54,7 +54,7 @@ function ArticlesPage() {
 
   return (
     <SiteShell>
-      <section className="border-b-2 border-ink bg-paper">
+      <section className="border-b border-border bg-paper">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
           <h1 className="pixel-font text-2xl text-ink sm:text-3xl">The Archive</h1>
           <p className="mt-4 max-w-xl font-serif text-lg text-muted-foreground">
@@ -73,7 +73,7 @@ function ArticlesPage() {
               key={name}
               type="button"
               onClick={() => setCategory(name)}
-              className={`pixel-font border-2 border-ink px-3 py-1.5 text-[10px] ${
+              className={`pixel-font border border-border px-3 py-1.5 text-[10px] ${
                 category === name ? "bg-ink text-background" : "bg-paper hover:bg-accent"
               }`}
             >

@@ -78,7 +78,7 @@ function MarketPulsePage() {
               key={tab.key}
               type="button"
               onClick={() => setActiveTab(tab.key)}
-              className={`pixel-font border-2 border-ink px-3 py-1.5 text-[10px] transition-colors ${
+              className={`pixel-font border border-border px-3 py-1.5 text-[10px] transition-colors ${
                 activeTab === tab.key
                   ? "bg-ink text-background"
                   : "bg-paper hover:bg-accent"
