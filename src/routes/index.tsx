@@ -171,7 +171,7 @@ function Home() {
       {/* Latest */}
       <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <h2 className="pixel-font text-sm text-ink">Latest Wonders</h2>
+          <h2 className="display-font text-3xl text-ink">Latest Wonders</h2>
           <div className="flex flex-wrap gap-2">
             {filters.map((name) => (
               <button
@@ -240,7 +240,7 @@ function Home() {
 
       {/* Topics */}
       <section className="mx-auto max-w-6xl px-4 py-14 text-center sm:px-6">
-        <h2 className="pixel-font text-sm">Explore by topic</h2>
+        <h2 className="display-font text-3xl">Explore by topic</h2>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           {categories.map((c) => (
             <Link

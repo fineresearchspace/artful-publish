@@ -61,7 +61,7 @@ export const Route = createFileRoute("/articles/$slug")({
   notFoundComponent: () => (
     <SiteShell>
       <div className="mx-auto max-w-2xl px-4 py-24 text-center">
-        <h1 className="pixel-font text-xl">Wonder not found</h1>
+        <h1 className="display-font text-3xl">Wonder not found</h1>
         <p className="mt-4 text-sm text-muted-foreground">
           This article may have been unpublished or moved.
         </p>
@@ -152,7 +152,7 @@ function ArticlePage() {
 
         {related.length ? (
           <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
-            <h2 className="pixel-font text-sm">Related wonders</h2>
+            <h2 className="display-font text-2xl">Related wonders</h2>
             <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((item) => (
                 <ArticleCard key={item.id} article={item} />

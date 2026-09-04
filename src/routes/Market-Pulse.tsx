@@ -67,7 +67,7 @@ function MarketPulsePage() {
     <SiteShell>
       <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
         <p className="pixel-font text-[11px] text-primary">[ Market Pulse ]</p>
-        <h1 className="pixel-font mt-3 text-2xl text-ink">Market Pulse</h1>
+        <h1 className="display-font mt-3 text-4xl text-ink sm:text-5xl">Market Pulse</h1>
         <p className="mt-3 font-serif text-lg text-muted-foreground">
           Indices, commodities, and currencies from around the world.
         </p>
@@ -144,7 +144,7 @@ function MarketCard({ data }: { data: MarketData }) {
       className="pixel-frame-sm pixel-lift block bg-paper p-5 transition-opacity hover:opacity-90"
     >
       <p className="mt-1 font-serif text-lg">{data.name}</p>
-      <p className="pixel-font mt-3 text-lg text-ink">
+      <p className="display-font mt-3 text-3xl text-ink">
         {data.latest_price?.toLocaleString()}
       </p>
       <p

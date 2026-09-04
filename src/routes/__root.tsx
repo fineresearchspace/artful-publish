@@ -43,7 +43,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="pixel-frame max-w-md p-10 text-center">
-        <h1 className="pixel-font text-sm text-ink">This page didn't load</h1>
+        <h1 className="display-font text-3xl text-ink">This page didn't load</h1>
         <p className="mt-3 text-sm text-muted-foreground">
           Something went wrong. Try refreshing or head back home.
         </p>

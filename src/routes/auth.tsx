@@ -75,7 +75,7 @@ function AuthPage() {
 
         <div className="pixel-frame mt-4 p-8">
           <PixelArt variant="newspaper" className="size-12 border border-border" />
-          <h1 className="pixel-font mt-6 text-sm text-ink">Writing Studio</h1>
+          <h1 className="display-font mt-6 text-3xl text-ink">Writing Studio</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Private workspace. Only the site owner can publish.
           </p>

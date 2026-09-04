@@ -56,7 +56,7 @@ function ArticlesPage() {
     <SiteShell>
       <section className="border-b border-border bg-paper">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-          <h1 className="pixel-font text-2xl text-ink sm:text-3xl">The Archive</h1>
+          <h1 className="display-font text-4xl text-ink sm:text-5xl">The Archive</h1>
           <p className="mt-4 max-w-xl font-serif text-lg text-muted-foreground">
             {articles.length} wonders collected so far. Search by title, topic or tag.
           </p>
