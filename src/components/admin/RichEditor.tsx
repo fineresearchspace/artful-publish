@@ -14,7 +14,10 @@ import { supabase } from "@/integrations/supabase/client";
 
 const FONT_SIZES = [12, 14, 16, 18, 20, 24, 28, 32, 40];
 
-/** Uploads an image file to storage and returns its public URL. */
+/** Ten years, in seconds — image links stay valid for the life of the article. */
+const IMAGE_URL_TTL = 60 * 60 * 24 * 3650;
+
+/** Uploads an image file to storage and returns a long-lived URL. */
 async function uploadImage(file: File): Promise<string | null> {
   const ext = file.name.split(".").pop()?.toLowerCase() || "png";
   const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
@@ -25,11 +28,16 @@ async function uploadImage(file: File): Promise<string | null> {
     toast.error(`Image upload failed: ${error.message}`);
     return null;
   }
-  const { data: urlData } = supabase.storage
+  const { data: signed, error: signError } = await supabase.storage
     .from("article-images")
-    .getPublicUrl(data.path);
-  return urlData.publicUrl;
+    .createSignedUrl(data.path, IMAGE_URL_TTL);
+  if (signError || !signed?.signedUrl) {
+    toast.error("Image uploaded but the link could not be created");
+    return null;
+  }
+  return signed.signedUrl;
 }
+
 
 /** Converts tab/comma separated clipboard cells into a real table in the doc. */
 function insertTableFromText(editor: Editor, raw: string) {
