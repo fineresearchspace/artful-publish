@@ -28,13 +28,23 @@ async function copyRich(html: string, plain: string) {
 export function SubstackSendDialog({
   draft,
   onSent,
+  open: openProp,
+  onOpenChange,
 }: {
   draft: Article;
   onSent?: (() => void | Promise<void>) | undefined;
+  open?: boolean | undefined;
+  onOpenChange?: ((open: boolean) => void) | undefined;
 }) {
-  const [open, setOpen] = useState(false);
+  const [openState, setOpenState] = useState(false);
+  const open = openProp ?? openState;
+  const setOpen = (value: boolean) => {
+    setOpenState(value);
+    onOpenChange?.(value);
+  };
   const exported = substackProvider.exportPost(draft);
   const composeUrl = `${loadSettings().substackUrl}/publish/post?type=newsletter`;
+
 
   async function send() {
     const ok = await copyRich(exported.html, exported.markdown);

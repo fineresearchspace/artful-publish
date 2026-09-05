@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Eye, Save, Upload, Star } from "lucide-react";
+import { Eye, Save, Upload, Star, Send } from "lucide-react";
 import {
   createArticle,
   fetchArticle,
@@ -56,6 +56,8 @@ function WritePage() {
   const [saving, setSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<string | null>(null);
   const [publishError, setPublishError] = useState<string | null>(null);
+  const [substackOpen, setSubstackOpen] = useState(false);
+
   const dirtyRef = useRef(false);
 
 
@@ -163,6 +165,7 @@ function WritePage() {
       }
       await save(extra);
       toast.success(`Status: ${STATUS_LABELS[status]}`);
+      return true;
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error";
       setPublishError(message);
@@ -170,8 +173,15 @@ function WritePage() {
         await updateArticle(articleId, { status: "failed" }).catch(() => undefined);
         setDraft((d) => ({ ...d, status: "failed" }));
       }
+      return false;
     }
   }
+
+  async function publishEverywhere() {
+    const ok = await setStatus("published_web");
+    if (ok) setSubstackOpen(true);
+  }
+
 
   const editorHtml = useMemo(() => renderMarkdown(draft.content ?? ""), [draft.content]);
 
@@ -204,10 +214,17 @@ function WritePage() {
           </button>
           <button
             onClick={() => void setStatus("published_web")}
+            className="pixel-frame-sm pixel-lift pixel-font flex items-center gap-2 bg-paper px-3 py-2 text-[11px]"
+          >
+            <Upload className="size-3.5" /> Website only
+          </button>
+          <button
+            onClick={() => void publishEverywhere()}
             className="pixel-frame-sm pixel-lift pixel-font flex items-center gap-2 bg-primary px-3 py-2 text-[11px] text-primary-foreground"
           >
-            <Upload className="size-3.5" /> Publish to website
+            <Send className="size-3.5" /> Publish everywhere
           </button>
+
         </div>
       </header>
 
@@ -431,7 +448,10 @@ function WritePage() {
           <SubstackPanel
             draft={{ ...(payload as Article), id: articleId ?? "" }}
             onSent={() => void setStatus("exported_substack")}
+            open={substackOpen}
+            onOpenChange={setSubstackOpen}
           />
+
 
         </aside>
       </div>

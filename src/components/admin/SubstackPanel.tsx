@@ -28,9 +28,13 @@ async function copy(label: string, value: string) {
 export function SubstackPanel({
   draft,
   onSent,
+  open,
+  onOpenChange,
 }: {
   draft: Article;
   onSent?: (() => void | Promise<void>) | undefined;
+  open?: boolean | undefined;
+  onOpenChange?: ((open: boolean) => void) | undefined;
 }) {
   const exported = substackProvider.exportPost(draft);
   const slug = draft.slug || "article";
@@ -38,11 +42,17 @@ export function SubstackPanel({
   return (
     <div className="pixel-panel space-y-3 p-4">
       <p className="pixel-font text-[10px] text-primary">Send to Substack</p>
-      <SubstackSendDialog draft={draft} onSent={onSent} />
+      <SubstackSendDialog
+        draft={draft}
+        onSent={onSent}
+        open={open}
+        onOpenChange={onOpenChange}
+      />
       <p className="text-xs text-muted-foreground">
         Preview the newsletter first, then send it across in one paste. Manual export
         options are below.
       </p>
+
 
 
       <div className="grid gap-2">
