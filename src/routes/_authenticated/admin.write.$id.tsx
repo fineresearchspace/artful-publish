@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Eye, Save, Upload, Star } from "lucide-react";
+import { Eye, Save, Upload, Star, Send } from "lucide-react";
 import {
   createArticle,
   fetchArticle,
