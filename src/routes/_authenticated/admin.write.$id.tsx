@@ -163,6 +163,7 @@ function WritePage() {
       }
       await save(extra);
       toast.success(`Status: ${STATUS_LABELS[status]}`);
+      return true;
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error";
       setPublishError(message);
@@ -170,8 +171,15 @@ function WritePage() {
         await updateArticle(articleId, { status: "failed" }).catch(() => undefined);
         setDraft((d) => ({ ...d, status: "failed" }));
       }
+      return false;
     }
   }
+
+  async function publishEverywhere() {
+    const ok = await setStatus("published_web");
+    if (ok) setSubstackOpen(true);
+  }
+
 
   const editorHtml = useMemo(() => renderMarkdown(draft.content ?? ""), [draft.content]);
 
