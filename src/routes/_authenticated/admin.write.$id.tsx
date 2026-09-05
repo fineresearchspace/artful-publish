@@ -214,10 +214,17 @@ function WritePage() {
           </button>
           <button
             onClick={() => void setStatus("published_web")}
+            className="pixel-frame-sm pixel-lift pixel-font flex items-center gap-2 bg-paper px-3 py-2 text-[11px]"
+          >
+            <Upload className="size-3.5" /> Website only
+          </button>
+          <button
+            onClick={() => void publishEverywhere()}
             className="pixel-frame-sm pixel-lift pixel-font flex items-center gap-2 bg-primary px-3 py-2 text-[11px] text-primary-foreground"
           >
-            <Upload className="size-3.5" /> Publish to website
+            <Send className="size-3.5" /> Publish everywhere
           </button>
+
         </div>
       </header>
 
