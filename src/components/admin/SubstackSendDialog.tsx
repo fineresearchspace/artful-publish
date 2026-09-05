@@ -30,7 +30,7 @@ export function SubstackSendDialog({
   onSent,
 }: {
   draft: Article;
-  onSent?: () => void | Promise<void>;
+  onSent?: (() => void | Promise<void>) | undefined;
 }) {
   const [open, setOpen] = useState(false);
   const exported = substackProvider.exportPost(draft);

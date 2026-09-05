@@ -30,7 +30,7 @@ export function SubstackPanel({
   onSent,
 }: {
   draft: Article;
-  onSent?: () => void | Promise<void>;
+  onSent?: (() => void | Promise<void>) | undefined;
 }) {
   const exported = substackProvider.exportPost(draft);
   const slug = draft.slug || "article";
