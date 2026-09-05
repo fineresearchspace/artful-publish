@@ -3,6 +3,8 @@ import { Copy, Download, ExternalLink } from "lucide-react";
 import type { Article } from "@/lib/articles";
 import { substackProvider } from "@/lib/publishing/substack";
 import { loadSettings } from "@/lib/site";
+import { SubstackSendDialog } from "./SubstackSendDialog";
+
 
 function download(filename: string, contents: string, type: string) {
   const blob = new Blob([contents], { type });
@@ -23,17 +25,25 @@ async function copy(label: string, value: string) {
   }
 }
 
-export function SubstackPanel({ draft }: { draft: Article }) {
+export function SubstackPanel({
+  draft,
+  onSent,
+}: {
+  draft: Article;
+  onSent?: (() => void | Promise<void>) | undefined;
+}) {
   const exported = substackProvider.exportPost(draft);
   const slug = draft.slug || "article";
 
   return (
     <div className="pixel-panel space-y-3 p-4">
-      <p className="pixel-font text-[10px] text-primary">Export for Substack</p>
+      <p className="pixel-font text-[10px] text-primary">Send to Substack</p>
+      <SubstackSendDialog draft={draft} onSent={onSent} />
       <p className="text-xs text-muted-foreground">
-        Substack has no official public publishing API, so Weekly Wonders prepares the post
-        for a clean paste instead of pretending to send it.
+        Preview the newsletter first, then send it across in one paste. Manual export
+        options are below.
       </p>
+
 
       <div className="grid gap-2">
         <button
