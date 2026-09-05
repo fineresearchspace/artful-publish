@@ -56,6 +56,8 @@ function WritePage() {
   const [saving, setSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<string | null>(null);
   const [publishError, setPublishError] = useState<string | null>(null);
+  const [substackOpen, setSubstackOpen] = useState(false);
+
   const dirtyRef = useRef(false);
 
 
