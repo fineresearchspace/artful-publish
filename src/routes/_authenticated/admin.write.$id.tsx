@@ -428,7 +428,11 @@ function WritePage() {
             </label>
           </div>
 
-          <SubstackPanel draft={{ ...(payload as Article), id: articleId ?? "" }} />
+          <SubstackPanel
+            draft={{ ...(payload as Article), id: articleId ?? "" }}
+            onSent={() => void setStatus("exported_substack")}
+          />
+
         </aside>
       </div>
     </div>

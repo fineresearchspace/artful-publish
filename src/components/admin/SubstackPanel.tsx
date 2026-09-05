@@ -3,6 +3,8 @@ import { Copy, Download, ExternalLink } from "lucide-react";
 import type { Article } from "@/lib/articles";
 import { substackProvider } from "@/lib/publishing/substack";
 import { loadSettings } from "@/lib/site";
+import { SubstackSendDialog } from "./SubstackSendDialog";
+
 
 function download(filename: string, contents: string, type: string) {
   const blob = new Blob([contents], { type });
