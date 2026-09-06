@@ -20,7 +20,12 @@ export function SiteShell({ children }: { children: ReactNode }) {
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 sm:px-6">
-          <Link to="/" className="flex items-baseline gap-2">
+          <Link to="/" className="flex items-center gap-3">
+            <img
+              src={logoAsset.url}
+              alt="The Context logo"
+              className="h-9 w-auto rounded-md"
+            />
             <span className="display-font text-2xl leading-none text-ink sm:text-[1.7rem]">
               The Context
             </span>
@@ -89,7 +94,11 @@ export function SiteShell({ children }: { children: ReactNode }) {
       <footer className="mt-20 border-t border-border bg-paper">
         <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 sm:px-6 md:flex-row md:items-start md:justify-between">
           <div className="max-w-sm">
-            <p className="display-font text-2xl text-ink">The Context</p>
+            <img
+              src={logoAsset.url}
+              alt="The Context logo"
+              className="h-12 w-auto rounded-md"
+            />
             <p className="mt-3 text-sm text-muted-foreground">{SITE.tagline}</p>
           </div>
           <div className="flex flex-col gap-2">
