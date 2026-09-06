@@ -74,7 +74,7 @@ function AdminSettings() {
         <p className="pixel-font text-[10px] text-primary">Publishing providers</p>
         <ul className="mt-4 space-y-2 text-sm">
           <li className="flex items-center justify-between gap-4">
-            <span>Weekly Wonders website</span>
+            <span>The Context website</span>
             <span className="pixel-font text-[10px] text-primary">Active</span>
           </li>
           <li className="flex items-center justify-between gap-4">

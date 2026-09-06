@@ -8,16 +8,16 @@ export const Route = createFileRoute("/categories")({
   loader: () => listPublishedArticles(),
   head: () => ({
     meta: [
-      { title: "Topics — Weekly Wonders" },
+      { title: "Topics — The Context" },
       {
         name: "description",
         content:
-          "Browse Weekly Wonders by topic: markets, finance, business, mindset, deep dives and ideas.",
+          "Browse The Context by topic: markets, finance, business, mindset, deep dives and ideas.",
       },
-      { property: "og:title", content: "Topics — Weekly Wonders" },
+      { property: "og:title", content: "Topics — The Context" },
       {
         property: "og:description",
-        content: "Browse the Weekly Wonders archive by topic.",
+        content: "Browse the The Context archive by topic.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/categories" },

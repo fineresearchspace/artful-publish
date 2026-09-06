@@ -1,5 +1,5 @@
 export const SITE = {
-  name: "Weekly Wonders",
+  name: "The Context",
   tagline:
     "Curious ideas about markets, money, business and the world around them.",
   /** Update these in Admin → Settings if your Substack address changes. */

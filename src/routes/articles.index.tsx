@@ -9,16 +9,16 @@ export const Route = createFileRoute("/articles/")({
   loader: () => listPublishedArticles(),
   head: () => ({
     meta: [
-      { title: "The Archive — Weekly Wonders" },
+      { title: "The Archive — The Context" },
       {
         name: "description",
         content:
-          "Every Weekly Wonders article: markets, finance, business, mindset and ideas worth understanding.",
+          "Every The Context article: markets, finance, business, mindset and ideas worth understanding.",
       },
-      { property: "og:title", content: "The Archive — Weekly Wonders" },
+      { property: "og:title", content: "The Archive — The Context" },
       {
         property: "og:description",
-        content: "Every Weekly Wonders article, collected as pixel-art cards.",
+        content: "Every The Context article, collected as pixel-art cards.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/articles" },

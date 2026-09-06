@@ -71,12 +71,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Weekly Wonders" },
+      { title: "The Context" },
       {
         name: "description",
         content: "Curious ideas about markets, money, business and the world around them.",
       },
-      { property: "og:site_name", content: "Weekly Wonders" },
+      { property: "og:site_name", content: "The Context" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

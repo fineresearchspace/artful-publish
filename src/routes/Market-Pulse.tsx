@@ -7,7 +7,7 @@ import MarketPulseNews from "@/components/MarketPulseNews";
 export const Route = createFileRoute("/Market-Pulse")({
   head: () => ({
     meta: [
-      { title: "Market Pulse — Weekly Wonders" },
+      { title: "Market Pulse — The Context" },
       {
         name: "description",
         content: "Live global market data: indices, commodities, and currencies.",
