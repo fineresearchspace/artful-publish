@@ -1,7 +1,6 @@
 export const SITE = {
   name: "The Context",
-  tagline:
-    "Curious ideas about markets, money, business and the world around them.",
+  tagline: "Daily market moves.\nThe stories behind them.\nAnd the ideas worth understanding.",
   /** Update these in Admin → Settings if your Substack address changes. */
   substackUrl: "https://survivingthe20s.substack.com",
   substackSubscribeUrl: "https://survivingthe20s.substack.com/subscribe",
