@@ -62,7 +62,6 @@ const WIDGET_CONFIG = {
       title: "Japan",
       symbols: [
         { s: "INDEX:NKY", d: "Nikkei 225" },
-        { s: "TVC:NI225", d: "Nikkei 225 (TVC)" },
         { s: "INDEX:TOPIX", d: "TOPIX" },
         { s: "FX:USDJPY", d: "USD/JPY" },
       ],
