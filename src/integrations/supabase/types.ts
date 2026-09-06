@@ -110,6 +110,68 @@ export type Database = {
         }
         Relationships: []
       }
+      newsletter_sends: {
+        Row: {
+          article_id: string | null
+          failed_count: number
+          id: string
+          recipient_count: number
+          sent_at: string
+          subject: string
+        }
+        Insert: {
+          article_id?: string | null
+          failed_count?: number
+          id?: string
+          recipient_count?: number
+          sent_at?: string
+          subject: string
+        }
+        Update: {
+          article_id?: string | null
+          failed_count?: number
+          id?: string
+          recipient_count?: number
+          sent_at?: string
+          subject?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "newsletter_sends_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          source: string | null
+          status: string
+          unsubscribe_token: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          source?: string | null
+          status?: string
+          unsubscribe_token?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          source?: string | null
+          status?: string
+          unsubscribe_token?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
