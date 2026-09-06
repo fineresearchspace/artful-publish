@@ -26,22 +26,60 @@ const WIDGET_CONFIG = {
   symbolActiveColor: "rgba(41, 98, 255, 0.12)",
   tabs: [
     {
-      title: "Indices",
+      title: "India",
       symbols: [
+        { s: "NSE:NIFTY", d: "Nifty 50" },
         { s: "BSE:SENSEX", d: "Sensex" },
+        { s: "NSE:BANKNIFTY", d: "Bank Nifty" },
+        { s: "NSE:CNXFINANCE", d: "Nifty Financial Services" },
+        { s: "NSE:CNXIT", d: "Nifty IT" },
+        { s: "NSE:CNXAUTO", d: "Nifty Auto" },
+        { s: "NSE:CNXPHARMA", d: "Nifty Pharma" },
+        { s: "NSE:CNXFMCG", d: "Nifty FMCG" },
+        { s: "NSE:CNXMETAL", d: "Nifty Metal" },
+        { s: "NSE:CNXPSUBANK", d: "Nifty PSU Bank" },
+        { s: "NSE:CNXREALTY", d: "Nifty Realty" },
+        { s: "NSE:CNXENERGY", d: "Nifty Energy" },
+        { s: "NSE:NIFTYJR", d: "Nifty Next 50" },
+        { s: "NSE:NIFTYMIDCAP150", d: "Nifty Midcap 150" },
+        { s: "NSE:NIFTYSMLCAP250", d: "Nifty Smallcap 250" },
+        { s: "NSE:INDIAVIX", d: "India VIX" },
+      ],
+      originalTitle: "India",
+    },
+    {
+      title: "US",
+      symbols: [
         { s: "FOREXCOM:SPXUSD", d: "S&P 500" },
         { s: "FOREXCOM:NSXUSD", d: "Nasdaq 100" },
         { s: "FOREXCOM:DJI", d: "Dow 30" },
+        { s: "TVC:RUT", d: "Russell 2000" },
+        { s: "TVC:VIX", d: "VIX" },
+      ],
+      originalTitle: "US",
+    },
+    {
+      title: "Japan",
+      symbols: [
         { s: "INDEX:NKY", d: "Nikkei 225" },
+        { s: "TVC:NI225", d: "Nikkei 225 (TVC)" },
+        { s: "INDEX:TOPIX", d: "TOPIX" },
+        { s: "FX:USDJPY", d: "USD/JPY" },
+      ],
+      originalTitle: "Japan",
+    },
+    {
+      title: "Europe",
+      symbols: [
         { s: "INDEX:DEU40", d: "DAX" },
         { s: "FOREXCOM:UKXGBP", d: "FTSE 100" },
-        { s: "NSE:NIFTY", d: "Nifty 50" },
+        { s: "INDEX:CAC40", d: "CAC 40" },
+        { s: "INDEX:STOXX50E", d: "Euro Stoxx 50" },
       ],
-      originalTitle: "Indices",
+      originalTitle: "Europe",
     },
     {
       title: "Forex",
-
       symbols: [
         { s: "FX_IDC:USDINR", d: "USD/INR" },
         { s: "FX:EURUSD", d: "EUR/USD" },
