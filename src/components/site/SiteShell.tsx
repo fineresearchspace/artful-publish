@@ -3,6 +3,7 @@ import { useState, type ReactNode } from "react";
 import { Menu, X } from "lucide-react";
 import { SITE } from "@/lib/site";
 import { HeadlineTicker } from "@/components/site/HeadlineTicker";
+import logoAsset from "@/assets/the-context-logo.png.asset.json";
 
 const NAV = [
   { to: "/", label: "Home" },
