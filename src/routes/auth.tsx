@@ -9,11 +9,11 @@ import { useAuth } from "@/hooks/useAuth";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Studio sign in — Weekly Wonders" },
-      { name: "description", content: "Sign in to the Weekly Wonders writing studio." },
+      { title: "Studio sign in — The Context" },
+      { name: "description", content: "Sign in to the The Context writing studio." },
       { name: "robots", content: "noindex" },
-      { property: "og:title", content: "Studio sign in — Weekly Wonders" },
-      { property: "og:description", content: "Private writing studio for Weekly Wonders." },
+      { property: "og:title", content: "Studio sign in — The Context" },
+      { property: "og:description", content: "Private writing studio for The Context." },
     ],
   }),
   component: AuthPage,
@@ -70,7 +70,7 @@ function AuthPage() {
     <div className="flex min-h-screen items-center justify-center px-4 py-16">
       <div className="w-full max-w-sm">
         <Link to="/" className="pixel-font text-[10px] text-muted-foreground">
-          ← Weekly Wonders
+          ← The Context
         </Link>
 
         <div className="pixel-frame mt-4 p-8">

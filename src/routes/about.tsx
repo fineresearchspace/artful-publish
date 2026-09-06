@@ -6,13 +6,13 @@ import { SITE } from "@/lib/site";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About — Weekly Wonders" },
+      { title: "About — The Context" },
       {
         name: "description",
         content:
-          "Weekly Wonders is a personal publication about markets, finance, business, investing and mental models worth understanding.",
+          "The Context is a personal publication about markets, finance, business, investing and mental models worth understanding.",
       },
-      { property: "og:title", content: "About — Weekly Wonders" },
+      { property: "og:title", content: "About — The Context" },
       {
         property: "og:description",
         content: "A personal publication about markets, money and ideas worth understanding.",
@@ -35,7 +35,7 @@ function AboutPage() {
 
         <div className="article-prose mt-8">
           <p>
-            <strong>Weekly Wonders</strong> is a personal publication. One issue a week, written
+            <strong>The Context</strong> is a personal publication. One issue a week, written
             because writing is how I work out what I actually think.
           </p>
           <p>It wanders around a few recurring subjects:</p>

@@ -12,13 +12,13 @@ export const Route = createFileRoute("/")({
   loader: () => listPublishedArticles(),
   head: () => ({
     meta: [
-      { title: "Weekly Wonders — Ideas worth wondering about" },
+      { title: "The Context — Ideas worth wondering about" },
       {
         name: "description",
         content:
           "A pixel-art archive of curious ideas about markets, money, business and the world around them.",
       },
-      { property: "og:title", content: "Weekly Wonders — Ideas worth wondering about" },
+      { property: "og:title", content: "The Context — Ideas worth wondering about" },
       {
         property: "og:description",
         content: "Curious ideas about markets, money, business and the world around them.",

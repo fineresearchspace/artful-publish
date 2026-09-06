@@ -15,9 +15,9 @@ import { useAuth } from "@/hooks/useAuth";
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
     meta: [
-      { title: "Writing Studio — Weekly Wonders" },
+      { title: "Writing Studio — The Context" },
       { name: "robots", content: "noindex" },
-      { name: "description", content: "Private writing studio for Weekly Wonders." },
+      { name: "description", content: "Private writing studio for The Context." },
     ],
   }),
   component: AdminLayout,
@@ -42,7 +42,7 @@ function AdminLayout() {
         <div className="pixel-frame max-w-sm p-8 text-center">
           <h1 className="pixel-font text-sm">Not the owner</h1>
           <p className="mt-3 text-sm text-muted-foreground">
-            This studio belongs to the Weekly Wonders owner account.
+            This studio belongs to the The Context owner account.
           </p>
           <button
             onClick={async () => {

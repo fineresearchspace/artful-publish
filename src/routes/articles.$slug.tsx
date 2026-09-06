@@ -21,7 +21,7 @@ export const Route = createFileRoute("/articles/$slug")({
     if (!loaderData?.article) {
       return {
         meta: [
-          { title: "Article not found — Weekly Wonders" },
+          { title: "Article not found — The Context" },
           { name: "robots", content: "noindex" },
         ],
       };
@@ -30,7 +30,7 @@ export const Route = createFileRoute("/articles/$slug")({
     const description = a.excerpt || a.subtitle || SITE.tagline;
     return {
       meta: [
-        { title: `${a.title} — Weekly Wonders` },
+        { title: `${a.title} — The Context` },
         { name: "description", content: description },
         { property: "og:title", content: a.title },
         { property: "og:description", content: description },
@@ -51,7 +51,7 @@ export const Route = createFileRoute("/articles/$slug")({
             dateModified: a.updated_at,
             articleSection: a.category,
             keywords: (a.tags ?? []).join(", "),
-            author: { "@type": "Person", name: "Weekly Wonders" },
+            author: { "@type": "Person", name: "The Context" },
           }),
         },
       ],
