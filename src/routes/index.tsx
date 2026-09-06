@@ -74,7 +74,7 @@ function Home() {
               <span className="inline-block h-px w-8 bg-primary" />
             </p>
             <h1 className="display-font mt-6 text-5xl leading-[0.98] text-ink sm:text-7xl">
-              Markets, explaineda0
+              Markets, explained&nbsp;
               <br />
               <span className="italic text-primary">in context.</span>
             </h1>
