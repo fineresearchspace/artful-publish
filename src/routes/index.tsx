@@ -71,12 +71,12 @@ function Home() {
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 sm:px-6 md:py-24 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
             <p className="pixel-font flex items-center gap-3 text-[10px] text-primary">
-              <span className="inline-block h-px w-8 bg-primary" />A market-aware newsletter
+              <span className="inline-block h-px w-8 bg-primary" />
             </p>
             <h1 className="display-font mt-6 text-5xl leading-[0.98] text-ink sm:text-7xl">
-              The week,
+              Markets, explained&nbsp;
               <br />
-              <span className="italic text-primary">made legible.</span>
+              <span className="italic text-primary">in context.</span>
             </h1>
             <p className="mt-7 max-w-xl text-lg leading-relaxed text-muted-foreground">
               {SITE.tagline}
