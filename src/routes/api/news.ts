@@ -8,6 +8,9 @@ const DEFAULT_RSS = [
   "The Economic Times|https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms",
   "Business Standard|https://www.business-standard.com/rss/markets-106.rss",
   "Mint|https://www.livemint.com/rss/markets",
+  "Mint|https://www.livemint.com/rss/economy",
+  "Mint|https://www.livemint.com/rss/companies",
+  "Mint|https://www.livemint.com/rss/money",
   "Investing.com|https://www.investing.com/rss/news_25.rss",
   "Investing.com|https://www.investing.com/rss/news.rss",
 ].join(",");
