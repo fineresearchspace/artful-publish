@@ -51,7 +51,7 @@ export const listPublishedArticles = createServerFn({ method: "GET" }).handler(
 );
 
 export const getPublishedArticle = createServerFn({ method: "GET" })
-  .inputValidator((data: { slug: string }) => {
+  .validator((data: { slug: string }) => {
     // Validate input with Zod before processing
     return slugSchema.parse(data.slug);
   })
@@ -84,7 +84,7 @@ export const getPublishedArticle = createServerFn({ method: "GET" })
   );
 
 export const registerArticleView = createServerFn({ method: "POST" })
-  .inputValidator((data: { slug: string }) => {
+  .validator((data: { slug: string }) => {
     return slugSchema.parse(data.slug);
   })
   .handler(async ({ data }) => {

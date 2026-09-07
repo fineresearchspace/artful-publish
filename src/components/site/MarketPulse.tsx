@@ -13,6 +13,7 @@ const WIDGET_CONFIG = {
   isTransparent: true,
   showSymbolLogo: true,
   showFloatingTooltip: true,
+  showTabs: true,
   width: "100%",
   height: 500,
   plotLineColorGrowing: "rgba(41, 98, 255, 1)",
@@ -50,8 +51,8 @@ const WIDGET_CONFIG = {
     {
       title: "US",
       symbols: [
-        { s: "FOREXCOM:SPXUSD", d: "S&P 500" },
-        { s: "FOREXCOM:NSXUSD", d: "Nasdaq 100" },
+        { s: "FOREXCOM:SPX", d: "S&P 500" },
+        { s: "FOREXCOM:NDX", d: "Nasdaq 100" },
         { s: "FOREXCOM:DJI", d: "Dow 30" },
         { s: "TVC:RUT", d: "Russell 2000" },
         { s: "TVC:VIX", d: "VIX" },
@@ -62,7 +63,7 @@ const WIDGET_CONFIG = {
       title: "Japan",
       symbols: [
         { s: "INDEX:NKY", d: "Nikkei 225" },
-        { s: "INDEX:TOPIX", d: "TOPIX" },
+        { s: "INDEX:TPX", d: "TOPIX" },
         { s: "FX:USDJPY", d: "USD/JPY" },
       ],
       originalTitle: "Japan",
@@ -70,10 +71,10 @@ const WIDGET_CONFIG = {
     {
       title: "Europe",
       symbols: [
-        { s: "INDEX:DEU40", d: "DAX" },
-        { s: "FOREXCOM:UKXGBP", d: "FTSE 100" },
-        { s: "INDEX:CAC40", d: "CAC 40" },
-        { s: "INDEX:STOXX50E", d: "Euro Stoxx 50" },
+        { s: "GERMAN40", d: "DAX" },
+        { s: "UK100", d: "FTSE 100" },
+        { s: "FR40", d: "CAC 40" },
+        { s: "EU50", d: "Euro Stoxx 50" },
       ],
       originalTitle: "Europe",
     },
