@@ -98,31 +98,25 @@ function TradingViewMarketOverview() {
     const container = containerRef.current;
     if (!container) return;
 
-    // Clear previous content
-    container.innerHTML = "";
-
-    // Create the widget container structure
-    container.className = "tradingview-widget-container";
-    container.style.height = "500px";
-    container.style.width = "100%";
-
-    const widgetDiv = document.createElement("div");
-    widgetDiv.className = "tradingview-widget-container__widget";
-    container.appendChild(widgetDiv);
-
-    const script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js";
-    script.async = true;
-    script.innerHTML = JSON.stringify(WIDGET_CONFIG);
-    container.appendChild(script);
+    // Use innerHTML to ensure the script tag is properly parsed and executed
+    // TradingView's embed script must be in the HTML source to run
+    container.innerHTML = `
+      <div class="tradingview-widget-container__widget"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js">${JSON.stringify(WIDGET_CONFIG)}<\/script>
+    `;
 
     return () => {
       container.innerHTML = "";
     };
   }, []);
 
-  return <div ref={containerRef} />;
+  return (
+    <div
+      ref={containerRef}
+      className="tradingview-widget-container"
+      style={{ height: "500px", width: "100%" }}
+    />
+  );
 }
 
 type Point = { yield: number; changeBps: number | null };
