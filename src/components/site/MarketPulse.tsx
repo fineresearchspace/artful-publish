@@ -93,20 +93,37 @@ const WIDGET_CONFIG = {
 
 function TradingViewMarketOverview() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const scriptLoaded = useRef(false);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    // Use innerHTML to ensure the script tag is properly parsed and executed
-    // TradingView's embed script must be in the HTML source to run
-    container.innerHTML = `
-      <div class="tradingview-widget-container__widget"></div>
-      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js">${JSON.stringify(WIDGET_CONFIG)}<\/script>
-    `;
+    // Prevent double-loading in React StrictMode
+    if (scriptLoaded.current) return;
+    scriptLoaded.current = true;
+
+    // Clear previous content
+    container.innerHTML = "";
+
+    // Create widget div
+    const widgetDiv = document.createElement("div");
+    widgetDiv.className = "tradingview-widget-container__widget";
+    container.appendChild(widgetDiv);
+
+    // Create script tag
+    const script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js";
+    script.async = true;
+    script.innerHTML = JSON.stringify(WIDGET_CONFIG);
+
+    // Append script to container
+    container.appendChild(script);
 
     return () => {
       container.innerHTML = "";
+      scriptLoaded.current = false;
     };
   }, []);
 
