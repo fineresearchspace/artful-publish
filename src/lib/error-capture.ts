@@ -15,6 +15,32 @@ function record(error: unknown) {
 const CAUSE_DEPTH_LIMIT = 5;
 const DESCRIPTION_LENGTH_LIMIT = 8_000;
 
+/**
+ * Sanitizes a stack trace to remove absolute file paths that could leak
+ * internal directory structure. Replaces absolute paths with relative paths
+ * or redacts them entirely in production.
+ */
+function sanitizeStack(stack: string): string {
+  // Replace common Windows and Unix absolute paths with relative paths
+  return (
+    stack
+      // Windows paths: C:\Users\... or C:/Users/...
+      .replace(/[A-Za-z]:[\\/]+/g, "[PATH]/")
+      // Unix paths starting with / (but keep node: and builtin: schemes)
+      .replace(/(?<![\w:/])\/[^\s)]+/g, (match) => {
+        // Don't sanitize node: builtin modules or URLs
+        if (
+          match.startsWith("node:") ||
+          match.startsWith("https://") ||
+          match.startsWith("http://")
+        ) {
+          return match;
+        }
+        return "[PATH]/" + match.split("/").pop();
+      })
+  );
+}
+
 export function describeError(error: unknown): string {
   const parts: string[] = [];
   let current: unknown = error;
@@ -25,7 +51,8 @@ export function describeError(error: unknown): string {
     }
     const label = depth === 0 ? "" : "caused by: ";
     const status = describeStatus(current);
-    parts.push(`${label}${current.stack ?? `${current.name}: ${current.message}`}${status}`);
+    const stack = current.stack ?? `${current.name}: ${current.message}`;
+    parts.push(`${label}${sanitizeStack(stack)}${status}`);
     current = current.cause;
   }
   return parts.join("\n").slice(0, DESCRIPTION_LENGTH_LIMIT);

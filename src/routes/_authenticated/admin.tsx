@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useNavigate, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   LayoutDashboard,
@@ -20,6 +20,26 @@ export const Route = createFileRoute("/_authenticated/admin")({
       { name: "description", content: "Private writing studio for Weekly Wonders." },
     ],
   }),
+  beforeLoad: async () => {
+    // Server-side authorization check: verify admin role before rendering any admin content.
+    const { data, error } = await supabase.auth.getUser();
+    if (error || !data.user) {
+      throw redirect({ to: "/auth" });
+    }
+
+    const { data: roleData } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", data.user.id)
+      .eq("role", "admin")
+      .maybeSingle();
+
+    if (!roleData) {
+      throw redirect({ to: "/auth" });
+    }
+
+    return { user: data.user };
+  },
   component: AdminLayout,
 });
 

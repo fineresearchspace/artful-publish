@@ -1,8 +1,22 @@
 import { useState, useRef } from "react";
 import {
-  Bold, Italic, Heading1, Heading2, Heading3, List, ListOrdered,
-  Quote, Link2, Image, Table, Code, Minus, Type, Palette,
-  FileSpreadsheet, Frame,
+  Bold,
+  Italic,
+  Heading1,
+  Heading2,
+  Heading3,
+  List,
+  ListOrdered,
+  Quote,
+  Link2,
+  Image,
+  Table,
+  Code,
+  Minus,
+  Type,
+  Palette,
+  FileSpreadsheet,
+  Frame,
 } from "lucide-react";
 
 type InsertFn = (before: string, after?: string, placeholder?: string) => void;
@@ -30,6 +44,20 @@ function parseTableData(raw: string): string {
   const bodyRows = body.map((r) => `| ${r.join(" | ")} |`).join("\n");
 
   return `\n${headerRow}\n${dividerRow}\n${bodyRows}\n`;
+}
+
+/**
+ * Validates that a URL is safe for embedding in an iframe.
+ * Rejects javascript:, data:, and other non-http(s) schemes to prevent XSS.
+ */
+function isSafeEmbedUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url.trim());
+    // Only allow http/https protocols for iframe embeds
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
 }
 
 export function EditorToolbar({ onInsert }: { onInsert: InsertFn }) {
@@ -203,8 +231,12 @@ export function EditorToolbar({ onInsert }: { onInsert: InsertFn }) {
               type="button"
               onClick={() => {
                 if (embedUrl.trim()) {
+                  if (!isSafeEmbedUrl(embedUrl)) {
+                    // URL validation failed — do not insert untrusted input
+                    return;
+                  }
                   onInsert(
-                    `\n<iframe src="${embedUrl.trim()}" width="100%" height="400" frameborder="0"></iframe>\n`
+                    `\n<iframe src="${embedUrl.trim()}" width="100%" height="400" frameborder="0"></iframe>\n`,
                   );
                 }
                 setEmbedUrl("");
