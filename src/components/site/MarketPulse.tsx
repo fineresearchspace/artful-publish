@@ -32,16 +32,16 @@ const WIDGET_CONFIG = {
         { s: "NSE:NIFTY", d: "Nifty 50" },
         { s: "BSE:SENSEX", d: "Sensex" },
         { s: "NSE:BANKNIFTY", d: "Bank Nifty" },
-        { s: "NSE:CNXFINANCE", d: "Nifty Financial Services" },
-        { s: "NSE:CNXIT", d: "Nifty IT" },
-        { s: "NSE:CNXAUTO", d: "Nifty Auto" },
-        { s: "NSE:CNXPHARMA", d: "Nifty Pharma" },
-        { s: "NSE:CNXFMCG", d: "Nifty FMCG" },
-        { s: "NSE:CNXMETAL", d: "Nifty Metal" },
-        { s: "NSE:CNXPSUBANK", d: "Nifty PSU Bank" },
-        { s: "NSE:CNXREALTY", d: "Nifty Realty" },
-        { s: "NSE:CNXENERGY", d: "Nifty Energy" },
-        { s: "NSE:NIFTYJR", d: "Nifty Next 50" },
+        { s: "NSE:NIFTYFIN", d: "Nifty Financial Services" },
+        { s: "NSE:NIFTYIT", d: "Nifty IT" },
+        { s: "NSE:NIFTYAUTO", d: "Nifty Auto" },
+        { s: "NSE:NIFTYCPHARMA", d: "Nifty Pharma" },
+        { s: "NSE:NIFTYFMCG", d: "Nifty FMCG" },
+        { s: "NSE:NIFTYMETAL", d: "Nifty Metal" },
+        { s: "NSE:NIFTYPSE", d: "Nifty PSU Bank" },
+        { s: "NSE:NIFTYREALTY", d: "Nifty Realty" },
+        { s: "NSE:NIFTYENERGY", d: "Nifty Energy" },
+        { s: "NSE:NIFTY500", d: "Nifty 500" },
         { s: "NSE:NIFTYMIDCAP150", d: "Nifty Midcap 150" },
         { s: "NSE:NIFTYSMLCAP250", d: "Nifty Smallcap 250" },
         { s: "NSE:INDIAVIX", d: "India VIX" },
@@ -97,19 +97,23 @@ function TradingViewMarketOverview() {
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+
+    // Clear previous content
     container.innerHTML = "";
 
-    // Create widget container
-    const widget = document.createElement("div");
-    widget.className = "tradingview-widget-container__widget";
-    container.appendChild(widget);
+    // Create the widget container structure
+    container.className = "tradingview-widget-container";
+    container.style.height = "500px";
+    container.style.width = "100%";
 
-    // Create script as a sibling of the widget div
+    const widgetDiv = document.createElement("div");
+    widgetDiv.className = "tradingview-widget-container__widget";
+    container.appendChild(widgetDiv);
+
     const script = document.createElement("script");
-    script.src =
-      "https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js";
-    script.async = true;
     script.type = "text/javascript";
+    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js";
+    script.async = true;
     script.innerHTML = JSON.stringify(WIDGET_CONFIG);
     container.appendChild(script);
 
@@ -118,7 +122,7 @@ function TradingViewMarketOverview() {
     };
   }, []);
 
-  return <div ref={containerRef} className="tradingview-widget-container" style={{ height: "500px" }} />;
+  return <div ref={containerRef} />;
 }
 
 type Point = { yield: number; changeBps: number | null };
