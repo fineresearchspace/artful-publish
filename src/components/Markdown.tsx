@@ -4,6 +4,7 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 import { cn } from "@/lib/utils";
+import { useMemo } from "react";
 
 marked.setOptions({ gfm: true, breaks: false });
 
@@ -29,15 +30,23 @@ interface MarkdownProps {
   className?: string;
 }
 
+/** True when the stored content is already rich HTML (produced by the editor). */
+export function isHtmlContent(value: string): boolean {
+  return /^\s*<(p|h[1-6]|ul|ol|blockquote|pre|table|img|figure|div|hr)\b/i.test(value ?? "");
+}
+
 /**
  * Renders markdown to a sanitized HTML string.
  * Used by the Substack export provider for HTML export.
  */
 export function renderMarkdown(markdown: string): string {
-  return marked.parse(markdown ?? "", { async: false }) as string;
+  const value = markdown ?? "";
+  if (isHtmlContent(value)) return value;
+  return marked.parse(value, { async: false }) as string;
 }
 
 export function Markdown({ content, className }: MarkdownProps) {
+  const html = useMemo(() => renderMarkdown(content), [content]);
   return (
     <div className={cn("article-prose", className)}>
       <ReactMarkdown

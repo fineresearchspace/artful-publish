@@ -15,9 +15,9 @@ import { useAuth } from "@/hooks/useAuth";
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
     meta: [
-      { title: "Writing Studio — Weekly Wonders" },
+      { title: "Writing Studio — The Context" },
       { name: "robots", content: "noindex" },
-      { name: "description", content: "Private writing studio for Weekly Wonders." },
+      { name: "description", content: "Private writing studio for The Context." },
     ],
   }),
   beforeLoad: async () => {
@@ -62,7 +62,7 @@ function AdminLayout() {
         <div className="pixel-frame max-w-sm p-8 text-center">
           <h1 className="pixel-font text-sm">Not the owner</h1>
           <p className="mt-3 text-sm text-muted-foreground">
-            This studio belongs to the Weekly Wonders owner account.
+            This studio belongs to the The Context owner account.
           </p>
           <button
             onClick={async () => {
@@ -80,7 +80,7 @@ function AdminLayout() {
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
-      <aside className="border-b-2 border-ink bg-paper md:w-60 md:shrink-0 md:border-b-0 md:border-r-2">
+      <aside className="border-b border-border bg-paper md:w-60 md:shrink-0 md:border-b-0 md:border-r-2">
         <div className="flex items-center gap-3 p-4">
           <Link to="/" className="pixel-font text-xs text-ink">
             WW Studio

@@ -85,13 +85,13 @@ function AdminCategories() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Name"
-          className="w-full border-2 border-ink bg-paper px-3 py-2 text-sm outline-none focus:border-primary"
+          className="w-full border border-border bg-paper px-3 py-2 text-sm outline-none focus:border-primary"
         />
         <input
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Short description"
-          className="w-full border-2 border-ink bg-paper px-3 py-2 text-sm outline-none focus:border-primary"
+          className="w-full border border-border bg-paper px-3 py-2 text-sm outline-none focus:border-primary"
         />
         <button
           type="submit"
@@ -101,7 +101,7 @@ function AdminCategories() {
         </button>
       </form>
 
-      <ul className="mt-8 divide-y-2 divide-ink border-2 border-ink bg-paper">
+      <ul className="mt-8 divide-y-2 divide-ink border border-border bg-paper">
         {categories.map((c) => (
           <li key={c.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
             <span className="pixel-font w-40 text-[11px]">{c.name}</span>
@@ -112,7 +112,7 @@ function AdminCategories() {
                   update.mutate({ id: c.id, description: e.target.value });
                 }
               }}
-              className="min-w-0 flex-1 border-2 border-ink bg-background px-2 py-1 text-sm outline-none focus:border-primary"
+              className="min-w-0 flex-1 border border-border bg-background px-2 py-1 text-sm outline-none focus:border-primary"
             />
             <button
               aria-label={`Delete ${c.name}`}

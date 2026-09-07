@@ -38,7 +38,7 @@ export const listPublishedArticles = createServerFn({ method: "GET" }).handler(
       supabase
         .from("articles")
         .select(ARTICLE_LIST_FIELDS)
-        .in("status", ["published_web", "published_substack"])
+        .in("status", ["published_web", "exported_substack"])
         .order("published_at", { ascending: false }),
       supabase.from("categories").select("*").order("sort_order"),
     ]);
@@ -55,31 +55,33 @@ export const getPublishedArticle = createServerFn({ method: "GET" })
     // Validate input with Zod before processing
     return slugSchema.parse(data.slug);
   })
-  .handler(async ({ data }): Promise<{ article: Article | null; related: ArticleListItem[] }> => {
-    const supabase = publicClient();
-    const { data: article } = await supabase
-      .from("articles")
-      .select("*")
-      .eq("slug", data)
-      .in("status", ["published_web", "published_substack"])
-      .maybeSingle();
+  .handler(
+    async ({ data }): Promise<{ article: Article | null; related: ArticleListItem[] }> => {
+      const supabase = publicClient();
+      const { data: article } = await supabase
+        .from("articles")
+        .select("*")
+        .eq("slug", data)
+        .in("status", ["published_web", "exported_substack"])
+        .maybeSingle();
 
-    if (!article) return { article: null, related: [] };
+      if (!article) return { article: null, related: [] };
 
-    const { data: related } = await supabase
-      .from("articles")
-      .select(ARTICLE_LIST_FIELDS)
-      .in("status", ["published_web", "published_substack"])
-      .eq("category", (article as Article).category)
-      .neq("slug", data)
-      .order("published_at", { ascending: false })
-      .limit(3);
+      const { data: related } = await supabase
+        .from("articles")
+        .select(ARTICLE_LIST_FIELDS)
+        .in("status", ["published_web", "exported_substack"])
+        .eq("category", (article as Article).category)
+        .neq("slug", data)
+        .order("published_at", { ascending: false })
+        .limit(3);
 
-    return {
-      article: article as unknown as Article,
-      related: (related ?? []) as unknown as ArticleListItem[],
-    };
-  });
+      return {
+        article: article as unknown as Article,
+        related: (related ?? []) as unknown as ArticleListItem[],
+      };
+    },
+  );
 
 export const registerArticleView = createServerFn({ method: "POST" })
   .inputValidator((data: { slug: string }) => {

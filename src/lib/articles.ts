@@ -2,7 +2,7 @@ export type ArticleStatus =
   | "draft"
   | "ready"
   | "published_web"
-  | "published_substack"
+  | "exported_substack"
   | "failed";
 
 export type Article = {
@@ -37,14 +37,14 @@ export type Category = {
 
 export const PUBLIC_STATUSES: ArticleStatus[] = [
   "published_web",
-  "published_substack",
+  "exported_substack",
 ];
 
 export const STATUS_LABELS: Record<ArticleStatus, string> = {
   draft: "Draft",
-  ready: "Ready",
+  ready: "Ready to publish",
   published_web: "Published to website",
-  published_substack: "Published to Substack",
+  exported_substack: "Exported for Substack",
   failed: "Failed",
 };
 
@@ -52,7 +52,7 @@ export const STATUS_SHORT: Record<ArticleStatus, string> = {
   draft: "Draft",
   ready: "Ready",
   published_web: "Website",
-  published_substack: "Substack",
+  exported_substack: "Exported",
   failed: "Failed",
 };
 
@@ -77,7 +77,9 @@ export function slugify(input: string): string {
     .slice(0, 80);
 }
 
-export function estimateReadingTime(markdown: string): number {
-  const words = markdown.trim().split(/\s+/).filter(Boolean).length;
+export function estimateReadingTime(content: string): number {
+  const text = (content ?? "").replace(/<[^>]+>/g, " ");
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
   return Math.max(1, Math.round(words / 220));
 }
+

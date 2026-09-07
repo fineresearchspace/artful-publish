@@ -17,7 +17,8 @@ function parseFrontmatter(raw: string): NewsletterPost {
   if (!match) {
     throw new Error("Newsletter post missing frontmatter block");
   }
-  const [, fm, body] = match;
+  const fm = match[1] ?? "";
+  const body = match[2] ?? "";
 
   const data: Record<string, string> = {};
   fm.split("\n").forEach((line) => {
@@ -36,14 +37,15 @@ function parseFrontmatter(raw: string): NewsletterPost {
   });
 
   return {
-    title: data.title ?? "",
-    subtitle: data.subtitle ?? "",
-    date: data.date ?? "",
-    slug: data.slug ?? "",
-    source: data.source ?? "",
-    original_post_id: data.original_post_id ?? "",
+    title: data["title"] ?? "",
+    subtitle: data["subtitle"] ?? "",
+    date: data["date"] ?? "",
+    slug: data["slug"] ?? "",
+    source: data["source"] ?? "",
+    original_post_id: data["original_post_id"] ?? "",
     body: body.trim(),
   };
+
 }
 
 // Eagerly import every .md file in this folder as a raw string.
