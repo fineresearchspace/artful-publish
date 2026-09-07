@@ -51,19 +51,19 @@ const WIDGET_CONFIG = {
     {
       title: "US",
       symbols: [
-        { s: "FOREXCOM:SPX", d: "S&P 500" },
-        { s: "FOREXCOM:NDX", d: "Nasdaq 100" },
-        { s: "FOREXCOM:DJI", d: "Dow 30" },
-        { s: "TVC:RUT", d: "Russell 2000" },
-        { s: "TVC:VIX", d: "VIX" },
+        { s: "SPX", d: "S&P 500" },
+        { s: "NDX", d: "Nasdaq 100" },
+        { s: "DJI", d: "Dow 30" },
+        { s: "RUT", d: "Russell 2000" },
+        { s: "VIX", d: "VIX" },
       ],
       originalTitle: "US",
     },
     {
       title: "Japan",
       symbols: [
-        { s: "INDEX:NKY", d: "Nikkei 225" },
-        { s: "INDEX:TPX", d: "TOPIX" },
+        { s: "JP225", d: "Nikkei 225" },
+        { s: "TOPX", d: "TOPIX" },
         { s: "FX:USDJPY", d: "USD/JPY" },
       ],
       originalTitle: "Japan",
@@ -71,7 +71,7 @@ const WIDGET_CONFIG = {
     {
       title: "Europe",
       symbols: [
-        { s: "GERMAN40", d: "DAX" },
+        { s: "DE100", d: "DAX" },
         { s: "UK100", d: "FTSE 100" },
         { s: "FR40", d: "CAC 40" },
         { s: "EU50", d: "Euro Stoxx 50" },
@@ -99,10 +99,12 @@ function TradingViewMarketOverview() {
     if (!container) return;
     container.innerHTML = "";
 
+    // Create widget container
     const widget = document.createElement("div");
     widget.className = "tradingview-widget-container__widget";
     container.appendChild(widget);
 
+    // Create script as a sibling of the widget div
     const script = document.createElement("script");
     script.src =
       "https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js";
@@ -116,7 +118,7 @@ function TradingViewMarketOverview() {
     };
   }, []);
 
-  return <div ref={containerRef} className="tradingview-widget-container" />;
+  return <div ref={containerRef} className="tradingview-widget-container" style={{ height: "500px" }} />;
 }
 
 type Point = { yield: number; changeBps: number | null };
