@@ -2,24 +2,21 @@ import React from "react";
 import { ClientOnly } from "@tanstack/react-router";
 
 /**
- * TradingView Market Overview using iframe embed.
- * This uses TradingView's documented iframe approach instead of script injection,
- * which is more reliable in React environments.
+ * TradingView Market Overview using direct embed URL.
+ * Uses properly formatted tickers for all regions.
  */
 
 function TradingViewMarketOverview() {
   return (
-    <div className="tradingview-widget-container">
-      <div className="tradingview-widget-container__widget">
-        <iframe
-          src="https://www.tradingview.com/embed-widget/market-overview/?locale=en#%7B%22showChart%22%3Atrue%2C%22width%22%3A%22100%25%22%2C%22height%22%3A500%2C%22colorTheme%22%3A%22light%22%2C%22dateRange%22%3A%221D%22%2C%22showSymbolLogo%22%3Atrue%2C%22showFloatingTooltip%22%3Atrue%2C%22isTransparent%22%3Atrue%2C%22plotLineColorGrowing%22%3A%22rgba%2841%2C%2098%2C%20255%2C%201%29%22%2C%22plotLineColorFalling%22%3A%22rgba%2841%2C%2098%2C%20255%2C%201%29%22%2C%22gridLineColor%22%3A%22rgba%2842%2C%2046%2C%2057%2C%200.06%29%22%2C%22scaleFontColor%22%3A%22rgba%2819%2C%2023%2C%2034%2C%201%29%22%2C%22belowLineFillColorGrowing%22%3A%22rgba%2841%2C%2098%2C%20255%2C%200.12%29%22%2C%22belowLineFillColorFalling%22%3A%22rgba%2841%2C%2098%2C%20255%2C%200.12%29%22%2C%22belowLineFillColorGrowingBottom%22%3A%22rgba%2841%2C%2098%2C%20255%2C%200%29%22%2C%22belowLineFillColorFallingBottom%22%3A%22rgba%2841%2C%2098%2C%20255%2C%200%29%22%2C%22symbolActiveColor%22%3A%22rgba%2841%2C%2098%2C%20255%2C%200.12%29%22%2C%22tabs%22%3A%5B%7B%22title%22%3A%22India%22%2C%22symbols%22%3A%5B%7B%22s%22%3A%22SENSEX%22%2C%22d%22%3A%22Sensex%22%7D%2C%7B%22s%22%3A%22NIFTY50%22%2C%22d%22%3A%22NIFTY%2050%22%7D%2C%7B%22s%22%3A%22NIFTYJR%22%2C%22d%22%3A%22NIFTY%20Next%2050%22%7D%2C%7B%22s%22%3A%22NIFTYIT%22%2C%22d%22%3A%22NIFTY%20IT%22%7D%2C%7B%22s%22%3A%22NIFTYBANK%22%2C%22d%22%3A%22NIFTY%20Bank%22%7D%2C%7B%22s%22%3A%22NIFTYPHARMA%22%2C%22d%22%3A%22NIFTY%20Pharma%22%7D%2C%7B%22s%22%3A%22NIFTYAUTO%22%2C%22d%22%3A%22NIFTY%20Auto%22%7D%2C%7B%22s%22%3A%22NIFTYREALTY%22%2C%22d%22%3A%22NIFTY%20Realty%22%7D%5D%2C%22originalTitle%22%3A%22India%22%7D%2C%7B%22title%22%3A%22US%22%2C%22symbols%22%3A%5B%7B%22s%22%3A%22SPX%22%2C%22d%22%3A%22S%26P%20500%22%7D%2C%7B%22s%22%3A%22NDX%22%2C%22d%22%3A%22Nasdaq%20100%22%7D%2C%7B%22s%22%3A%22DJI%22%2C%22d%22%3A%22Dow%2030%22%7D%2C%7B%22s%22%3A%22RUT%22%2C%22d%22%3A%22Russell%202000%22%7D%2C%7B%22s%22%3A%22VIX%22%2C%22d%22%3A%22VIX%22%7D%5D%2C%22originalTitle%22%3A%22US%22%7D%2C%7B%22title%22%3A%22Japan%22%2C%22symbols%22%3A%5B%7B%22s%22%3A%22TVC%3AN225%22%2C%22d%22%3A%22Nikkei%20225%22%7D%2C%7B%22s%22%3A%22TVC%3AJPXN%22%2C%22d%22%3A%22Topix%22%7D%2C%7B%22s%22%3A%22FX%3AUSDJPY%22%2C%22d%22%3A%22USD%2FJPY%22%7D%5D%2C%22originalTitle%22%3A%22Japan%22%7D%2C%7B%22title%22%3A%22Europe%22%2C%22symbols%22%3A%5B%7B%22s%22%3A%22TVC%3ADAX%22%2C%22d%22%3A%22DAX%22%7D%2C%7B%22s%22%3A%22TVC%3AFTSE%22%2C%22d%22%3A%22FTSE%20100%22%7D%2C%7B%22s%22%3A%22TVC%3AFCHI%22%2C%22d%22%3A%22CAC%2040%22%7D%2C%7B%22s%22%3A%22TVC%3ASTOXX50E%22%2C%22d%22%3A%22Euro%20Stoxx%2050%22%7D%5D%2C%22originalTitle%22%3A%22Europe%22%7D%2C%7B%22title%22%3A%22Forex%22%2C%22symbols%22%3A%5B%7B%22s%22%3A%22FX_IDC%3AUSDINR%22%2C%22d%22%3A%22USD%2FINR%22%7D%2C%7B%22s%22%3A%22FX%3AEURUSD%22%2C%22d%22%3A%22EUR%2FUSD%22%7D%2C%7B%22s%22%3A%22FX%3AGBPUSD%22%2C%22d%22%3A%22GBP%2FUSD%22%7D%2C%7B%22s%22%3A%22FX%3AUSDJPY%22%2C%22d%22%3A%22USD%2FJPY%22%7D%5D%2C%22originalTitle%22%3A%22Forex%22%7D%5D%7D"
-          style={{ width: "100%", height: "500px" }}
-          frameBorder="0"
-          allowTransparency={true}
-          scrolling="no"
-          allowFullScreen
-        />
-      </div>
+    <div className="tradingview-widget-container" style={{ width: "100%", height: "500px" }}>
+      <iframe
+        src="https://s.tradingview.com/embed-widget/market-overview/?locale=en#%7B%22showChart%22%3Atrue%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22500%22%2C%22colorTheme%22%3A%22light%22%2C%22dateRange%22%3A%221D%22%2C%22showSymbolLogo%22%3Atrue%2C%22showFloatingTooltip%22%3Atrue%2C%22isTransparent%22%3Atrue%2C%22plotLineColorGrowing%22%3A%22rgba%2841%2C98%2C255%2C1%29%22%2C%22plotLineColorFalling%22%3A%22rgba%2841%2C98%2C255%2C1%29%22%2C%22gridLineColor%22%3A%22rgba%2842%2C46%2C57%2C0.06%29%22%2C%22scaleFontColor%22%3A%22rgba%2819%2C23%2C34%2C1%29%22%2C%22belowLineFillColorGrowing%22%3A%22rgba%2841%2C98%2C255%2C0.12%29%22%2C%22belowLineFillColorFalling%22%3A%22rgba%2841%2C98%2C255%2C0.12%29%22%2C%22belowLineFillColorGrowingBottom%22%3A%22rgba%2841%2C98%2C255%2C0%29%22%2C%22belowLineFillColorFallingBottom%22%3A%22rgba%2841%2C98%2C255%2C0%29%22%2C%22symbolActiveColor%22%3A%22rgba%2841%2C98%2C255%2C0.12%29%22%2C%22tabs%22%3A%5B%7B%22title%22%3A%22India%22%2C%22originalTitle%22%3A%22India%22%2C%22symbols%22%3A%5B%7B%22s%22%3A%22SENSEX%22%2C%22d%22%3A%22Sensex%22%7D%2C%7B%22s%22%3A%22NIFTY50%22%2C%22d%22%3A%22NIFTY%2050%22%7D%2C%7B%22s%22%3A%22NIFTYJR%22%2C%22d%22%3A%22NIFTY%20Jr%22%7D%2C%7B%22s%22%3A%22NIFTYIT%22%2C%22d%22%3A%22NIFTY%20IT%22%7D%2C%7B%22s%22%3A%22NIFTYBANK%22%2C%22d%22%3A%22NIFTY%20Bank%22%7D%2C%7B%22s%22%3A%22NIFTYPHARMA%22%2C%22d%22%3A%22NIFTY%20Pharma%22%7D%2C%7B%22s%22%3A%22NIFTYAUTO%22%2C%22d%22%3A%22NIFTY%20Auto%22%7D%2C%7B%22s%22%3A%22NIFTYREALTY%22%2C%22d%22%3A%22NIFTY%20Realty%22%7D%5D%7D%2C%7B%22title%22%3A%22US%22%2C%22originalTitle%22%3A%22US%22%2C%22symbols%22%3A%5B%7B%22s%22%3A%22SPX%22%2C%22d%22%3A%22S%26P%20500%22%7D%2C%7B%22s%22%3A%22NDX%22%2C%22d%22%3A%22Nasdaq%20100%22%7D%2C%7B%22s%22%3A%22DJI%22%2C%22d%22%3A%22Dow%20Jones%22%7D%2C%7B%22s%22%3A%22RUT%22%2C%22d%22%3A%22Russell%202000%22%7D%2C%7B%22s%22%3A%22VIX%22%2C%22d%22%3A%22VIX%22%7D%5D%7D%2C%7B%22title%22%3A%22Japan%22%2C%22originalTitle%22%3A%22Japan%22%2C%22symbols%22%3A%5B%7B%22s%22%3A%22TVC%3AN225%22%2C%22d%22%3A%22Nikkei%20225%22%7D%2C%7B%22s%22%3A%22TVC%3AJPXN%22%2C%22d%22%3A%22Topix%22%7D%2C%7B%22s%22%3A%22FX%3AUSDJPY%22%2C%22d%22%3A%22USD%2FJPY%22%7D%5D%7D%2C%7B%22title%22%3A%22Europe%22%2C%22originalTitle%22%3A%22Europe%22%2C%22symbols%22%3A%5B%7B%22s%22%3A%22TVC%3ADAX%22%2C%22d%22%3A%22DAX%22%7D%2C%7B%22s%22%3A%22TVC%3AFTSE%22%2C%22d%22%3A%22FTSE%20100%22%7D%2C%7B%22s%22%3A%22TVC%3AFCHI%22%2C%22d%22%3A%22CAC%2040%22%7D%2C%7B%22s%22%3A%22TVC%3ASTOXX50E%22%2C%22d%22%3A%22Euro%20Stoxx%2050%22%7D%5D%7D%2C%7B%22title%22%3A%22Forex%22%2C%22originalTitle%22%3A%22Forex%22%2C%22symbols%22%3A%5B%7B%22s%22%3A%22FX_IDC%3AUSDINR%22%2C%22d%22%3A%22USD%2FINR%22%7D%2C%7B%22s%22%3A%22FX%3AEURUSD%22%2C%22d%22%3A%22EUR%2FUSD%22%7D%2C%7B%22s%22%3A%22FX%3AGBPUSD%22%2C%22d%22%3A%22GBP%2FUSD%22%7D%2C%7B%22s%22%3A%22FX%3AUSDJPY%22%2C%22d%22%3A%22USD%2FJPY%22%7D%5D%7D%5D%7D"
+        title="TradingView Market Overview"
+        style={{ width: "100%", height: "100%" }}
+        frameBorder="0"
+        allowFullScreen
+        allow="clipboard-read clipboard-write"
+      />
     </div>
   );
 }
