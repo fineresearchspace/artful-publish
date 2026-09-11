@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Eye, Save, Upload, Star } from "lucide-react";
+import { Eye, Save, Upload, Star, Send } from "lucide-react";
 import {
   createArticle,
   fetchArticle,
@@ -17,11 +17,12 @@ import {
   type Article,
   type ArticleStatus,
 } from "@/lib/articles";
-import { Markdown } from "@/components/Markdown";
+import { Markdown, renderMarkdown } from "@/components/Markdown";
 import { PixelArt, PIXEL_ART_KEYS, PIXEL_ART_LABELS } from "@/components/PixelArt";
 import { StatusBadge } from "@/components/admin/StatusBadge";
-import { EditorToolbar } from "@/components/admin/EditorToolbar";
+import { RichEditor } from "@/components/admin/RichEditor";
 import { SubstackPanel } from "@/components/admin/SubstackPanel";
+
 
 export const Route = createFileRoute("/_authenticated/admin/write/$id")({
   component: WritePage,
@@ -55,8 +56,10 @@ function WritePage() {
   const [saving, setSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<string | null>(null);
   const [publishError, setPublishError] = useState<string | null>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [substackOpen, setSubstackOpen] = useState(false);
+
   const dirtyRef = useRef(false);
+
 
   const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
@@ -155,13 +158,14 @@ function WritePage() {
     try {
       const extra: Partial<Article> = { status };
       if (
-        (status === "published_web" || status === "published_substack") &&
+        (status === "published_web" || status === "exported_substack") &&
         !draft.published_at
       ) {
         extra.published_at = new Date().toISOString();
       }
       await save(extra);
       toast.success(`Status: ${STATUS_LABELS[status]}`);
+      return true;
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error";
       setPublishError(message);
@@ -169,24 +173,18 @@ function WritePage() {
         await updateArticle(articleId, { status: "failed" }).catch(() => undefined);
         setDraft((d) => ({ ...d, status: "failed" }));
       }
+      return false;
     }
   }
 
-  function insert(before: string, after = "", placeholder = "") {
-    const el = textareaRef.current;
-    if (!el) return;
-    const start = el.selectionStart;
-    const end = el.selectionEnd;
-    const value = draft.content ?? "";
-    const selected = value.slice(start, end) || placeholder;
-    const next = value.slice(0, start) + before + selected + after + value.slice(end);
-    set({ content: next });
-    requestAnimationFrame(() => {
-      el.focus();
-      el.selectionStart = start + before.length;
-      el.selectionEnd = start + before.length + selected.length;
-    });
+  async function publishEverywhere() {
+    const ok = await setStatus("published_web");
+    if (ok) setSubstackOpen(true);
   }
+
+
+  const editorHtml = useMemo(() => renderMarkdown(draft.content ?? ""), [draft.content]);
+
 
   const status = (draft.status ?? "draft") as ArticleStatus;
 
@@ -216,10 +214,17 @@ function WritePage() {
           </button>
           <button
             onClick={() => void setStatus("published_web")}
+            className="pixel-frame-sm pixel-lift pixel-font flex items-center gap-2 bg-paper px-3 py-2 text-[11px]"
+          >
+            <Upload className="size-3.5" /> Website only
+          </button>
+          <button
+            onClick={() => void publishEverywhere()}
             className="pixel-frame-sm pixel-lift pixel-font flex items-center gap-2 bg-primary px-3 py-2 text-[11px] text-primary-foreground"
           >
-            <Upload className="size-3.5" /> Publish to website
+            <Send className="size-3.5" /> Publish everywhere
           </button>
+
         </div>
       </header>
 
@@ -237,20 +242,20 @@ function WritePage() {
             value={draft.title ?? ""}
             onChange={(e) => set({ title: e.target.value })}
             placeholder="Article title"
-            className="w-full border-2 border-ink bg-paper px-4 py-3 font-serif text-2xl outline-none focus:border-primary"
+            className="w-full border border-border bg-paper px-4 py-3 font-serif text-2xl outline-none focus:border-primary"
           />
           <input
             value={draft.subtitle ?? ""}
             onChange={(e) => set({ subtitle: e.target.value })}
             placeholder="Subtitle / deck"
-            className="mt-3 w-full border-2 border-ink bg-paper px-4 py-2 font-serif text-lg outline-none focus:border-primary"
+            className="mt-3 w-full border border-border bg-paper px-4 py-2 font-serif text-lg outline-none focus:border-primary"
           />
           <textarea
             value={draft.excerpt ?? ""}
             onChange={(e) => set({ excerpt: e.target.value })}
             placeholder="Short excerpt shown on cards and in previews"
             rows={2}
-            className="mt-3 w-full border-2 border-ink bg-paper px-4 py-2 text-sm outline-none focus:border-primary"
+            className="mt-3 w-full border border-border bg-paper px-4 py-2 text-sm outline-none focus:border-primary"
           />
 
           {showPreview ? (
@@ -284,19 +289,15 @@ function WritePage() {
             </div>
           ) : (
             <div className="mt-4">
-              <EditorToolbar onInsert={insert} />
-              <textarea
-                ref={textareaRef}
-                value={draft.content ?? ""}
-                onChange={(e) => set({ content: e.target.value })}
-                placeholder={"Write in Markdown…\n\n## A heading\n\nA paragraph."}
-                rows={26}
-                className="w-full border-2 border-t-0 border-ink bg-paper p-4 font-serif text-base leading-relaxed outline-none focus:border-primary"
+              <RichEditor
+                content={editorHtml}
+                onChange={(html) => set({ content: html })}
               />
               <p className="pixel-font mt-2 text-[9px] text-muted-foreground">
-                Markdown mode · {estimateReadingTime(draft.content ?? "")} min read estimate
+                Rich text mode · {estimateReadingTime(draft.content ?? "")} min read estimate
               </p>
             </div>
+
           )}
         </div>
 
@@ -310,7 +311,7 @@ function WritePage() {
               <select
                 value={draft.category ?? "Ideas"}
                 onChange={(e) => set({ category: e.target.value })}
-                className="mt-1 w-full border-2 border-ink bg-paper px-2 py-2 text-sm"
+                className="mt-1 w-full border border-border bg-paper px-2 py-2 text-sm"
               >
                 {categories.map((c) => (
                   <option key={c.id} value={c.name}>
@@ -326,7 +327,7 @@ function WritePage() {
                 value={draft.slug ?? ""}
                 onChange={(e) => set({ slug: slugify(e.target.value) })}
                 placeholder={slugify(draft.title ?? "")}
-                className="mt-1 w-full border-2 border-ink bg-paper px-2 py-1.5 text-sm"
+                className="mt-1 w-full border border-border bg-paper px-2 py-1.5 text-sm"
               />
             </label>
 
@@ -340,7 +341,7 @@ function WritePage() {
                   dirtyRef.current = true;
                   setTagInput(e.target.value);
                 }}
-                className="mt-1 w-full border-2 border-ink bg-paper px-2 py-1.5 text-sm"
+                className="mt-1 w-full border border-border bg-paper px-2 py-1.5 text-sm"
               />
             </label>
 
@@ -352,7 +353,7 @@ function WritePage() {
                   min={1}
                   value={draft.reading_time ?? 1}
                   onChange={(e) => set({ reading_time: Number(e.target.value) })}
-                  className="mt-1 w-full border-2 border-ink bg-paper px-2 py-1.5 text-sm"
+                  className="mt-1 w-full border border-border bg-paper px-2 py-1.5 text-sm"
                 />
               </label>
               <label className="block">
@@ -367,7 +368,7 @@ function WritePage() {
                         : null,
                     })
                   }
-                  className="mt-1 w-full border-2 border-ink bg-paper px-2 py-1.5 text-sm"
+                  className="mt-1 w-full border border-border bg-paper px-2 py-1.5 text-sm"
                 />
               </label>
             </div>
@@ -375,7 +376,7 @@ function WritePage() {
             <button
               type="button"
               onClick={() => set({ featured: !draft.featured })}
-              className={`pixel-font flex w-full items-center justify-center gap-2 border-2 border-ink px-3 py-2 text-[10px] ${
+              className={`pixel-font flex w-full items-center justify-center gap-2 border border-border px-3 py-2 text-[10px] ${
                 draft.featured ? "bg-accent text-accent-foreground" : "bg-paper"
               }`}
             >
@@ -393,7 +394,7 @@ function WritePage() {
                 value={draft.cover_image ?? ""}
                 onChange={(e) => set({ cover_image: e.target.value })}
                 placeholder="https://…"
-                className="mt-1 w-full border-2 border-ink bg-paper px-2 py-1.5 text-sm"
+                className="mt-1 w-full border border-border bg-paper px-2 py-1.5 text-sm"
               />
             </label>
             <span className="pixel-font text-[9px] text-muted-foreground">
@@ -407,7 +408,7 @@ function WritePage() {
                   title={PIXEL_ART_LABELS[key]}
                   onClick={() => set({ pixel_art_image: key })}
                   className={`border-2 p-1 ${
-                    draft.pixel_art_image === key ? "border-primary" : "border-ink"
+                    draft.pixel_art_image === key ? "border-primary" : "border-border"
                   }`}
                 >
                   <PixelArt variant={key} className="aspect-square w-full" />
@@ -419,12 +420,12 @@ function WritePage() {
           <div className="pixel-panel space-y-2 p-4">
             <p className="pixel-font text-[10px] text-primary">Publishing status</p>
             {(
-              ["draft", "ready", "published_web", "published_substack"] as ArticleStatus[]
+              ["draft", "ready", "published_web", "exported_substack"] as ArticleStatus[]
             ).map((s) => (
               <button
                 key={s}
                 onClick={() => void setStatus(s)}
-                className={`pixel-font block w-full border-2 border-ink px-3 py-2 text-left text-[10px] ${
+                className={`pixel-font block w-full border border-border px-3 py-2 text-left text-[10px] ${
                   status === s ? "bg-ink text-background" : "bg-paper hover:bg-accent"
                 }`}
               >
@@ -439,12 +440,19 @@ function WritePage() {
                 value={draft.substack_url ?? ""}
                 onChange={(e) => set({ substack_url: e.target.value })}
                 placeholder="https://…substack.com/p/…"
-                className="mt-1 w-full border-2 border-ink bg-paper px-2 py-1.5 text-sm"
+                className="mt-1 w-full border border-border bg-paper px-2 py-1.5 text-sm"
               />
             </label>
           </div>
 
-          <SubstackPanel draft={{ ...(payload as Article), id: articleId ?? "" }} />
+          <SubstackPanel
+            draft={{ ...(payload as Article), id: articleId ?? "" }}
+            onSent={() => void setStatus("exported_substack")}
+            open={substackOpen}
+            onOpenChange={setSubstackOpen}
+          />
+
+
         </aside>
       </div>
     </div>

@@ -17,8 +17,8 @@ function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="pixel-frame max-w-md p-10 text-center">
-        <h1 className="pixel-font text-4xl text-ink">404</h1>
-        <h2 className="pixel-font mt-4 text-sm">Page not found</h2>
+        <h1 className="display-font text-6xl text-ink">404</h1>
+        <h2 className="display-font mt-3 text-2xl">Page not found</h2>
         <p className="mt-3 text-sm text-muted-foreground">
           This corner of the archive doesn't exist.
         </p>
@@ -43,7 +43,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="pixel-frame max-w-md p-10 text-center">
-        <h1 className="pixel-font text-sm text-ink">This page didn't load</h1>
+        <h1 className="display-font text-3xl text-ink">This page didn't load</h1>
         <p className="mt-3 text-sm text-muted-foreground">
           Something went wrong. Try refreshing or head back home.
         </p>
@@ -71,12 +71,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Weekly Wonders" },
+      { title: "The Context" },
       {
         name: "description",
         content: "Curious ideas about markets, money, business and the world around them.",
       },
-      { property: "og:site_name", content: "Weekly Wonders" },
+      { property: "og:site_name", content: "The Context" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -86,9 +86,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],
   }),
   shellComponent: RootShell,

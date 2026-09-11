@@ -1,0 +1,346 @@
+import { useEffect, useState, useCallback } from "react";
+
+const NEWS_API_BASE = "/api";
+
+type Article = {
+  id: string;
+  title: string;
+  summary: string;
+  source: string;
+  sourceUrl: string;
+  imageUrl: string | null;
+  publishedAt: string;
+  category: string;
+  impactLabel?: "HIGH" | "MEDIUM" | "LOW";
+};
+
+type NewsResponse = {
+  items: Article[];
+  total: number;
+  sourcesFailed?: string[];
+};
+
+const CATEGORIES = [
+  "All Categories",
+  "Markets",
+  "Economy & Policy",
+  "Companies & Corporate",
+  "Industries",
+  "Global Business",
+  "Investing",
+  "Currency",
+];
+
+type FxPair = { pair: string; rate: number; changePct: number | null };
+type FxResponse = { pairs: FxPair[]; asOf: string };
+
+// Consistent per-category fallback so every entry has the same visual weight
+// when a feed ships no image.
+const CATEGORY_FALLBACK: Record<string, { icon: string; tone: string }> = {
+  Markets: { icon: "\u25B2", tone: "bg-primary/10" },
+  "Economy & Policy": { icon: "\u25C6", tone: "bg-accent/40" },
+  "Companies & Corporate": { icon: "\u25A0", tone: "bg-muted" },
+  Industries: { icon: "\u2699", tone: "bg-secondary" },
+  "Global Business": { icon: "\u25CF", tone: "bg-accent/25" },
+  Investing: { icon: "\u25B6", tone: "bg-primary/15" },
+  Currency: { icon: "\u20B9", tone: "bg-muted" },
+};
+
+function Thumbnail({ article }: { article: Article }) {
+  const [failed, setFailed] = useState(false);
+  const fallback = CATEGORY_FALLBACK[article.category] ?? { icon: "\u25A0", tone: "bg-muted" };
+
+  if (article.imageUrl && !failed) {
+    return (
+      <img
+        src={article.imageUrl}
+        alt=""
+        loading="lazy"
+        className="pixelated size-24 shrink-0 border border-border object-cover sm:size-28"
+        onError={() => setFailed(true)}
+      />
+    );
+  }
+
+  return (
+    <div
+      className={`flex size-24 shrink-0 flex-col items-center justify-center gap-1 border border-border sm:size-28 ${fallback.tone}`}
+      aria-hidden="true"
+    >
+      <span className="pixel-font text-xl text-ink">{fallback.icon}</span>
+      <span className="pixel-font px-1 text-center text-[7px] uppercase leading-tight text-ink">
+        {article.category}
+      </span>
+    </div>
+  );
+}
+
+function CurrencyStrip() {
+  const [pairs, setPairs] = useState<FxPair[]>([]);
+  const [asOf, setAsOf] = useState<string>("");
+  const [failedFx, setFailedFx] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/fx")
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .then((data: FxResponse) => {
+        if (!active) return;
+        setPairs(data.pairs ?? []);
+        setAsOf(data.asOf ?? "");
+      })
+      .catch(() => active && setFailedFx(true));
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  if (failedFx || pairs.length === 0) return null;
+
+  return (
+    <div className="mb-6">
+      <div className="mb-2 flex items-baseline justify-between">
+        <h3 className="pixel-font text-[10px] uppercase text-ink">Live FX Rates</h3>
+        <span className="font-sans text-[10px] text-muted-foreground">
+          ECB reference{asOf ? ` \u00B7 ${asOf}` : ""}
+        </span>
+      </div>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+        {pairs.map((p) => {
+          const up = (p.changePct ?? 0) >= 0;
+          return (
+            <div key={p.pair} className="pixel-frame-sm bg-paper px-3 py-2">
+              <div className="pixel-font text-[9px] uppercase text-muted-foreground">{p.pair}</div>
+              <div className="font-serif text-lg font-semibold text-ink">{p.rate}</div>
+              <div
+                className={`font-sans text-xs ${p.changePct === null ? "text-muted-foreground" : up ? "text-primary" : "text-destructive"}`}
+              >
+                {p.changePct === null ? "\u2014" : `${up ? "\u25B2" : "\u25BC"} ${Math.abs(p.changePct)}%`}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function formatTime(iso: string) {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "--:--";
+  return date.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: false });
+}
+
+function dayKey(iso: string) {
+  const date = new Date(iso);
+  return Number.isNaN(date.getTime()) ? "unknown" : date.toDateString();
+}
+
+function formatDay(iso: string) {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "Undated";
+  const today = new Date().toDateString();
+  const yesterday = new Date(Date.now() - 86_400_000).toDateString();
+  if (date.toDateString() === today) return "Today";
+  if (date.toDateString() === yesterday) return "Yesterday";
+  return date.toLocaleDateString("en-IN", { weekday: "long", month: "short", day: "numeric" });
+}
+
+export default function MarketPulseNews() {
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [status, setStatus] = useState<"loading" | "ready" | "error" | "empty">("loading");
+  const [category, setCategory] = useState("All Categories");
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [generating, setGenerating] = useState(false);
+  const [newsletterResult, setNewsletterResult] = useState<{ markdown: string } | null>(null);
+
+  const fetchNews = useCallback(async (cat: string) => {
+    setStatus("loading");
+    try {
+      const params = new URLSearchParams();
+      if (cat !== "All Categories") params.set("category", cat);
+      const res = await fetch(`${NEWS_API_BASE}/news?${params.toString()}`);
+      if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+      const data: NewsResponse = await res.json();
+      const sorted = [...data.items].sort(
+        (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
+      );
+      setArticles(sorted);
+      setStatus(sorted.length === 0 ? "empty" : "ready");
+      if (data.sourcesFailed?.length) {
+        console.warn("Some news sources failed to load:", data.sourcesFailed);
+      }
+    } catch (err) {
+      console.error("Failed to load market news:", err);
+      setStatus("error");
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchNews(category);
+  }, [category, fetchNews]);
+
+  const toggleSelect = (id: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const generateNewsletter = async () => {
+    const chosen = articles.filter((a) => selected.has(a.id));
+    if (chosen.length === 0) return;
+    setGenerating(true);
+    try {
+      const res = await fetch(`${NEWS_API_BASE}/newsletter/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ articles: chosen, title: "Daily Wonder" }),
+      });
+      if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+      const data = await res.json();
+      setNewsletterResult(data);
+    } catch (err) {
+      console.error("Failed to generate newsletter:", err);
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  return (
+    <section className="mx-auto w-full max-w-4xl px-4 sm:px-6">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <h2 className="pixel-font text-2xl text-ink">Market Pulse</h2>
+        <div className="flex items-center gap-2">
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="border border-border bg-paper px-3 py-1.5 text-sm outline-none focus:border-primary"
+          >
+            {CATEGORIES.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+          <button
+            onClick={() => fetchNews(category)}
+            className="pixel-font border border-border bg-paper px-3 py-1.5 text-[10px] uppercase transition-colors hover:bg-accent"
+          >
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      {category === "Currency" && <CurrencyStrip />}
+
+      {status === "loading" && (
+        <div className="py-12 text-center font-serif text-sm text-muted-foreground">
+          Loading latest market news…
+        </div>
+      )}
+      {status === "error" && (
+        <div className="py-12 text-center font-serif text-sm text-destructive">
+          Couldn’t load news right now. Try refreshing in a moment.
+        </div>
+      )}
+      {status === "empty" && (
+        <div className="py-12 text-center font-serif text-sm text-muted-foreground">
+          No stories in this category yet.
+        </div>
+      )}
+
+      {status === "ready" && (
+        <>
+          {/* Chronological timeline: vertical rail, newest first, grouped by day. */}
+          <div className="relative border-l border-border pl-6 sm:pl-8">
+            {articles.map((article, index) => {
+              const showDay =
+                index === 0 || dayKey(article.publishedAt) !== dayKey(articles[index - 1]!.publishedAt);
+              return (
+                <div key={article.id}>
+                  {showDay && (
+                    <div className="relative mb-4 mt-8 first:mt-0">
+                      <span className="absolute -left-[calc(1.5rem+9px)] top-1 size-4 border border-border bg-ink sm:-left-[calc(2rem+9px)]" />
+                      <h3 className="pixel-font text-[11px] uppercase tracking-wide text-ink">
+                        {formatDay(article.publishedAt)}
+                      </h3>
+                    </div>
+                  )}
+
+                  <article className="relative mb-8">
+                    <span className="absolute -left-[calc(1.5rem+7px)] top-2 size-3 border border-border bg-paper sm:-left-[calc(2rem+7px)]" />
+                    <div className="flex items-baseline gap-3 text-[10px] text-muted-foreground">
+                      <time className="pixel-font text-ink">{formatTime(article.publishedAt)}</time>
+                      <span className="pixel-font uppercase">{article.source}</span>
+                    </div>
+
+                    <div className="mt-2 flex gap-4">
+                      <div className="min-w-0 flex-1">
+                        <h4 className="font-serif text-xl font-semibold leading-snug text-ink sm:text-2xl">
+                          {article.title}
+                        </h4>
+                        <p className="mt-2 font-sans text-sm text-muted-foreground">
+                          {article.summary}
+                        </p>
+                        <div className="mt-3 flex flex-wrap items-center gap-3">
+                          <span className="pixel-font border border-border px-2 py-0.5 text-[9px] uppercase">
+                            {article.category}
+                          </span>
+                          {article.impactLabel && (
+                            <span className="pixel-font text-[9px] uppercase text-muted-foreground">
+                              {article.impactLabel} impact
+                            </span>
+                          )}
+                          <a
+                            href={article.sourceUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-sans text-sm font-medium text-primary underline underline-offset-2"
+                          >
+                            Read Original →
+                          </a>
+                          <label className="flex cursor-pointer items-center gap-2 font-sans text-xs text-ink">
+                            <input
+                              type="checkbox"
+                              checked={selected.has(article.id)}
+                              onChange={() => toggleSelect(article.id)}
+                              className="size-3.5 accent-current"
+                            />
+                            Add to Daily Wonder
+                          </label>
+                        </div>
+                      </div>
+                      <Thumbnail article={article} />
+                    </div>
+                  </article>
+                </div>
+              );
+            })}
+          </div>
+
+          {selected.size > 0 && (
+            <div className="sticky bottom-4 mt-6 flex justify-center">
+              <button
+                onClick={generateNewsletter}
+                disabled={generating}
+                className="pixel-font border border-border bg-ink px-6 py-2 text-[10px] uppercase text-background shadow-[4px_4px_0_0_var(--color-ink)] disabled:opacity-50"
+              >
+                {generating ? "Generating…" : `Generate Daily Wonder (${selected.size} selected)`}
+              </button>
+            </div>
+          )}
+
+          {newsletterResult && (
+            <div className="pixel-frame-sm mt-6 bg-paper p-4">
+              <h3 className="pixel-font mb-2 text-sm text-ink">Draft ready</h3>
+              <pre className="whitespace-pre-wrap font-sans text-xs text-ink">
+                {newsletterResult.markdown}
+              </pre>
+            </div>
+          )}
+        </>
+      )}
+    </section>
+  );
+}
