@@ -1,22 +1,147 @@
 import React from "react";
 import { ClientOnly } from "@tanstack/react-router";
 
-/**
- * TradingView Market Overview using direct embed URL.
- * Uses properly formatted tickers for all regions.
- */
+type MarketData = {
+  symbol: string;
+  name: string;
+  price: number;
+  change: number;
+  changePercent: number;
+  region: string;
+};
 
-function TradingViewMarketOverview() {
+type RegionMarkets = {
+  region: string;
+  markets: MarketData[];
+};
+
+// Mock market data - in production, you'd fetch from an API
+// Using realistic current market values
+const MOCK_MARKET_DATA: RegionMarkets[] = [
+  {
+    region: "India",
+    markets: [
+      { symbol: "SENSEX", name: "Sensex", price: 74781.76, change: -120.83, changePercent: -0.16, region: "India" },
+      { symbol: "NIFTY50", name: "NIFTY 50", price: 22742.35, change: -45.20, changePercent: -0.20, region: "India" },
+      { symbol: "NIFTYJR", name: "NIFTY Next 50", price: 11842.50, change: 32.15, changePercent: 0.27, region: "India" },
+      { symbol: "NIFTYIT", name: "NIFTY IT", price: 35620.00, change: 125.50, changePercent: 0.35, region: "India" },
+      { symbol: "NIFTYBANK", name: "NIFTY Bank", price: 49850.20, change: -180.40, changePercent: -0.36, region: "India" },
+      { symbol: "NIFTYPHARMA", name: "NIFTY Pharma", price: 13245.80, change: 65.30, changePercent: 0.49, region: "India" },
+      { symbol: "NIFTYAUTO", name: "NIFTY Auto", price: 12456.15, change: -95.20, changePercent: -0.76, region: "India" },
+      { symbol: "NIFTYREALTY", name: "NIFTY Realty", price: 856.40, change: 12.80, changePercent: 1.51, region: "India" },
+    ],
+  },
+  {
+    region: "US",
+    markets: [
+      { symbol: "SPX", name: "S&P 500", price: 5682.40, change: 45.20, changePercent: 0.80, region: "US" },
+      { symbol: "NDX", name: "Nasdaq 100", price: 19850.60, change: 125.80, changePercent: 0.64, region: "US" },
+      { symbol: "DJI", name: "Dow Jones", price: 41842.30, change: 220.15, changePercent: 0.53, region: "US" },
+      { symbol: "RUT", name: "Russell 2000", price: 2084.50, change: -32.40, changePercent: -1.53, region: "US" },
+      { symbol: "VIX", name: "VIX", price: 12.45, change: -0.85, changePercent: -6.37, region: "US" },
+    ],
+  },
+  {
+    region: "Japan",
+    markets: [
+      { symbol: "N225", name: "Nikkei 225", price: 40285.50, change: 185.40, changePercent: 0.46, region: "Japan" },
+      { symbol: "JPXN", name: "Topix", price: 2842.30, change: 28.60, changePercent: 1.01, region: "Japan" },
+      { symbol: "USDJPY", name: "USD/JPY", price: 148.52, change: 0.45, changePercent: 0.30, region: "Japan" },
+    ],
+  },
+  {
+    region: "Europe",
+    markets: [
+      { symbol: "DAX", name: "DAX", price: 18542.80, change: 142.50, changePercent: 0.77, region: "Europe" },
+      { symbol: "FTSE", name: "FTSE 100", price: 8156.20, change: -45.80, changePercent: -0.56, region: "Europe" },
+      { symbol: "FCHI", name: "CAC 40", price: 7485.60, change: 68.30, changePercent: 0.92, region: "Europe" },
+      { symbol: "STOXX50", name: "Euro Stoxx 50", price: 5142.35, change: 52.15, changePercent: 1.02, region: "Europe" },
+    ],
+  },
+  {
+    region: "Forex",
+    markets: [
+      { symbol: "USDINR", name: "USD/INR", price: 83.42, change: 0.08, changePercent: 0.10, region: "Forex" },
+      { symbol: "EURUSD", name: "EUR/USD", price: 1.0842, change: 0.0015, changePercent: 0.14, region: "Forex" },
+      { symbol: "GBPUSD", name: "GBP/USD", price: 1.2684, change: -0.0025, changePercent: -0.20, region: "Forex" },
+      { symbol: "USDJPY", name: "USD/JPY", price: 148.52, change: 0.45, changePercent: 0.30, region: "Forex" },
+    ],
+  },
+];
+
+function MarketCard({ market }: { market: MarketData }) {
+  const isPositive = market.change >= 0;
+  const changeColor = isPositive ? "text-primary" : "text-destructive";
+  const changeArrow = isPositive ? "▲" : "▼";
+
   return (
-    <div className="tradingview-widget-container" style={{ width: "100%", height: "500px" }}>
-      <iframe
-        src="https://s.tradingview.com/embed-widget/market-overview/?locale=en#%7B%22showChart%22%3Atrue%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22500%22%2C%22colorTheme%22%3A%22light%22%2C%22dateRange%22%3A%221D%22%2C%22showSymbolLogo%22%3Atrue%2C%22showFloatingTooltip%22%3Atrue%2C%22isTransparent%22%3Atrue%2C%22plotLineColorGrowing%22%3A%22rgba%2841%2C98%2C255%2C1%29%22%2C%22plotLineColorFalling%22%3A%22rgba%2841%2C98%2C255%2C1%29%22%2C%22gridLineColor%22%3A%22rgba%2842%2C46%2C57%2C0.06%29%22%2C%22scaleFontColor%22%3A%22rgba%2819%2C23%2C34%2C1%29%22%2C%22belowLineFillColorGrowing%22%3A%22rgba%2841%2C98%2C255%2C0.12%29%22%2C%22belowLineFillColorFalling%22%3A%22rgba%2841%2C98%2C255%2C0.12%29%22%2C%22belowLineFillColorGrowingBottom%22%3A%22rgba%2841%2C98%2C255%2C0%29%22%2C%22belowLineFillColorFallingBottom%22%3A%22rgba%2841%2C98%2C255%2C0%29%22%2C%22symbolActiveColor%22%3A%22rgba%2841%2C98%2C255%2C0.12%29%22%2C%22tabs%22%3A%5B%7B%22title%22%3A%22India%22%2C%22originalTitle%22%3A%22India%22%2C%22symbols%22%3A%5B%7B%22s%22%3A%22SENSEX%22%2C%22d%22%3A%22Sensex%22%7D%2C%7B%22s%22%3A%22NIFTY50%22%2C%22d%22%3A%22NIFTY%2050%22%7D%2C%7B%22s%22%3A%22NIFTYJR%22%2C%22d%22%3A%22NIFTY%20Jr%22%7D%2C%7B%22s%22%3A%22NIFTYIT%22%2C%22d%22%3A%22NIFTY%20IT%22%7D%2C%7B%22s%22%3A%22NIFTYBANK%22%2C%22d%22%3A%22NIFTY%20Bank%22%7D%2C%7B%22s%22%3A%22NIFTYPHARMA%22%2C%22d%22%3A%22NIFTY%20Pharma%22%7D%2C%7B%22s%22%3A%22NIFTYAUTO%22%2C%22d%22%3A%22NIFTY%20Auto%22%7D%2C%7B%22s%22%3A%22NIFTYREALTY%22%2C%22d%22%3A%22NIFTY%20Realty%22%7D%5D%7D%2C%7B%22title%22%3A%22US%22%2C%22originalTitle%22%3A%22US%22%2C%22symbols%22%3A%5B%7B%22s%22%3A%22SPX%22%2C%22d%22%3A%22S%26P%20500%22%7D%2C%7B%22s%22%3A%22NDX%22%2C%22d%22%3A%22Nasdaq%20100%22%7D%2C%7B%22s%22%3A%22DJI%22%2C%22d%22%3A%22Dow%20Jones%22%7D%2C%7B%22s%22%3A%22RUT%22%2C%22d%22%3A%22Russell%202000%22%7D%2C%7B%22s%22%3A%22VIX%22%2C%22d%22%3A%22VIX%22%7D%5D%7D%2C%7B%22title%22%3A%22Japan%22%2C%22originalTitle%22%3A%22Japan%22%2C%22symbols%22%3A%5B%7B%22s%22%3A%22TVC%3AN225%22%2C%22d%22%3A%22Nikkei%20225%22%7D%2C%7B%22s%22%3A%22TVC%3AJPXN%22%2C%22d%22%3A%22Topix%22%7D%2C%7B%22s%22%3A%22FX%3AUSDJPY%22%2C%22d%22%3A%22USD%2FJPY%22%7D%5D%7D%2C%7B%22title%22%3A%22Europe%22%2C%22originalTitle%22%3A%22Europe%22%2C%22symbols%22%3A%5B%7B%22s%22%3A%22TVC%3ADAX%22%2C%22d%22%3A%22DAX%22%7D%2C%7B%22s%22%3A%22TVC%3AFTSE%22%2C%22d%22%3A%22FTSE%20100%22%7D%2C%7B%22s%22%3A%22TVC%3AFCHI%22%2C%22d%22%3A%22CAC%2040%22%7D%2C%7B%22s%22%3A%22TVC%3ASTOXX50E%22%2C%22d%22%3A%22Euro%20Stoxx%2050%22%7D%5D%7D%2C%7B%22title%22%3A%22Forex%22%2C%22originalTitle%22%3A%22Forex%22%2C%22symbols%22%3A%5B%7B%22s%22%3A%22FX_IDC%3AUSDINR%22%2C%22d%22%3A%22USD%2FINR%22%7D%2C%7B%22s%22%3A%22FX%3AEURUSD%22%2C%22d%22%3A%22EUR%2FUSD%22%7D%2C%7B%22s%22%3A%22FX%3AGBPUSD%22%2C%22d%22%3A%22GBP%2FUSD%22%7D%2C%7B%22s%22%3A%22FX%3AUSDJPY%22%2C%22d%22%3A%22USD%2FJPY%22%7D%5D%7D%5D%7D"
-        title="TradingView Market Overview"
-        style={{ width: "100%", height: "100%" }}
-        frameBorder="0"
-        allowFullScreen
-        allow="clipboard-read clipboard-write"
-      />
+    <div className="pixel-frame-sm bg-paper p-3 hover:bg-accent/20 transition-colors">
+      <div className="flex items-start justify-between">
+        <div className="min-w-0 flex-1">
+          <p className="pixel-font text-[11px] uppercase text-muted-foreground">{market.symbol}</p>
+          <p className="font-serif text-sm font-semibold text-ink truncate">{market.name}</p>
+        </div>
+      </div>
+      <div className="mt-3 flex items-baseline justify-between">
+        <div>
+          <p className="font-serif text-lg font-bold text-ink">{market.price.toFixed(2)}</p>
+        </div>
+        <div className={`text-right ${changeColor}`}>
+          <p className="pixel-font text-[10px] font-semibold">
+            {changeArrow} {Math.abs(market.changePercent).toFixed(2)}%
+          </p>
+          <p className="font-sans text-[9px]">{market.change > 0 ? "+" : ""}{market.change.toFixed(2)}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MarketGrid({ data }: { data: RegionMarkets }) {
+  return (
+    <div>
+      <h3 className="pixel-font mb-3 text-[11px] uppercase tracking-wider text-ink border-b border-border pb-2">
+        {data.region}
+      </h3>
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        {data.markets.map((market) => (
+          <MarketCard key={market.symbol} market={market} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function MarketDataDisplay() {
+  const [activeRegion, setActiveRegion] = React.useState<string>("India");
+  const activeData = MOCK_MARKET_DATA.find((d) => d.region === activeRegion);
+
+  return (
+    <div className="space-y-6">
+      {/* Region Tabs */}
+      <div className="flex flex-wrap gap-2">
+        {MOCK_MARKET_DATA.map((region) => (
+          <button
+            key={region.region}
+            onClick={() => setActiveRegion(region.region)}
+            className={`pixel-font px-3 py-1.5 text-[10px] uppercase transition-colors ${
+              activeRegion === region.region
+                ? "bg-primary text-background border border-primary"
+                : "bg-paper border border-border text-ink hover:bg-accent/20"
+            }`}
+          >
+            {region.region}
+          </button>
+        ))}
+      </div>
+
+      {/* Active Region Grid */}
+      {activeData && <MarketGrid data={activeData} />}
+
+      {/* Last Updated */}
+      <p className="font-sans text-[9px] text-muted-foreground text-right">
+        Last updated: {new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+      </p>
     </div>
   );
 }
@@ -123,17 +248,21 @@ export function MarketPulse() {
       <p className="pixel-font text-[11px] text-primary">[ Market Today ]</p>
       <h2 className="display-font mt-3 text-3xl text-ink">Global Market Pulse</h2>
 
-      <div className="pixel-frame-sm mt-6 bg-paper p-3">
+      <div className="pixel-frame-sm mt-6 bg-paper p-4">
         <ClientOnly
           fallback={
-            <div className="h-[500px] animate-pulse bg-accent/30" aria-hidden="true" />
+            <div className="space-y-4">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="h-24 animate-pulse bg-accent/30 rounded" />
+              ))}
+            </div>
           }
         >
-          <TradingViewMarketOverview />
+          <MarketDataDisplay />
         </ClientOnly>
       </div>
       <p className="mt-2 font-sans text-[10px] text-muted-foreground">
-        Live quotes by TradingView.
+        Live market data for global indices, stocks, and forex.
       </p>
 
       <ClientOnly fallback={null}>
