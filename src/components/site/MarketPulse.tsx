@@ -1,3 +1,4 @@
+import React from "react";
 import { ClientOnly } from "@tanstack/react-router";
 
 /**
@@ -118,8 +119,6 @@ function BondStrip() {
     </div>
   );
 }
-
-import React from "react";
 
 export function MarketPulse() {
   return (
