@@ -30,15 +30,7 @@ export const Route = createFileRoute("/")({
     links: [{ rel: "canonical", href: "/" }],
   }),
   component: Home,
-  errorComponent: () => (
-    <SiteShell>
-      <p className="p-16 text-center text-sm text-muted-foreground">
-        The archive could not be loaded. Please refresh.
-      </p>
-    </SiteShell>
-  ),
-});
-
+ 
 function Home() {
   const { articles, categories } = Route.useLoaderData();
   const [activeCategory, setActiveCategory] = useState<string>("All");
