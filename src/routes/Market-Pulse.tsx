@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { SiteShell } from "@/components/site/SiteShell";
 import MarketPulseNews from "@/components/MarketPulseNews";
+import { TreasuryYields } from "@/components/TreasuryYields";
 
 
 export const Route = createFileRoute("/Market-Pulse")({
@@ -115,6 +116,7 @@ function MarketPulsePage() {
       <div className="py-14">
         <MarketPulseNews />
       </div>
+      <TreasuryYields />
     </SiteShell>
   );
 }
