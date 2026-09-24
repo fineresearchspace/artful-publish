@@ -6,7 +6,7 @@ import { PixelArt } from "@/components/PixelArt";
 import { listPublishedArticles } from "@/lib/public-articles.functions";
 import { formatDate } from "@/lib/articles";
 import { SITE } from "@/lib/site";
-import { MarketPulse } from "@/components/site/MarketPulse";
+
 
 export const Route = createFileRoute("/")({
   loader: () => listPublishedArticles(),
@@ -127,7 +127,7 @@ function Home() {
         </div>
       </section>
 
-      <MarketPulse />
+      
 
             {/* Featured */}
       {featured ? (
