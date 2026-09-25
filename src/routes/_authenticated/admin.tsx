@@ -6,6 +6,7 @@ import {
   FileText,
   FolderCog,
   Settings,
+  Users,
   LogOut,
   Menu,
 } from "lucide-react";
@@ -48,6 +49,7 @@ const NAV = [
   { to: "/admin/write/$id", label: "Write", icon: PenLine, params: { id: "new" } },
   { to: "/admin/articles", label: "Articles", icon: FileText },
   { to: "/admin/categories", label: "Categories", icon: FolderCog },
+  { to: "/admin/subscribers", label: "Subscribers", icon: Users },
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ] as const;
 
@@ -83,7 +85,7 @@ function AdminLayout() {
       <aside className="border-b border-border bg-paper md:w-60 md:shrink-0 md:border-b-0 md:border-r-2">
         <div className="flex items-center gap-3 p-4">
           <Link to="/" className="pixel-font text-xs text-ink">
-            WW Studio
+            The Context Studio
           </Link>
           <button
             className="pixel-panel ml-auto p-2 md:hidden"
