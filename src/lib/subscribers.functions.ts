@@ -13,14 +13,27 @@ export const subscribeToNewsletter = createServerFn({ method: "POST" })
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const email = data.email.toLowerCase();
-    const { error } = await supabaseAdmin.from("subscribers").upsert(
-      {
-        email,
-        status: "active",
-        source: "website",
-      },
-      { onConflict: "email" },
-    );
+    const { data: existing, error: lookupError } = await supabaseAdmin
+      .from("subscribers")
+      .select("id,status")
+      .eq("email", email)
+      .maybeSingle();
+
+    if (lookupError) {
+      console.error("Newsletter signup lookup failed", lookupError.message);
+      throw new Error("We could not save your subscription. Please try again.");
+    }
+
+    const { error } = existing
+      ? await supabaseAdmin
+          .from("subscribers")
+          .update({ status: "active" })
+          .eq("id", existing.id)
+      : await supabaseAdmin.from("subscribers").insert({
+          email,
+          status: "active",
+          source: "website",
+        });
 
     if (error) {
       console.error("Newsletter signup failed", error.message);
