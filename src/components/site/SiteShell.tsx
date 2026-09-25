@@ -54,13 +54,9 @@ export function SiteShell({ children }: { children: ReactNode }) {
             >
               Read on Substack →
             </a>
-            <div className="flex items-center border-l border-border pl-2">
-              <SiteSearch />
-              <ThemeToggle />
-            </div>
           </nav>
 
-          <div className="ml-auto flex items-center md:hidden">
+          <div className="ml-auto flex items-center border-border md:ml-0 md:border-l md:pl-2">
             <SiteSearch />
             <ThemeToggle />
           </div>
