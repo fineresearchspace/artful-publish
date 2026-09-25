@@ -7,3 +7,4 @@
 - [x] Add persistent daylight and dark appearance controls.
 - [x] Display cover images on published article pages.
 - [x] Add site-wide article search from the main navigation.
+- [x] Remove the unstable duplicate search popup mount that could blank the homepage.

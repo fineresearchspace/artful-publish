@@ -1,13 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { LoaderCircle, Search } from "lucide-react";
+import { LoaderCircle, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { formatDate } from "@/lib/articles";
 import {
   listPublishedArticles,
@@ -41,6 +35,11 @@ export function SiteSearch() {
 
   useEffect(() => {
     const handleShortcut = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && open) {
+        setOpen(false);
+        setQuery("");
+        return;
+      }
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
         setOpen(true);
@@ -48,7 +47,17 @@ export function SiteSearch() {
     };
     window.addEventListener("keydown", handleShortcut);
     return () => window.removeEventListener("keydown", handleShortcut);
-  }, []);
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    inputRef.current?.focus();
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [open]);
 
   const results = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -76,27 +85,43 @@ export function SiteSearch() {
       >
         <Search aria-hidden="true" />
       </Button>
-      <Dialog
-        open={open}
-        onOpenChange={(nextOpen) => {
-          setOpen(nextOpen);
-          if (!nextOpen) setQuery("");
-        }}
-      >
-        <DialogContent
-          onOpenAutoFocus={(event) => {
-            event.preventDefault();
-            inputRef.current?.focus();
+      {open ? (
+        <div
+          className="fixed inset-0 z-50 bg-foreground/70 px-4 py-[12vh]"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
+              setOpen(false);
+              setQuery("");
+            }
           }}
-          className="top-[12vh] max-h-[76vh] max-w-2xl translate-y-0 overflow-hidden border-border bg-paper p-0 sm:rounded-xl"
         >
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="site-search-title"
+            aria-describedby="site-search-description"
+            className="relative mx-auto max-h-[76vh] w-full max-w-2xl overflow-hidden rounded-xl border border-border bg-paper shadow-[var(--shadow-pixel-lg)]"
+          >
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label="Close search"
+              onClick={() => {
+                setOpen(false);
+                setQuery("");
+              }}
+              className="absolute right-3 top-3 z-10 rounded-full"
+            >
+              <X aria-hidden="true" />
+            </Button>
           <div className="border-b border-border px-5 py-5 pr-12">
-            <DialogTitle className="display-font text-2xl font-normal text-ink">
+            <h2 id="site-search-title" className="display-font text-2xl font-normal text-ink">
               Search The Context
-            </DialogTitle>
-            <DialogDescription className="mt-1">
+            </h2>
+            <p id="site-search-description" className="mt-1 text-sm text-muted-foreground">
               Find articles by title, topic, summary, or tag.
-            </DialogDescription>
+            </p>
           </div>
           <label className="flex items-center gap-3 border-b border-border px-5 py-4">
             <Search className="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
@@ -165,8 +190,9 @@ export function SiteSearch() {
               Browse the full archive →
             </Link>
           </div>
-        </DialogContent>
-      </Dialog>
+          </section>
+        </div>
+      ) : null}
     </>
   );
 }
