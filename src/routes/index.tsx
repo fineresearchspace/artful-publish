@@ -30,7 +30,8 @@ export const Route = createFileRoute("/")({
     links: [{ rel: "canonical", href: "/" }],
   }),
   component: Home,
- 
+});
+
 function Home() {
   const { articles, categories } = Route.useLoaderData();
   const [activeCategory, setActiveCategory] = useState<string>("All");
