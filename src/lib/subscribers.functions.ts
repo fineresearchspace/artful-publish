@@ -3,7 +3,7 @@ import { z } from "zod";
 
 const subscribeSchema = z.object({
   email: z.string().trim().email().max(254),
-  company: z.string().max(0).optional(),
+  company: z.string().max(200).optional(),
 });
 
 export const subscribeToNewsletter = createServerFn({ method: "POST" })
