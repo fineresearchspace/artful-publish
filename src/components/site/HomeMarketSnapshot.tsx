@@ -82,14 +82,14 @@ export function HomeMarketSnapshot() {
       <div className="mx-auto max-w-6xl px-4 py-7 sm:px-6">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4">
           <div className="min-w-0">
-            <p className="pixel-font text-[9px] text-primary">Market Pulse</p>
-            <h2 id="market-snapshot-title" className="display-font mt-1 text-2xl text-ink">
+            <p className="font-editorial-ui text-[11px] font-semibold uppercase text-primary">Market Pulse</p>
+            <h2 id="market-snapshot-title" className="display-font mt-1 text-[1.7rem] text-ink sm:text-3xl">
               India + US at a glance
             </h2>
           </div>
           <Link
             to="/Market-Pulse"
-            className="font-editorial-ui inline-flex shrink-0 items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
+            className="font-editorial-ui inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
           >
             Full pulse <ArrowRight className="size-3.5" aria-hidden="true" />
           </Link>
@@ -109,15 +109,15 @@ export function HomeMarketSnapshot() {
               return (
                 <div key={`${quote.region}-${quote.symbol}`} className="min-w-0 bg-paper px-4 py-3.5">
                   <div className="flex min-w-0 items-center justify-between gap-2">
-                    <p className="truncate font-editorial-ui text-xs font-semibold text-ink">{quote.name}</p>
-                    <span className="pixel-font shrink-0 text-[8px] text-muted-foreground">{quote.region}</span>
+                    <p className="truncate font-editorial-ui text-sm font-semibold text-ink">{quote.name}</p>
+                    <span className="font-editorial-ui shrink-0 text-[10px] font-semibold uppercase text-muted-foreground">{quote.region}</span>
                   </div>
                   <div className="mt-2 flex items-baseline justify-between gap-2">
-                    <span className="font-editorial-ui text-base font-semibold tabular-nums text-ink">
+                    <span className="font-editorial-ui text-lg font-semibold tabular-nums text-ink">
                       {formatIndexValue(quote.latest_price)}
                     </span>
                     <span
-                      className={`inline-flex items-center text-xs font-semibold tabular-nums ${rising ? "text-primary" : "text-destructive"}`}
+                      className={`inline-flex items-center text-sm font-semibold tabular-nums ${rising ? "text-primary" : "text-destructive"}`}
                     >
                       {rising ? <ArrowUpRight className="size-3" /> : <ArrowDownRight className="size-3" />}
                       {Math.abs(change).toFixed(2)}%
