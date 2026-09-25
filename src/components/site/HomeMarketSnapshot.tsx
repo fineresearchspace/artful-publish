@@ -149,7 +149,7 @@ type BondResponse = { countries?: CountryBonds[]; asOf?: string };
 
 const MATURITIES = ["2Y", "10Y", "30Y"] as const;
 
-function YieldCell({ point }: { point?: BondPoint }) {
+function YieldCell({ point }: { point: BondPoint | undefined }) {
   if (!point) return <span className="text-muted-foreground">—</span>;
   const rising = (point.changeBps ?? 0) >= 0;
   return (
