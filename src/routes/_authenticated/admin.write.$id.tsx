@@ -274,17 +274,15 @@ function WritePage() {
                 {draft.reading_time || estimateReadingTime(draft.content ?? "")} min read ·{" "}
                 {formatDate(draft.published_at ?? new Date().toISOString())}
               </p>
-              <div className="crt pixel-panel mt-5 aspect-[16/7] overflow-hidden">
-                {draft.cover_image ? (
-                  <img
-                    src={draft.cover_image}
-                    alt=""
-                    className="pixelated size-full object-cover"
-                  />
-                ) : (
-                  <PixelArt variant={draft.pixel_art_image ?? "chart"} className="size-full" />
-                )}
-              </div>
+              {draft.cover_image && (  
+                <div className="crt pixel-panel mt-5 aspect-[16/7] overflow-hidden">  
+                  <img  
+                    src={draft.cover_image}  
+                    alt=""  
+                    className="pixelated size-full object-cover"  
+                  />  
+                </div>  
+              )}
               <Markdown content={draft.content ?? ""} className="mt-6" />
             </div>
           ) : (
