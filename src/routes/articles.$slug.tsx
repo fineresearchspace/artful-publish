@@ -112,18 +112,7 @@ function ArticlePage() {
         </header>
 
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
-          <div className="crt pixel-frame mt-10 aspect-[16/7] overflow-hidden">
-            {article.cover_image ? (
-              <img
-                src={article.cover_image}
-                alt={article.title}
-                className="pixelated size-full object-cover"
-              />
-            ) : (
-              <PixelArt variant={article.pixel_art_image} className="size-full" />
-            )}
-          </div>
-
+          
           <Markdown content={article.content} className="mt-10" />
 
           {article.tags?.length ? (
