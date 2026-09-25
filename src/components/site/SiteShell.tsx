@@ -3,6 +3,7 @@ import { useState, type ReactNode } from "react";
 import { Menu, X } from "lucide-react";
 import { SITE } from "@/lib/site";
 import { HeadlineTicker } from "@/components/site/HeadlineTicker";
+import { NewsletterSignup } from "@/components/site/NewsletterSignup";
 import logoAsset from "@/assets/the-context-logo.png.asset.json";
 
 const NAV = [
@@ -109,16 +110,8 @@ export function SiteShell({ children }: { children: ReactNode }) {
               </Link>
             ))}
           </div>
-          <div className="flex flex-col gap-3">
-            <span className="pixel-font text-[10px] text-muted-foreground">Newsletter</span>
-            <a
-              href={SITE.substackSubscribeUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="pixel-font rounded-full bg-primary px-4 py-2 text-center text-[10px] text-primary-foreground transition-opacity hover:opacity-85"
-            >
-              Newsletter →
-            </a>
+          <div className="flex w-full max-w-sm flex-col gap-3 md:w-auto">
+            <NewsletterSignup />
             <a
               href={SITE.substackUrl}
               target="_blank"
