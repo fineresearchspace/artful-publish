@@ -27,6 +27,12 @@ export const Route = createFileRoute("/articles/$slug")({
     }
     const a = loaderData.article;
     const description = a.excerpt || a.subtitle || SITE.tagline;
+    const imageMeta = a.cover_image?.startsWith("https://")
+      ? [
+          { property: "og:image", content: a.cover_image },
+          { name: "twitter:image", content: a.cover_image },
+        ]
+      : [];
     return {
       meta: [
         { title: `${a.title} — The Context` },
@@ -36,6 +42,7 @@ export const Route = createFileRoute("/articles/$slug")({
         { property: "og:type", content: "article" },
         { property: "og:url", content: `/articles/${params.slug}` },
         { name: "twitter:card", content: "summary_large_image" },
+        ...imageMeta,
       ],
       links: [{ rel: "canonical", href: `/articles/${params.slug}` }],
       scripts: [
@@ -109,6 +116,15 @@ function ArticlePage() {
             </p>
           </div>
         </header>
+        {article.cover_image ? (
+          <figure className="mx-auto max-w-5xl px-4 pt-8 sm:px-6 sm:pt-10">
+            <img
+              src={article.cover_image}
+              alt={`Cover image for ${article.title}`}
+              className="aspect-[16/9] w-full rounded-xl border border-border object-cover shadow-[var(--shadow-pixel)]"
+            />
+          </figure>
+        ) : null}
         <div className="mx-auto max-w-3xl px-4 sm:px-6">  
           <Markdown content={article.content} className="mt-10" />
           {article.tags?.length ? (
