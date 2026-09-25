@@ -7,9 +7,17 @@ import { listPublishedArticles } from "@/lib/public-articles.functions";
 import { formatDate } from "@/lib/articles";
 import { SITE } from "@/lib/site";
 
+async function loadHomeData() {
+  try {
+    return await listPublishedArticles();
+  } catch (error) {
+    console.error("Homepage content request failed", error);
+    return { articles: [], categories: [] };
+  }
+}
 
 export const Route = createFileRoute("/")({
-  loader: () => listPublishedArticles(),
+  loader: loadHomeData,
   head: () => ({
     meta: [
       { title: "The Context — Ideas worth wondering about" },
