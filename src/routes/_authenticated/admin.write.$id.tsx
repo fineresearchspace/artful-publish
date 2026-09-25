@@ -318,9 +318,9 @@ function WritePage() {
               </select>
             </label>
 
-            <label className="block">
-              <span className="pixel-font text-[9px] text-muted-foreground">Slug</span>
-              <input
+            <label className="block">  
+              <span className="pixel-font text-[9px] text-muted-foreground">Slug</span>  
+              <input  
                 value={draft.slug ?? ""}
                 onChange={(e) => set({ slug: slugify(e.target.value) })}
                 placeholder={slugify(draft.title ?? "")}
