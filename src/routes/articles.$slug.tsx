@@ -2,7 +2,6 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { SiteShell } from "@/components/site/SiteShell";
 import { ArticleCard } from "@/components/site/ArticleCard";
-import { PixelArt } from "@/components/PixelArt";
 import { Markdown } from "@/components/Markdown";
 import { formatDate } from "@/lib/articles";
 import {
