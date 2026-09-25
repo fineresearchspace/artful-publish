@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import { Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { SITE } from "@/lib/site";
 import { HeadlineTicker } from "@/components/site/HeadlineTicker";
 import { NewsletterSignup } from "@/components/site/NewsletterSignup";
@@ -21,77 +22,94 @@ export function SiteShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 sm:px-6">
-          <Link to="/" className="flex items-center gap-3">
-            <img
-              src={logoAsset.url}
-              alt="The Context logo"
-              className="h-9 w-auto rounded-md"
-            />
-            <span className="display-font text-2xl leading-none text-ink sm:text-[1.7rem]">
-              The Context
-            </span>
-          </Link>
+      <header className="relative z-40 border-t-4 border-ink bg-paper shadow-[var(--shadow-pixel-sm)]">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="flex min-h-11 items-center justify-between border-b border-border font-editorial-ui text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            <Link to="/" className="flex items-center gap-3 transition-colors hover:text-primary">
+              <img
+                src={logoAsset.url}
+                alt="The Context logo"
+                className="h-7 w-auto rounded-sm"
+              />
+              <span className="hidden sm:inline">Independent financial publication</span>
+            </Link>
 
-          <nav className="ml-auto hidden items-center gap-5 md:flex">
-            {NAV.map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                className="pixel-font text-[11px] text-muted-foreground transition-colors hover:text-primary"
-                activeOptions={{ exact: item.to === "/" }}
-                activeProps={{ className: "pixel-font text-[11px] text-primary" }}
+            <div className="flex items-center gap-1 sm:gap-2">
+              <SiteSearch />
+              <ThemeToggle />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                aria-label="Toggle menu"
+                aria-expanded={open}
+                onClick={() => setOpen((value) => !value)}
+                className="rounded-full md:hidden"
               >
-                {item.label}
-              </Link>
-            ))}
-            <a
-              href={SITE.substackUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="pixel-font rounded-full bg-ink px-4 py-2 text-[10px] text-background transition-opacity hover:opacity-85"
-            >
-              Read on Substack →
-            </a>
-          </nav>
-
-          <div className="ml-auto flex items-center border-border md:ml-0 md:border-l md:pl-2">
-            <SiteSearch />
-            <ThemeToggle />
+                {open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+              </Button>
+            </div>
           </div>
-          <button
-            type="button"
-            aria-label="Toggle menu"
-            onClick={() => setOpen((v) => !v)}
-            className="rounded-lg border border-border bg-paper p-2 md:hidden"
-          >
-            {open ? <X className="size-4" /> : <Menu className="size-4" />}
-          </button>
-        </div>
 
-        {open ? (
-          <nav className="flex flex-col gap-1 border-t border-border bg-paper px-4 py-3 md:hidden">
-            {NAV.map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                onClick={() => setOpen(false)}
-                className="pixel-font py-2 text-xs"
-              >
-                {item.label}
-              </Link>
-            ))}
+          <div className="py-5 text-center sm:py-7">
+            <Link to="/" className="inline-block text-ink transition-colors hover:text-primary">
+              <span className="display-font block text-5xl italic leading-none sm:text-6xl lg:text-7xl">
+                The Context
+              </span>
+            </Link>
+            <p className="mt-2 font-serif text-sm italic text-primary sm:text-base">
+              Markets, explained in context.
+            </p>
+          </div>
+
+          <div className="hidden items-center justify-between border-y-2 border-ink py-3 md:flex">
+            <nav className="flex items-center gap-7 font-editorial-ui">
+              {NAV.map((item) => (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className="text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground transition-colors hover:text-primary"
+                  activeOptions={{ exact: item.to === "/" }}
+                  activeProps={{ className: "text-[11px] font-semibold uppercase tracking-[0.12em] text-primary" }}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
             <a
               href={SITE.substackUrl}
               target="_blank"
               rel="noreferrer"
-              className="pixel-font py-2 text-xs text-primary"
+              className="bg-ink px-6 py-2 font-editorial-ui text-[10px] font-semibold uppercase tracking-[0.14em] text-background shadow-[var(--shadow-pixel-sm)] transition-[transform,opacity] hover:-translate-y-0.5 hover:opacity-90"
             >
               Read on Substack →
             </a>
-          </nav>
-        ) : null}
+          </div>
+
+          {open ? (
+            <nav className="grid grid-cols-2 gap-x-6 gap-y-1 border-t-2 border-ink py-3 font-editorial-ui md:hidden">
+              {NAV.map((item) => (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => setOpen(false)}
+                  className="py-2 text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors hover:text-primary"
+                >
+                  {item.label}
+                </Link>
+              ))}
+              <a
+                href={SITE.substackUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="col-span-2 mt-2 bg-ink px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.14em] text-background"
+              >
+                Read on Substack →
+              </a>
+            </nav>
+          ) : null}
+        </div>
+        <div className="h-4 sm:h-5" aria-hidden="true" />
       </header>
 
       <HeadlineTicker />
