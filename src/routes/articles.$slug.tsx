@@ -111,10 +111,8 @@ function ArticlePage() {
         </header>
 
         
-        <div className="mx-auto max-w-3xl px-4 sm:px-6">
-
+        <div className="mx-auto max-w-3xl px-4 sm:px-6">  
           <Markdown content={article.content} className="mt-10" />
-
           {article.tags?.length ? (
             <div className="mt-10 flex flex-wrap gap-2">
               {article.tags.map((tag) => (
