@@ -393,7 +393,6 @@ function WritePage() {
                 className="mt-1 w-full border border-border bg-paper px-2 py-1.5 text-sm"
               />
             </label>
-            <span className="pixel-font text-[9px] text-muted-foreground">  
           </div>
 
           <div className="pixel-panel space-y-2 p-4">
