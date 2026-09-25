@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { PixelArt } from "@/components/PixelArt";
 import { formatDate } from "@/lib/articles";
 import type { ArticleListItem } from "@/lib/public-articles.functions";
 
