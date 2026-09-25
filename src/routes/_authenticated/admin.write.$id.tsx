@@ -18,7 +18,6 @@ import {
   type ArticleStatus,
 } from "@/lib/articles";
 import { Markdown, renderMarkdown } from "@/components/Markdown";
-import { PixelArt, PIXEL_ART_KEYS, PIXEL_ART_LABELS } from "@/components/PixelArt";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { RichEditor } from "@/components/admin/RichEditor";
 import { SubstackPanel } from "@/components/admin/SubstackPanel";
