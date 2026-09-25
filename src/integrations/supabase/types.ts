@@ -206,10 +206,6 @@ export type Database = {
         Returns: boolean
       }
       increment_article_view: { Args: { _slug: string }; Returns: undefined }
-      subscribe_to_newsletter: {
-        Args: { _email: string; _source?: string }
-        Returns: undefined
-      }
     }
     Enums: {
       app_role: "admin" | "user"
