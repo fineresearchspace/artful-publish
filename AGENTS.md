@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Newsletter subscriptions enter through a validated server function using privileged access; the subscriber table stays unreadable to public visitors to protect email addresses.
+- Public appearance preference is stored under `the-context-theme` and applied before rendering to prevent a light/dark flash.

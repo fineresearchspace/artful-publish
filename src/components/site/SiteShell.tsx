@@ -4,6 +4,8 @@ import { Menu, X } from "lucide-react";
 import { SITE } from "@/lib/site";
 import { HeadlineTicker } from "@/components/site/HeadlineTicker";
 import { NewsletterSignup } from "@/components/site/NewsletterSignup";
+import { SiteSearch } from "@/components/site/SiteSearch";
+import { ThemeToggle } from "@/components/site/ThemeToggle";
 import logoAsset from "@/assets/the-context-logo.png.asset.json";
 
 const NAV = [
@@ -52,13 +54,21 @@ export function SiteShell({ children }: { children: ReactNode }) {
             >
               Read on Substack →
             </a>
+            <div className="flex items-center border-l border-border pl-2">
+              <SiteSearch />
+              <ThemeToggle />
+            </div>
           </nav>
 
+          <div className="ml-auto flex items-center md:hidden">
+            <SiteSearch />
+            <ThemeToggle />
+          </div>
           <button
             type="button"
             aria-label="Toggle menu"
             onClick={() => setOpen((v) => !v)}
-            className="ml-auto md:hidden rounded-lg border border-border bg-paper p-2"
+            className="rounded-lg border border-border bg-paper p-2 md:hidden"
           >
             {open ? <X className="size-4" /> : <Menu className="size-4" />}
           </button>
