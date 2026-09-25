@@ -397,24 +397,7 @@ function WritePage() {
                 className="mt-1 w-full border border-border bg-paper px-2 py-1.5 text-sm"
               />
             </label>
-            <span className="pixel-font text-[9px] text-muted-foreground">
-              Pixel illustration
-            </span>
-            <div className="grid grid-cols-3 gap-2">
-              {PIXEL_ART_KEYS.map((key) => (
-                <button
-                  key={key}
-                  type="button"
-                  title={PIXEL_ART_LABELS[key]}
-                  onClick={() => set({ pixel_art_image: key })}
-                  className={`border-2 p-1 ${
-                    draft.pixel_art_image === key ? "border-primary" : "border-border"
-                  }`}
-                >
-                  <PixelArt variant={key} className="aspect-square w-full" />
-                </button>
-              ))}
-            </div>
+            <span className="pixel-font text-[9px] text-muted-foreground">  
           </div>
 
           <div className="pixel-panel space-y-2 p-4">
