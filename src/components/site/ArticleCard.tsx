@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { PixelArt } from "@/components/PixelArt";
 import { formatDate } from "@/lib/articles";
 import type { ArticleListItem } from "@/lib/public-articles.functions";
 
@@ -10,22 +9,7 @@ export function ArticleCard({ article }: { article: ArticleListItem }) {
       params={{ slug: article.slug }}
       className="pixel-frame pixel-lift group flex flex-col overflow-hidden"
     >
-      <div className="crt relative aspect-[16/10] overflow-hidden border-b-2 border-ink">
-        {article.cover_image ? (
-          <img
-            src={article.cover_image}
-            alt=""
-            loading="lazy"
-            className="pixelated size-full object-cover transition-transform duration-200 group-hover:scale-105"
-          />
-        ) : (
-          <PixelArt
-            variant={article.pixel_art_image}
-            className="size-full transition-transform duration-200 group-hover:scale-105"
-          />
-        )}
-      </div>
-
+      
       <div className="flex flex-1 flex-col gap-3 p-5">
         <span className="pixel-font text-[10px] text-primary">{article.category}</span>
         <h3 className="font-serif text-xl leading-snug transition-transform duration-150 group-hover:translate-x-1">
