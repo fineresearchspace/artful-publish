@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { SiteShell } from "@/components/site/SiteShell";
 import { ArticleCard } from "@/components/site/ArticleCard";
+import { HomeBondSnapshot, HomeMarketSnapshot } from "@/components/site/HomeMarketSnapshot";
 import { PixelArt } from "@/components/PixelArt";
 import { listPublishedArticles } from "@/lib/public-articles.functions";
 import { formatDate } from "@/lib/articles";
@@ -128,42 +129,9 @@ function Home() {
         </div>
       </section>
 
-      
+      <HomeMarketSnapshot />
 
-            {/* Featured */}
-      {featured ? (
-        <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
-          <p className="pixel-font text-[11px] text-primary">[ Featured Wonder ]</p>
-          <Link
-            to="/articles/$slug"
-            params={{ slug: featured.slug }}
-            className="pixel-frame pixel-lift mt-5 grid gap-0 overflow-hidden md:grid-cols-2"
-          >
-            <div className="crt aspect-[16/10] border-b border-border md:aspect-auto md:border-b-0 md:border-r-2">
-              {featured.cover_image ? (
-                <img
-                  src={featured.cover_image}
-                  alt=""
-                  className="pixelated size-full object-cover"
-                />
-              ) : (
-                <PixelArt variant={featured.pixel_art_image} className="size-full" />
-              )}
-            </div>
-            <div className="flex flex-col justify-center gap-4 p-7 md:p-10">
-              <span className="pixel-font text-[10px] text-primary">{featured.category}</span>
-              <h2 className="font-serif text-2xl leading-tight sm:text-3xl">{featured.title}</h2>
-              {featured.subtitle ? (
-                <p className="font-serif text-lg text-muted-foreground">{featured.subtitle}</p>
-              ) : null}
-              <p className="pixel-font text-[10px] text-muted-foreground">
-                {featured.reading_time} min read · {formatDate(featured.published_at)}
-              </p>
-              <span className="pixel-font text-[11px]">Read →</span>
-            </div>
-          </Link>
-        </section>
-      ) : null}
+      <HomeBondSnapshot />
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="pixel-rule" />

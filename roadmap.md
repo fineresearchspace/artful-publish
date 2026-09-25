@@ -8,3 +8,5 @@
 - [x] Display cover images on published article pages.
 - [x] Add site-wide article search from the main navigation.
 - [x] Remove the unstable duplicate search popup mount that could blank the homepage.
+- [x] Add a compact India and US market snapshot to the homepage.
+- [x] Replace the duplicate featured article block with live sovereign bond yields.
