@@ -31,7 +31,7 @@ export function SiteSearch() {
     return () => {
       active = false;
     };
-  }, [open, status]);
+  }, [open]);
 
   useEffect(() => {
     const handleShortcut = (event: KeyboardEvent) => {
