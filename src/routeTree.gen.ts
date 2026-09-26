@@ -15,6 +15,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CategoriesRouteImport } from './routes/categories'
+import { Route as CfaExamRouteImport } from './routes/cfa-exam'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ApiBondsRouteImport } from './routes/api/bonds'
@@ -57,6 +58,11 @@ const AuthRoute = AuthRouteImport.update({
 const CategoriesRoute = CategoriesRouteImport.update({
   id: '/categories',
   path: '/categories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CfaExamRoute = CfaExamRouteImport.update({
+  id: '/cfa-exam',
+  path: '/cfa-exam',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -141,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
+  '/cfa-exam': typeof CfaExamRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/api/bonds': typeof ApiBondsRoute
@@ -162,6 +169,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
+  '/cfa-exam': typeof CfaExamRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/bonds': typeof ApiBondsRoute
   '/api/fx': typeof ApiFxRoute
@@ -184,6 +192,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
+  '/cfa-exam': typeof CfaExamRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/api/bonds': typeof ApiBondsRoute
@@ -207,6 +216,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/categories'
+    | '/cfa-exam'
     | '/sitemap.xml'
     | '/admin'
     | '/api/bonds'
@@ -228,6 +238,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/categories'
+    | '/cfa-exam'
     | '/sitemap.xml'
     | '/api/bonds'
     | '/api/fx'
@@ -249,6 +260,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/categories'
+    | '/cfa-exam'
     | '/sitemap.xml'
     | '/_authenticated/admin'
     | '/api/bonds'
@@ -272,6 +284,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
   CategoriesRoute: typeof CategoriesRoute
+  CfaExamRoute: typeof CfaExamRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiBondsRoute: typeof ApiBondsRoute
   ApiFxRoute: typeof ApiFxRoute
@@ -323,6 +336,13 @@ declare module '@tanstack/react-router' {
       path: '/categories'
       fullPath: '/categories'
       preLoaderRoute: typeof CategoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cfa-exam': {
+      id: '/cfa-exam'
+      path: '/cfa-exam'
+      fullPath: '/cfa-exam'
+      preLoaderRoute: typeof CfaExamRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -465,6 +485,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
   CategoriesRoute: CategoriesRoute,
+  CfaExamRoute: CfaExamRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiBondsRoute: ApiBondsRoute,
   ApiFxRoute: ApiFxRoute,
