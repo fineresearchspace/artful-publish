@@ -13,6 +13,7 @@ const NAV = [
   { to: "/", label: "Home" },
   { to: "/Market-Pulse", label: "Market Pulse" },
   { to: "/articles", label: "Articles" },
+  { to: "/cfa-exam", label: "CFA Exam" },
   { to: "/categories", label: "Categories" },
   { to: "/about", label: "About" },
 ] as const;
@@ -63,7 +64,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
           </div>
 
           <div className="hidden items-center justify-between border-y-2 border-ink py-3 md:flex">
-            <nav className="flex items-center gap-7 font-editorial-ui">
+            <nav className="flex items-center gap-5 font-editorial-ui lg:gap-7">
               {NAV.map((item) => (
                 <Link
                   key={item.to}

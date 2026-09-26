@@ -50,6 +50,20 @@ export const listPublishedArticles = createServerFn({ method: "GET" }).handler(
   },
 );
 
+export const listPublishedCfaArticles = createServerFn({ method: "GET" }).handler(
+  async (): Promise<{ articles: ArticleListItem[] }> => {
+    const supabase = publicClient();
+    const { data } = await supabase
+      .from("articles")
+      .select(ARTICLE_LIST_FIELDS)
+      .in("status", ["published_web", "exported_substack"])
+      .eq("category", "CFA Exam")
+      .order("published_at", { ascending: false });
+
+    return { articles: (data ?? []) as unknown as ArticleListItem[] };
+  },
+);
+
 export const getPublishedArticle = createServerFn({ method: "GET" })
   .validator((data: { slug: string }) => {
     // Validate input with Zod before processing

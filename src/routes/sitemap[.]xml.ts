@@ -26,7 +26,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           .select("slug,updated_at")
           .in("status", ["published_web", "exported_substack"]);
 
-        const statics = ["", "/articles", "/categories", "/about"];
+        const statics = ["", "/articles", "/cfa-exam", "/categories", "/about"];
         const urls = [
           ...statics.map((path) => `<url><loc>${origin}${path}</loc></url>`),
           ...(data ?? []).map(

@@ -12,3 +12,4 @@
 - Newsletter subscriptions enter through a validated server function using privileged access; the subscriber table stays unreadable to public visitors to protect email addresses.
 - Public appearance preference is stored under `the-context-theme` and applied before rendering to prevent a light/dark flash.
 - Homepage market summaries live in `HomeMarketSnapshot.tsx` and degrade independently so third-party quote failures never block editorial content.
+- CFA Exam editorial content uses the `CFA Exam` article category and is surfaced separately at `/cfa-exam`.
