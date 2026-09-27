@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { SiteShell } from "@/components/site/SiteShell";
 import MarketPulseNews from "@/components/MarketPulseNews";
+import { IndexHeatmap } from "@/components/site/IndexHeatmap";
 
 
 export const Route = createFileRoute("/Market-Pulse")({
@@ -10,8 +11,12 @@ export const Route = createFileRoute("/Market-Pulse")({
       { title: "Market Pulse — The Context" },
       {
         name: "description",
-        content: "Live global market data: indices, commodities, and currencies.",
+        content: "Live global indices, market heatmap, historical price charts, volume, commodities, currencies, and financial news.",
       },
+      { property: "og:title", content: "Market Pulse — The Context" },
+      { property: "og:description", content: "Track global indices with a live heatmap, price history, volume, currencies, and market news." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: MarketPulsePage,
@@ -112,6 +117,7 @@ function MarketPulsePage() {
           </div>
         )}
       </section>
+      <IndexHeatmap />
       <div className="py-14">
         <MarketPulseNews />
       </div>

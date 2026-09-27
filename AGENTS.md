@@ -13,3 +13,5 @@
 - Public appearance preference is stored under `the-context-theme` and applied before rendering to prevent a light/dark flash.
 - Homepage market summaries live in `HomeMarketSnapshot.tsx` and degrade independently so third-party quote failures never block editorial content.
 - CFA Exam editorial content uses the `CFA Exam` article category and is surfaced separately at `/cfa-exam`.
+- The writing studio is single-owner: the database permits only one `admin` role, while every other account remains a regular user.
+- Historical index charts use the allowlisted same-origin `/api/market-history` route so third-party failures remain isolated from Market Pulse.
