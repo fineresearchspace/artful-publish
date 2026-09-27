@@ -11,3 +11,5 @@
 - [x] Add a compact India and US market snapshot to the homepage.
 - [x] Replace the duplicate featured article block with live sovereign bond yields.
 - [x] Add a dedicated CFA Exam blog section and category for candidate guidance.
+- [x] Enforce a single owner account with administrator rights.
+- [x] Add a selectable global index heatmap with price history and reported volume.

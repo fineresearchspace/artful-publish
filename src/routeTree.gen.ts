@@ -20,6 +20,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ApiBondsRouteImport } from './routes/api/bonds'
 import { Route as ApiFxRouteImport } from './routes/api/fx'
+import { Route as ApiMarketHistoryRouteImport } from './routes/api/market-history'
 import { Route as ApiNewsRouteImport } from './routes/api/news'
 import { Route as ArticlesIndexRouteImport } from './routes/articles.index'
 import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
@@ -83,6 +84,11 @@ const ApiBondsRoute = ApiBondsRouteImport.update({
 const ApiFxRoute = ApiFxRouteImport.update({
   id: '/api/fx',
   path: '/api/fx',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMarketHistoryRoute = ApiMarketHistoryRouteImport.update({
+  id: '/api/market-history',
+  path: '/api/market-history',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiNewsRoute = ApiNewsRouteImport.update({
@@ -152,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/api/bonds': typeof ApiBondsRoute
   '/api/fx': typeof ApiFxRoute
+  '/api/market-history': typeof ApiMarketHistoryRoute
   '/api/news': typeof ApiNewsRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles/': typeof ArticlesIndexRoute
@@ -173,6 +180,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/bonds': typeof ApiBondsRoute
   '/api/fx': typeof ApiFxRoute
+  '/api/market-history': typeof ApiMarketHistoryRoute
   '/api/news': typeof ApiNewsRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles': typeof ArticlesIndexRoute
@@ -197,6 +205,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/api/bonds': typeof ApiBondsRoute
   '/api/fx': typeof ApiFxRoute
+  '/api/market-history': typeof ApiMarketHistoryRoute
   '/api/news': typeof ApiNewsRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles/': typeof ArticlesIndexRoute
@@ -221,6 +230,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/api/bonds'
     | '/api/fx'
+    | '/api/market-history'
     | '/api/news'
     | '/articles/$slug'
     | '/articles/'
@@ -242,6 +252,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/api/bonds'
     | '/api/fx'
+    | '/api/market-history'
     | '/api/news'
     | '/articles/$slug'
     | '/articles'
@@ -265,6 +276,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/api/bonds'
     | '/api/fx'
+    | '/api/market-history'
     | '/api/news'
     | '/articles/$slug'
     | '/articles/'
@@ -288,6 +300,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiBondsRoute: typeof ApiBondsRoute
   ApiFxRoute: typeof ApiFxRoute
+  ApiMarketHistoryRoute: typeof ApiMarketHistoryRoute
   ApiNewsRoute: typeof ApiNewsRoute
   ArticlesSlugRoute: typeof ArticlesSlugRoute
   ArticlesIndexRoute: typeof ArticlesIndexRoute
@@ -371,6 +384,13 @@ declare module '@tanstack/react-router' {
       path: '/api/fx'
       fullPath: '/api/fx'
       preLoaderRoute: typeof ApiFxRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/market-history': {
+      id: '/api/market-history'
+      path: '/api/market-history'
+      fullPath: '/api/market-history'
+      preLoaderRoute: typeof ApiMarketHistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/news': {
@@ -489,6 +509,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiBondsRoute: ApiBondsRoute,
   ApiFxRoute: ApiFxRoute,
+  ApiMarketHistoryRoute: ApiMarketHistoryRoute,
   ApiNewsRoute: ApiNewsRoute,
   ArticlesSlugRoute: ArticlesSlugRoute,
   ArticlesIndexRoute: ArticlesIndexRoute,
