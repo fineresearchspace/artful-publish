@@ -13,3 +13,5 @@
 - [x] Add a dedicated CFA Exam blog section and category for candidate guidance.
 - [x] Enforce a single owner account with administrator rights.
 - [x] Add a selectable global index heatmap with price history and reported volume.
+- [x] Replace the homepage market snapshot with the interactive heatmap.
+- [x] Restore published article cover previews across article cards.
