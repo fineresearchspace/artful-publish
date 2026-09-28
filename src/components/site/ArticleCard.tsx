@@ -9,7 +9,19 @@ export function ArticleCard({ article }: { article: ArticleListItem }) {
       params={{ slug: article.slug }}
       className="pixel-frame pixel-lift group flex flex-col overflow-hidden"
     >
-      
+      {article.cover_image ? (
+        <div className="aspect-video w-full overflow-hidden border-b border-border bg-muted">
+          <img
+            src={article.cover_image}
+            alt={`Cover image for ${article.title}`}
+            loading="lazy"
+            className="size-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+            onError={(event) => {
+              event.currentTarget.parentElement?.classList.add("hidden");
+            }}
+          />
+        </div>
+      ) : null}
       <div className="flex flex-1 flex-col gap-3 p-5">
         <span className="pixel-font text-[10px] text-primary">{article.category}</span>
         <h3 className="font-serif text-xl leading-snug transition-transform duration-150 group-hover:translate-x-1">
