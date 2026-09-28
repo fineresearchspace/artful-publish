@@ -42,6 +42,11 @@ const EMPTY: Draft = {
   featured: false,
 };
 
+function firstEmbeddedImage(content: string) {
+  const match = content.match(/<img\b[^>]*\bsrc=["']([^"']+)["']/i);
+  return match?.[1] ?? null;
+}
+
 function WritePage() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
@@ -95,7 +100,7 @@ function WritePage() {
       subtitle: draft.subtitle ?? "",
       excerpt: draft.excerpt ?? "",
       content: draft.content ?? "",
-      cover_image: draft.cover_image || null,
+      cover_image: draft.cover_image || firstEmbeddedImage(draft.content ?? ""),
       pixel_art_image: draft.pixel_art_image ?? "chart",
       category: draft.category ?? "Ideas",
       tags,
