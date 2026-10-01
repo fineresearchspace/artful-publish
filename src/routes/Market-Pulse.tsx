@@ -63,19 +63,25 @@ function MarketPulsePage() {
   const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
+    const controller = new AbortController();
     setMarkets(null);
     setLoadError(null);
 
-    fetch(`${API_BASE_URL}/api/markets/region/${activeTab}`)
+    fetch(`${API_BASE_URL}/api/markets/region/${activeTab}`, {
+      signal: controller.signal,
+    })
       .then((res) => {
         if (!res.ok) throw new Error(`Server responded with ${res.status}`);
         return res.json();
       })
       .then((data) => setMarkets(data.data))
       .catch((err) => {
+        if (err instanceof DOMException && err.name === "AbortError") return;
         console.error("Market Pulse fetch error:", err);
         setLoadError("Could not load market data. Is the backend running?");
       });
+
+    return () => controller.abort();
   }, [activeTab]);
 
   return (
