@@ -15,3 +15,4 @@
 - [x] Add a selectable global index heatmap with price history and reported volume.
 - [x] Replace the homepage market snapshot with the interactive heatmap.
 - [x] Restore published article cover previews across article cards.
+- [x] Replace the duplicate Market Pulse history heatmap with a complete multi-market performance board, including commodities.

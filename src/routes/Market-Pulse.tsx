@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { SiteShell } from "@/components/site/SiteShell";
 import MarketPulseNews from "@/components/MarketPulseNews";
-import { IndexHeatmap } from "@/components/site/IndexHeatmap";
+import { Button } from "@/components/ui/button";
 
 
 export const Route = createFileRoute("/Market-Pulse")({
@@ -11,10 +11,10 @@ export const Route = createFileRoute("/Market-Pulse")({
       { title: "Market Pulse — The Context" },
       {
         name: "description",
-        content: "Live global indices, market heatmap, historical price charts, volume, commodities, currencies, and financial news.",
+        content: "A delayed-data performance heatmap for global indices, commodities and currencies, alongside financial news.",
       },
       { property: "og:title", content: "Market Pulse — The Context" },
-      { property: "og:description", content: "Track global indices with a live heatmap, price history, volume, currencies, and market news." },
+      { property: "og:description", content: "Compare global indices, commodities and currencies in a delayed-data market heatmap." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -47,6 +47,16 @@ type MarketData = {
   error: string | null;
 };
 
+function heatClass(change: number | null, available: boolean) {
+  if (!available || change === null || Math.abs(change) < 0.05) {
+    return "bg-muted text-foreground";
+  }
+  if (change >= 1) return "bg-chart-2 text-primary-foreground";
+  if (change > 0) return "bg-chart-2/70 text-foreground";
+  if (change <= -1) return "bg-destructive text-destructive-foreground";
+  return "bg-destructive/70 text-destructive-foreground";
+}
+
 function MarketPulsePage() {
   const [activeTab, setActiveTab] = useState<TabKey>("india");
   const [markets, setMarkets] = useState<MarketData[] | null>(null);
@@ -74,32 +84,31 @@ function MarketPulsePage() {
         <p className="pixel-font text-[11px] text-primary">[ Market Pulse ]</p>
         <h1 className="display-font mt-3 text-4xl text-ink sm:text-5xl">Market Pulse</h1>
         <p className="mt-3 font-serif text-lg text-muted-foreground">
-          Indices, commodities, and currencies from around the world.
+          Compare global indices, commodities, and currencies at a glance. Delayed data.
         </p>
 
-        <div className="mt-8 flex flex-wrap gap-2">
+        <div className="mt-8 flex flex-wrap gap-2" aria-label="Market groups">
           {TABS.map((tab) => (
-            <button
+            <Button
               key={tab.key}
               type="button"
+              size="sm"
+              variant={activeTab === tab.key ? "default" : "outline"}
               onClick={() => setActiveTab(tab.key)}
-              className={`pixel-font border border-border px-3 py-1.5 text-[10px] transition-colors ${
-                activeTab === tab.key
-                  ? "bg-ink text-background"
-                  : "bg-paper hover:bg-accent"
-              }`}
+              aria-pressed={activeTab === tab.key}
+              className="font-editorial-ui text-xs font-semibold uppercase"
             >
               {tab.label}
-            </button>
+            </Button>
           ))}
         </div>
 
         {loadError ? (
           <p className="mt-10 font-serif text-sm text-muted-foreground">{loadError}</p>
         ) : !markets ? (
-          <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-10 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="pixel-frame-sm animate-pulse bg-paper p-5">
+              <div key={i} className="h-32 animate-pulse rounded-md bg-muted p-4">
                 <div className="h-3 w-24 bg-accent" />
                 <div className="mt-4 h-6 w-32 bg-accent" />
               </div>
@@ -110,14 +119,13 @@ function MarketPulsePage() {
             No assets configured for this region yet.
           </p>
         ) : (
-          <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-10 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
             {markets.map((m) => (
               <MarketCard key={m.symbol} data={m} />
             ))}
           </div>
         )}
       </section>
-      <IndexHeatmap />
       <div className="py-14">
         <MarketPulseNews />
       </div>
@@ -131,9 +139,9 @@ function MarketCard({ data }: { data: MarketData }) {
 
   if (!data.available) {
     return (
-      <div className="pixel-frame-sm bg-paper p-5">
-        <p className="mt-1 font-serif text-lg">{data.name}</p>
-        <p className="mt-3 font-serif text-sm text-muted-foreground">
+      <div className="flex min-h-32 flex-col justify-between rounded-md border border-border bg-muted p-4">
+        <p className="font-editorial-ui text-sm font-semibold">{data.name}</p>
+        <p className="text-xs text-muted-foreground">
           Data temporarily unavailable
         </p>
       </div>
@@ -147,20 +155,18 @@ function MarketCard({ data }: { data: MarketData }) {
       href={yahooUrl}
       target="_blank"
       rel="noreferrer"
-      className="pixel-frame-sm pixel-lift block bg-paper p-5 transition-opacity hover:opacity-90"
+      className={`flex min-h-32 flex-col justify-between rounded-md border border-border p-4 transition-transform hover:scale-[1.02] ${heatClass(data.change_percent, data.available)}`}
     >
-      <p className="mt-1 font-serif text-lg">{data.name}</p>
-      <p className="display-font mt-3 text-3xl text-ink">
-        {data.latest_price?.toLocaleString()}
-      </p>
-      <p
-        className={`pixel-font mt-2 text-[11px] ${
-          isUp ? "text-green-700" : "text-red-700"
-        }`}
-      >
-        {isUp ? "▲" : "▼"} {data.change?.toFixed(2)} ({data.change_percent?.toFixed(2)}%)
-      </p>
-      <p className="mt-2 text-[10px] text-muted-foreground">{data.market_status}</p>
+      <p className="font-editorial-ui text-sm font-semibold leading-tight">{data.name}</p>
+      <div>
+        <p className="font-editorial-ui text-xl font-semibold tabular-nums">
+          {data.latest_price?.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+        </p>
+        <p className="mt-1 text-xs font-semibold tabular-nums">
+          {isUp ? "▲" : "▼"} {data.change?.toFixed(2)} ({data.change_percent?.toFixed(2)}%)
+        </p>
+        <p className="mt-1 text-[10px] opacity-75">{data.market_status || "Delayed"}</p>
+      </div>
     </a>
   );
 }

@@ -15,3 +15,4 @@
 - CFA Exam editorial content uses the `CFA Exam` article category and is surfaced separately at `/cfa-exam`.
 - The writing studio is single-owner: the database permits only one `admin` role, while every other account remains a regular user.
 - Historical index charts use the allowlisted same-origin `/api/market-history` route so third-party failures remain isolated from Market Pulse.
+- Market Pulse uses a categorized delayed-data performance board for indices, commodities, and currencies; detailed index history remains homepage-only.
