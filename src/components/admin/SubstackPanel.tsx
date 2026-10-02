@@ -3,6 +3,8 @@ import { Copy, Download, ExternalLink } from "lucide-react";
 import type { Article } from "@/lib/articles";
 import { substackProvider } from "@/lib/publishing/substack";
 import { loadSettings } from "@/lib/site";
+import { SubstackSendDialog } from "./SubstackSendDialog";
+
 
 function download(filename: string, contents: string, type: string) {
   const blob = new Blob([contents], { type });
@@ -23,67 +25,85 @@ async function copy(label: string, value: string) {
   }
 }
 
-export function SubstackPanel({ draft }: { draft: Article }) {
+export function SubstackPanel({
+  draft,
+  onSent,
+  open,
+  onOpenChange,
+}: {
+  draft: Article;
+  onSent?: (() => void | Promise<void>) | undefined;
+  open?: boolean | undefined;
+  onOpenChange?: ((open: boolean) => void) | undefined;
+}) {
   const exported = substackProvider.exportPost(draft);
   const slug = draft.slug || "article";
 
   return (
     <div className="pixel-panel space-y-3 p-4">
-      <p className="pixel-font text-[10px] text-primary">Export for Substack</p>
+      <p className="pixel-font text-[10px] text-primary">Send to Substack</p>
+      <SubstackSendDialog
+        draft={draft}
+        onSent={onSent}
+        open={open}
+        onOpenChange={onOpenChange}
+      />
       <p className="text-xs text-muted-foreground">
-        Substack has no official public publishing API, so Weekly Wonders prepares the post
-        for a clean paste instead of pretending to send it.
+        Preview the newsletter first, then send it across in one paste. Manual export
+        options are below.
       </p>
+
+
 
       <div className="grid gap-2">
         <button
           onClick={() => void copy("Formatted article", exported.html)}
-          className="pixel-font flex items-center gap-2 border-2 border-ink bg-accent px-3 py-2 text-[10px] text-accent-foreground"
+          className="pixel-font flex items-center gap-2 border border-border bg-accent px-3 py-2 text-[10px] text-accent-foreground"
         >
-          <Copy className="size-3.5" /> Copy formatted article
+          <Copy className="size-3.5" /> Copy for Substack
         </button>
         <button
           onClick={() => void copy("Markdown", exported.markdown)}
-          className="pixel-font flex items-center gap-2 border-2 border-ink px-3 py-2 text-[10px]"
+          className="pixel-font flex items-center gap-2 border border-border px-3 py-2 text-[10px]"
         >
           <Copy className="size-3.5" /> Copy Markdown
         </button>
         <div className="grid grid-cols-2 gap-2">
           <button
             onClick={() => download(`${slug}.md`, exported.markdown, "text/markdown")}
-            className="pixel-font flex items-center gap-1 border-2 border-ink px-2 py-2 text-[10px]"
+            className="pixel-font flex items-center gap-1 border border-border px-2 py-2 text-[10px]"
           >
-            <Download className="size-3.5" /> .md
+            <Download className="size-3.5" /> Markdown
           </button>
           <button
             onClick={() => download(`${slug}.html`, exported.html, "text/html")}
-            className="pixel-font flex items-center gap-1 border-2 border-ink px-2 py-2 text-[10px]"
+            className="pixel-font flex items-center gap-1 border border-border px-2 py-2 text-[10px]"
           >
-            <Download className="size-3.5" /> .html
+            <Download className="size-3.5" /> HTML
           </button>
         </div>
         <div className="grid grid-cols-2 gap-2">
           <button
             onClick={() => void copy("Title", exported.title)}
-            className="pixel-font border-2 border-ink px-2 py-2 text-[10px]"
+            className="pixel-font border border-border px-2 py-2 text-[10px]"
           >
             Copy title
           </button>
           <button
             onClick={() => void copy("Subtitle", exported.subtitle)}
-            className="pixel-font border-2 border-ink px-2 py-2 text-[10px]"
+            className="pixel-font border border-border px-2 py-2 text-[10px]"
           >
             Copy subtitle
           </button>
           <button
             onClick={() => void copy("Excerpt", exported.excerpt)}
-            className="pixel-font border-2 border-ink px-2 py-2 text-[10px]"
+            className="pixel-font border border-border px-2 py-2 text-[10px]"
           >
             Copy excerpt
           </button>
           <button
             onClick={() => void copy("Tags", exported.tags)}
-            className="pixel-font border-2 border-ink px-2 py-2 text-[10px]"
+            className="pixel-font border border-border px-2 py-2 text-[10px]"
           >
             Copy tags
           </button>
@@ -92,15 +112,15 @@ export function SubstackPanel({ draft }: { draft: Article }) {
           href={`${loadSettings().substackUrl}/publish/post?type=newsletter`}
           target="_blank"
           rel="noreferrer"
-          className="pixel-font flex items-center gap-2 border-2 border-ink px-3 py-2 text-[10px]"
+          className="pixel-font flex items-center gap-2 border border-border px-3 py-2 text-[10px]"
         >
           <ExternalLink className="size-3.5" /> Open Substack editor
         </a>
       </div>
 
       <p className="text-[11px] text-muted-foreground">
-        After posting, paste the Substack link above and set the status to “Published to
-        Substack”.
+        After pasting into Substack, save the post link above and set the status to
+        “Exported for Substack”.
       </p>
     </div>
   );

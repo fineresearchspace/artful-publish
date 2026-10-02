@@ -9,16 +9,16 @@ export const Route = createFileRoute("/articles/")({
   loader: () => listPublishedArticles(),
   head: () => ({
     meta: [
-      { title: "The Archive — Weekly Wonders" },
+      { title: "The Archive — The Context" },
       {
         name: "description",
         content:
-          "Every Weekly Wonders article: markets, finance, business, mindset and ideas worth understanding.",
+          "Every The Context article: markets, finance, business, mindset and ideas worth understanding.",
       },
-      { property: "og:title", content: "The Archive — Weekly Wonders" },
+      { property: "og:title", content: "The Archive — The Context" },
       {
         property: "og:description",
-        content: "Every Weekly Wonders article, collected as pixel-art cards.",
+        content: "Every The Context article, collected as pixel-art cards.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/articles" },
@@ -54,9 +54,9 @@ function ArticlesPage() {
 
   return (
     <SiteShell>
-      <section className="border-b-2 border-ink bg-paper">
+      <section className="border-b border-border bg-paper">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-          <h1 className="pixel-font text-2xl text-ink sm:text-3xl">The Archive</h1>
+          <h1 className="display-font text-4xl text-ink sm:text-5xl">The Archive</h1>
           <p className="mt-4 max-w-xl font-serif text-lg text-muted-foreground">
             {articles.length} wonders collected so far. Search by title, topic or tag.
           </p>
@@ -73,7 +73,7 @@ function ArticlesPage() {
               key={name}
               type="button"
               onClick={() => setCategory(name)}
-              className={`pixel-font border-2 border-ink px-3 py-1.5 text-[10px] ${
+              className={`pixel-font border border-border px-3 py-1.5 text-[10px] ${
                 category === name ? "bg-ink text-background" : "bg-paper hover:bg-accent"
               }`}
             >
