@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { SiteShell } from "@/components/site/SiteShell";
 import MarketPulseNews from "@/components/MarketPulseNews";
 import { Button } from "@/components/ui/button";
+import { MarketHistoryChart } from "@/components/site/MarketHistoryChart";
 
 
 export const Route = createFileRoute("/Market-Pulse")({
@@ -61,10 +62,12 @@ function MarketPulsePage() {
   const [activeTab, setActiveTab] = useState<TabKey>("india");
   const [markets, setMarkets] = useState<MarketData[] | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [selectedMarket, setSelectedMarket] = useState<MarketData | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
     setMarkets(null);
+    setSelectedMarket(null);
     setLoadError(null);
 
     fetch(`${API_BASE_URL}/api/markets/region/${activeTab}`, {
@@ -74,7 +77,11 @@ function MarketPulsePage() {
         if (!res.ok) throw new Error(`Server responded with ${res.status}`);
         return res.json();
       })
-      .then((data) => setMarkets(data.data))
+      .then((data: { data?: MarketData[] }) => {
+        const nextMarkets = data.data ?? [];
+        setMarkets(nextMarkets);
+        setSelectedMarket(nextMarkets.find((market) => market.available) ?? null);
+      })
       .catch((err) => {
         if (err instanceof DOMException && err.name === "AbortError") return;
         console.error("Market Pulse fetch error:", err);
@@ -127,10 +134,19 @@ function MarketPulsePage() {
         ) : (
           <div className="mt-10 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
             {markets.map((m) => (
-              <MarketCard key={m.symbol} data={m} />
+              <MarketCard
+                key={m.symbol}
+                data={m}
+                selected={selectedMarket?.symbol === m.symbol}
+                onSelect={() => setSelectedMarket(m)}
+              />
             ))}
           </div>
         )}
+
+        {selectedMarket ? (
+          <MarketHistoryChart symbol={selectedMarket.symbol} name={selectedMarket.name} />
+        ) : null}
       </section>
       <div className="py-14">
         <MarketPulseNews />
@@ -140,9 +156,7 @@ function MarketPulsePage() {
 }
 
 
-function MarketCard({ data }: { data: MarketData }) {
-  const yahooUrl = `https://finance.yahoo.com/quote/${encodeURIComponent(data.symbol)}/`;
-
+function MarketCard({ data, selected, onSelect }: { data: MarketData; selected: boolean; onSelect: () => void }) {
   if (!data.available) {
     return (
       <div className="flex min-h-32 flex-col justify-between rounded-md border border-border bg-muted p-4">
@@ -157,11 +171,12 @@ function MarketCard({ data }: { data: MarketData }) {
   const isUp = (data.change ?? 0) >= 0;
 
   return (
-    <a
-      href={yahooUrl}
-      target="_blank"
-      rel="noreferrer"
-      className={`flex min-h-32 flex-col justify-between rounded-md border border-border p-4 transition-transform hover:scale-[1.02] ${heatClass(data.change_percent, data.available)}`}
+    <Button
+      type="button"
+      variant="ghost"
+      onClick={onSelect}
+      aria-pressed={selected}
+      className={`h-auto min-h-32 min-w-0 flex-col items-stretch justify-between whitespace-normal rounded-md border border-border p-4 text-left shadow-none ring-offset-2 transition-transform hover:scale-[1.02] hover:text-current focus-visible:ring-2 ${heatClass(data.change_percent, data.available)} ${selected ? "ring-2 ring-ink" : ""}`}
     >
       <p className="font-editorial-ui text-sm font-semibold leading-tight">{data.name}</p>
       <div>
@@ -173,6 +188,6 @@ function MarketCard({ data }: { data: MarketData }) {
         </p>
         <p className="mt-1 text-[10px] opacity-75">{data.market_status || "Delayed"}</p>
       </div>
-    </a>
+    </Button>
   );
 }
