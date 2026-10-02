@@ -18,6 +18,7 @@ const INDEX_SYMBOLS = {
   "^NSEBANK": "^NSEBANK",
   "^CNXIT": "^CNXIT",
   "^CNXAUTO": "^CNXAUTO",
+  "^CNXPHARMA": "^CNXPHARMA",
   "^INDIAVIX": "^INDIAVIX",
   "^GSPC": "^GSPC",
   "^NDX": "^NDX",

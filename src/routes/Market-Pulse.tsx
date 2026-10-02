@@ -48,6 +48,49 @@ type MarketData = {
   error: string | null;
 };
 
+type MarketHistoryPayload = {
+  points?: Array<{ date: string; price: number }>;
+};
+
+async function replaceNiftyAutoWithPharma(markets: MarketData[], signal: AbortSignal) {
+  const withoutAuto = markets.filter((market) => market.symbol !== "^CNXAUTO");
+  try {
+    const response = await fetch("/api/market-history?symbol=%5ECNXPHARMA&range=1m", { signal });
+    if (!response.ok) throw new Error(`Pharma history responded with ${response.status}`);
+    const payload = (await response.json()) as MarketHistoryPayload;
+    const points = payload.points ?? [];
+    const latest = points.at(-1)?.price;
+    const previous = points.at(-2)?.price;
+    if (latest === undefined || previous === undefined) throw new Error("Pharma history is incomplete");
+    const change = latest - previous;
+    withoutAuto.push({
+      name: "NIFTY Pharma",
+      symbol: "^CNXPHARMA",
+      region: "India",
+      latest_price: latest,
+      change,
+      change_percent: previous === 0 ? 0 : (change / previous) * 100,
+      market_status: "Delayed",
+      available: true,
+      error: null,
+    });
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") throw error;
+    withoutAuto.push({
+      name: "NIFTY Pharma",
+      symbol: "^CNXPHARMA",
+      region: "India",
+      latest_price: null,
+      change: null,
+      change_percent: null,
+      market_status: "Delayed",
+      available: false,
+      error: "Data temporarily unavailable",
+    });
+  }
+  return withoutAuto;
+}
+
 function heatClass(change: number | null, available: boolean) {
   if (!available || change === null || Math.abs(change) < 0.05) {
     return "bg-muted text-foreground";
@@ -77,8 +120,11 @@ function MarketPulsePage() {
         if (!res.ok) throw new Error(`Server responded with ${res.status}`);
         return res.json();
       })
-      .then((data: { data?: MarketData[] }) => {
-        const nextMarkets = data.data ?? [];
+      .then(async (data: { data?: MarketData[] }) => {
+        const receivedMarkets = data.data ?? [];
+        const nextMarkets = activeTab === "india"
+          ? await replaceNiftyAutoWithPharma(receivedMarkets, controller.signal)
+          : receivedMarkets;
         setMarkets(nextMarkets);
         setSelectedMarket(nextMarkets.find((market) => market.available) ?? null);
       })
