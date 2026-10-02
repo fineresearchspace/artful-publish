@@ -16,3 +16,4 @@
 - [x] Replace the homepage market snapshot with the interactive heatmap.
 - [x] Restore published article cover previews across article cards.
 - [x] Replace the duplicate Market Pulse history heatmap with a complete multi-market performance board, including commodities.
+- [x] Add selectable price-history and volume charts to every supported Market Pulse tile.
