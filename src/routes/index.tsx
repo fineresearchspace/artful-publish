@@ -3,7 +3,6 @@ import { useMemo, useState } from "react";
 import { SiteShell } from "@/components/site/SiteShell";
 import { ArticleCard } from "@/components/site/ArticleCard";
 import { HomeBondSnapshot } from "@/components/site/HomeMarketSnapshot";
-import { IndexHeatmap } from "@/components/site/IndexHeatmap";
 import { PixelArt } from "@/components/PixelArt";
 import { listPublishedArticles } from "@/lib/public-articles.functions";
 import { formatDate } from "@/lib/articles";
@@ -129,8 +128,6 @@ function Home() {
           ) : null}
         </div>
       </section>
-
-      <IndexHeatmap />
 
       <HomeBondSnapshot />
 
