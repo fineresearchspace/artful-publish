@@ -11,7 +11,7 @@
 
 - Newsletter subscriptions enter through a validated server function using privileged access; the subscriber table stays unreadable to public visitors to protect email addresses.
 - Public appearance preference is stored under `the-context-theme` and applied before rendering to prevent a light/dark flash.
-- The homepage uses the reusable index heatmap for market context; its quote and history failures degrade independently from editorial content.
+- Market heatmaps and their historical charts belong exclusively on the Market Pulse page; the homepage stays focused on editorial content and bond yields.
 - CFA Exam editorial content uses the `CFA Exam` article category and is surfaced separately at `/cfa-exam`.
 - The writing studio is single-owner: the database permits only one `admin` role, while every other account remains a regular user.
 - Historical index charts use the allowlisted same-origin `/api/market-history` route so third-party failures remain isolated from Market Pulse.
