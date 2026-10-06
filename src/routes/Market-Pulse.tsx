@@ -1,10 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { SiteShell } from "@/components/site/SiteShell";
 import MarketPulseNews from "@/components/MarketPulseNews";
 import { Button } from "@/components/ui/button";
-import { MarketHistoryChart } from "@/components/site/MarketHistoryChart";
-import { MarketReasons } from "@/components/site/MarketReasons";
 
 
 export const Route = createFileRoute("/Market-Pulse")({
@@ -240,6 +238,6 @@ function MarketCard({ data, selected, onSelect }: { data: MarketData; selected: 
         </p>
         <p className="mt-1 text-[10px] opacity-75">{data.market_status || "Delayed"}</p>
       </div>
-    </Button>
+    </Link>
   );
 }
