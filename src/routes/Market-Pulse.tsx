@@ -4,6 +4,7 @@ import { SiteShell } from "@/components/site/SiteShell";
 import MarketPulseNews from "@/components/MarketPulseNews";
 import { Button } from "@/components/ui/button";
 import { MarketHistoryChart } from "@/components/site/MarketHistoryChart";
+import { MarketReasons } from "@/components/site/MarketReasons";
 
 
 export const Route = createFileRoute("/Market-Pulse")({
@@ -191,7 +192,14 @@ function MarketPulsePage() {
         )}
 
         {selectedMarket ? (
-          <MarketHistoryChart symbol={selectedMarket.symbol} name={selectedMarket.name} />
+          <>
+            <MarketReasons
+              name={selectedMarket.name}
+              region={selectedMarket.region}
+              changePercent={selectedMarket.change_percent}
+            />
+            <MarketHistoryChart symbol={selectedMarket.symbol} name={selectedMarket.name} />
+          </>
         ) : null}
       </section>
       <div className="py-14">
