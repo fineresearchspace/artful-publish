@@ -191,16 +191,7 @@ function MarketPulsePage() {
           </div>
         )}
 
-        {selectedMarket ? (
-          <>
-            <MarketReasons
-              name={selectedMarket.name}
-              region={selectedMarket.region}
-              changePercent={selectedMarket.change_percent}
-            />
-            <MarketHistoryChart symbol={selectedMarket.symbol} name={selectedMarket.name} />
-          </>
-        ) : null}
+        <p className="mt-4 text-xs text-muted-foreground">Tap any card for today's drivers, price history and related articles.</p>
       </section>
       <div className="py-14">
         <MarketPulseNews />
@@ -224,13 +215,20 @@ function MarketCard({ data, selected, onSelect }: { data: MarketData; selected: 
 
   const isUp = (data.change ?? 0) >= 0;
 
+  void selected;
+  void onSelect;
   return (
-    <Button
-      type="button"
-      variant="ghost"
-      onClick={onSelect}
-      aria-pressed={selected}
-      className={`h-auto min-h-32 min-w-0 flex-col items-stretch justify-between whitespace-normal rounded-md border border-border p-4 text-left shadow-none ring-offset-2 transition-transform hover:scale-[1.02] hover:text-current focus-visible:ring-2 ${heatClass(data.change_percent, data.available)} ${selected ? "ring-2 ring-ink" : ""}`}
+    <Link
+      to="/markets/$symbol"
+      params={{ symbol: data.symbol }}
+      search={{
+        name: data.name,
+        region: data.region,
+        price: data.latest_price ?? undefined,
+        change: data.change ?? undefined,
+        pct: data.change_percent ?? undefined,
+      }}
+      className={`flex min-h-32 min-w-0 flex-col justify-between rounded-md border border-border p-4 text-left transition-transform hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${heatClass(data.change_percent, data.available)}`}
     >
       <p className="font-editorial-ui text-sm font-semibold leading-tight">{data.name}</p>
       <div>
