@@ -24,6 +24,7 @@ import { Route as ApiMarketHistoryRouteImport } from './routes/api/market-histor
 import { Route as ApiNewsRouteImport } from './routes/api/news'
 import { Route as ArticlesIndexRouteImport } from './routes/articles.index'
 import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
+import { Route as MarketsSymbolRouteImport } from './routes/markets.$symbol'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminArticlesRouteImport } from './routes/_authenticated/admin.articles'
 import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_authenticated/admin.categories'
@@ -106,6 +107,11 @@ const ArticlesSlugRoute = ArticlesSlugRouteImport.update({
   path: '/articles/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MarketsSymbolRoute = MarketsSymbolRouteImport.update({
+  id: '/markets/$symbol',
+  path: '/markets/$symbol',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -161,6 +167,7 @@ export interface FileRoutesByFullPath {
   '/api/market-history': typeof ApiMarketHistoryRoute
   '/api/news': typeof ApiNewsRoute
   '/articles/$slug': typeof ArticlesSlugRoute
+  '/markets/$symbol': typeof MarketsSymbolRoute
   '/articles/': typeof ArticlesIndexRoute
   '/admin/articles': typeof AuthenticatedAdminArticlesRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
@@ -183,6 +190,7 @@ export interface FileRoutesByTo {
   '/api/market-history': typeof ApiMarketHistoryRoute
   '/api/news': typeof ApiNewsRoute
   '/articles/$slug': typeof ArticlesSlugRoute
+  '/markets/$symbol': typeof MarketsSymbolRoute
   '/articles': typeof ArticlesIndexRoute
   '/admin/articles': typeof AuthenticatedAdminArticlesRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
@@ -208,6 +216,7 @@ export interface FileRoutesById {
   '/api/market-history': typeof ApiMarketHistoryRoute
   '/api/news': typeof ApiNewsRoute
   '/articles/$slug': typeof ArticlesSlugRoute
+  '/markets/$symbol': typeof MarketsSymbolRoute
   '/articles/': typeof ArticlesIndexRoute
   '/_authenticated/admin/articles': typeof AuthenticatedAdminArticlesRoute
   '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
@@ -233,6 +242,7 @@ export interface FileRouteTypes {
     | '/api/market-history'
     | '/api/news'
     | '/articles/$slug'
+    | '/markets/$symbol'
     | '/articles/'
     | '/admin/articles'
     | '/admin/categories'
@@ -255,6 +265,7 @@ export interface FileRouteTypes {
     | '/api/market-history'
     | '/api/news'
     | '/articles/$slug'
+    | '/markets/$symbol'
     | '/articles'
     | '/admin/articles'
     | '/admin/categories'
@@ -279,6 +290,7 @@ export interface FileRouteTypes {
     | '/api/market-history'
     | '/api/news'
     | '/articles/$slug'
+    | '/markets/$symbol'
     | '/articles/'
     | '/_authenticated/admin/articles'
     | '/_authenticated/admin/categories'
@@ -303,6 +315,7 @@ export interface RootRouteChildren {
   ApiMarketHistoryRoute: typeof ApiMarketHistoryRoute
   ApiNewsRoute: typeof ApiNewsRoute
   ArticlesSlugRoute: typeof ArticlesSlugRoute
+  MarketsSymbolRoute: typeof MarketsSymbolRoute
   ArticlesIndexRoute: typeof ArticlesIndexRoute
   ApiNewsletterGenerateRoute: typeof ApiNewsletterGenerateRoute
 }
@@ -414,6 +427,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArticlesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/markets/$symbol': {
+      id: '/markets/$symbol'
+      path: '/markets/$symbol'
+      fullPath: '/markets/$symbol'
+      preLoaderRoute: typeof MarketsSymbolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
       path: '/'
@@ -512,6 +532,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiMarketHistoryRoute: ApiMarketHistoryRoute,
   ApiNewsRoute: ApiNewsRoute,
   ArticlesSlugRoute: ArticlesSlugRoute,
+  MarketsSymbolRoute: MarketsSymbolRoute,
   ArticlesIndexRoute: ArticlesIndexRoute,
   ApiNewsletterGenerateRoute: ApiNewsletterGenerateRoute,
 }
