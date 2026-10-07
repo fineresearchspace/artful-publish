@@ -67,29 +67,38 @@ function MarketLandingPage() {
           </p>
         )}
 
-        <section className="mt-8 rounded-md border border-border bg-card p-6">
-          <h2 className="display-font text-2xl text-ink">Today's drivers</h2>
-          {isLoading ? (
-            <div className="mt-4 space-y-2">
-              {[0, 1, 2].map((i) => <div key={i} className="h-4 w-3/4 animate-pulse rounded bg-muted" />)}
-            </div>
-          ) : error ? (
-            <p className="mt-3 font-serif text-muted-foreground">{(error as Error).message}</p>
-          ) : data ? (
-            <>
-              <p className="mt-3 font-serif text-lg text-foreground">{data.summary}</p>
-              <ul className="mt-3 list-disc space-y-1.5 pl-5 font-serif text-foreground">
-                {data.reasons.map((r) => <li key={r}>{r}</li>)}
-              </ul>
-              <p className="mt-4 text-[10px] text-muted-foreground">AI-generated from recent headlines; not investment advice.</p>
-            </>
-          ) : null}
-        </section>
+        <div className="mt-8 grid gap-8 lg:grid-cols-[1.35fr_1fr] lg:items-start">
+          <MarketHistoryChart symbol={symbol} name={name} />
+
+          <aside className="rounded-md border border-border bg-card p-6">
+            <h2 className="display-font text-2xl text-ink">Today's drivers</h2>
+            {isLoading ? (
+              <div className="mt-4 space-y-2">
+                {[0, 1, 2].map((i) => <div key={i} className="h-4 w-3/4 animate-pulse rounded bg-muted" />)}
+              </div>
+            ) : error ? (
+              <p className="mt-3 font-serif text-muted-foreground">{(error as Error).message}</p>
+            ) : data ? (
+              <>
+                <p className="mt-3 font-serif text-lg text-foreground">{data.summary}</p>
+                <ul className="mt-3 list-disc space-y-1.5 pl-5 font-serif text-foreground">
+                  {data.reasons.map((r) => <li key={r}>{r}</li>)}
+                </ul>
+                <p className="mt-4 text-[10px] text-muted-foreground">AI-generated from recent headlines; not investment advice.</p>
+              </>
+            ) : null}
+          </aside>
+        </div>
 
         <section className="mt-10">
           <h2 className="display-font text-2xl text-ink">History of {name}</h2>
-          {data?.background && <p className="mt-3 font-serif text-foreground">{data.background}</p>}
-          <MarketHistoryChart symbol={symbol} name={name} />
+          {isLoading ? (
+            <div className="mt-3 space-y-2">
+              {[0, 1].map((i) => <div key={i} className="h-4 w-2/3 animate-pulse rounded bg-muted" />)}
+            </div>
+          ) : data?.background ? (
+            <p className="mt-3 font-serif text-foreground">{data.background}</p>
+          ) : null}
         </section>
 
         <section className="mt-12">
