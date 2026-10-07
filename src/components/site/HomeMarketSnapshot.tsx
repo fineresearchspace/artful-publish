@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowDownRight, ArrowRight, ArrowUpRight } from "lucide-react";
 import { useEffect, useState } from "react";
+import { tenYearSpreadBps } from "@/lib/bond-spreads";
 
 const MARKET_API = "https://weekly-wonders-market.onrender.com";
 
@@ -184,7 +185,7 @@ export function HomeBondSnapshot() {
   }, []);
 
   return (
-    <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6" aria-labelledby="bond-snapshot-title">
+    <section className="mt-10" aria-labelledby="bond-snapshot-title">
       <div className="grid gap-6 border-b-2 border-ink pb-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
         <div className="min-w-0">
           <p className="pixel-font text-[10px] text-primary">Fixed income</p>
@@ -237,6 +238,23 @@ export function HomeBondSnapshot() {
         </div>
       )}
       <p className="mt-3 text-[10px] text-muted-foreground">Yield changes shown in basis points where available.</p>
+      {data?.countries?.length ? (
+        <section className="mt-8 border-t border-border pt-5" aria-labelledby="bond-spread-title">
+          <h3 id="bond-spread-title" className="font-editorial-ui text-base font-semibold text-ink">10Y spread vs US</h3>
+          <dl className="mt-4 grid gap-x-8 sm:grid-cols-2 lg:grid-cols-3">
+            {data.countries.map((country) => {
+              const usYield = data.countries?.find((item) => item.country === "United States")?.rates["10Y"]?.yield;
+              const spread = tenYearSpreadBps(country.rates["10Y"]?.yield, usYield);
+              return (
+                <div key={country.country} className="flex items-baseline justify-between gap-4 border-b border-border py-3 font-editorial-ui text-sm">
+                  <dt className="text-muted-foreground">{country.country}</dt>
+                  <dd className="font-semibold tabular-nums text-ink">{spread === null ? "—" : `${spread > 0 ? "+" : ""}${spread} bp`}</dd>
+                </div>
+              );
+            })}
+          </dl>
+        </section>
+      ) : null}
     </section>
   );
 }

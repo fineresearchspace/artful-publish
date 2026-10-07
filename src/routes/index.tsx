@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { SiteShell } from "@/components/site/SiteShell";
 import { ArticleCard } from "@/components/site/ArticleCard";
-import { HomeBondSnapshot } from "@/components/site/HomeMarketSnapshot";
 import { PixelArt } from "@/components/PixelArt";
 import { listPublishedArticles } from "@/lib/public-articles.functions";
 import { formatDate } from "@/lib/articles";
@@ -128,8 +127,6 @@ function Home() {
           ) : null}
         </div>
       </section>
-
-      <HomeBondSnapshot />
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="pixel-rule" />
