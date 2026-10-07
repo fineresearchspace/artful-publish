@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { SiteShell } from "@/components/site/SiteShell";
 import MarketPulseNews from "@/components/MarketPulseNews";
 import { Button } from "@/components/ui/button";
+import { HomeBondSnapshot } from "@/components/site/HomeMarketSnapshot";
 
 
 export const Route = createFileRoute("/Market-Pulse")({
@@ -29,6 +30,7 @@ const TABS = [
   { key: "us", label: "US" },
   { key: "europe", label: "Europe" },
   { key: "asia", label: "Asia" },
+  { key: "bonds", label: "Bonds" },
   { key: "commodities", label: "Commodities" },
   { key: "currencies", label: "Currencies" },
 ] as const;
@@ -112,6 +114,8 @@ function MarketPulsePage() {
     setSelectedMarket(null);
     setLoadError(null);
 
+    if (activeTab === "bonds") return () => controller.abort();
+
     fetch(`${API_BASE_URL}/api/markets/region/${activeTab}`, {
       signal: controller.signal,
     })
@@ -139,7 +143,7 @@ function MarketPulsePage() {
   return (
     <SiteShell>
       <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
-        <p className="pixel-font text-[11px] text-primary">[ Market Pulse ]</p>
+         <p className="font-editorial-ui text-sm font-semibold uppercase tracking-normal text-primary">[ Market Pulse ]</p>
         <h1 className="display-font mt-3 text-4xl text-ink sm:text-5xl">Market Pulse</h1>
         <p className="mt-3 font-serif text-lg text-muted-foreground">
           Compare global indices, commodities, and currencies at a glance. Delayed data.
@@ -150,18 +154,18 @@ function MarketPulsePage() {
             <Button
               key={tab.key}
               type="button"
-              size="sm"
+               size="default"
               variant={activeTab === tab.key ? "default" : "outline"}
               onClick={() => setActiveTab(tab.key)}
               aria-pressed={activeTab === tab.key}
-              className="font-editorial-ui text-xs font-semibold uppercase"
+               className="font-editorial-ui text-base font-semibold uppercase tracking-normal"
             >
               {tab.label}
             </Button>
           ))}
         </div>
 
-        {loadError ? (
+        {activeTab === "bonds" ? <HomeBondSnapshot /> : loadError ? (
           <p className="mt-10 font-serif text-sm text-muted-foreground">{loadError}</p>
         ) : !markets ? (
           <div className="mt-10 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
@@ -189,7 +193,7 @@ function MarketPulsePage() {
           </div>
         )}
 
-        <p className="mt-4 text-xs text-muted-foreground">Tap any card for today's drivers, price history and related articles.</p>
+        {activeTab !== "bonds" ? <p className="mt-4 text-xs text-muted-foreground">Tap any card for today's drivers, price history and related articles.</p> : null}
       </section>
       <div className="py-14">
         <MarketPulseNews />

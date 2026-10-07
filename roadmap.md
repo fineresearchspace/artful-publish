@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Move sovereign yields to the Bonds tab between Asia and Commodities, preserve the table and timestamp, add 10Y spreads vs US, and align tab typography.
 
 - [x] Keep subscriber records private and accept validated website signups.
 - [x] Add newsletter signup form to the public site.
