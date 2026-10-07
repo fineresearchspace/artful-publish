@@ -35,7 +35,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
                 aria-label="Toggle menu"
                 aria-expanded={open}
                 onClick={() => setOpen((value) => !value)}
-                className="rounded-full md:hidden"
+                className="rounded-full lg:hidden"
               >
                 {open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
               </Button>
@@ -53,15 +53,15 @@ export function SiteShell({ children }: { children: ReactNode }) {
             </p>
           </div>
 
-          <div className="hidden items-center justify-between border-y-2 border-ink py-3 md:flex">
+          <div className="hidden items-center justify-between border-y-2 border-ink py-3 lg:flex">
             <nav className="flex items-center gap-5 font-editorial-ui lg:gap-7">
               {NAV.map((item) => (
                 <Link
                   key={item.to}
                   to={item.to}
-                  className="text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground transition-colors hover:text-primary"
+                  className="text-base font-semibold uppercase tracking-normal text-foreground transition-colors hover:text-primary"
                   activeOptions={{ exact: item.to === "/" }}
-                  activeProps={{ className: "text-[11px] font-semibold uppercase tracking-[0.12em] text-primary" }}
+                  activeProps={{ className: "text-base font-semibold uppercase tracking-normal text-primary" }}
                 >
                   {item.label}
                 </Link>
@@ -78,13 +78,13 @@ export function SiteShell({ children }: { children: ReactNode }) {
           </div>
 
           {open ? (
-            <nav className="grid grid-cols-2 gap-x-6 gap-y-1 border-t-2 border-ink py-3 font-editorial-ui md:hidden">
+            <nav className="grid grid-cols-2 gap-x-6 gap-y-1 border-t-2 border-ink py-3 font-editorial-ui lg:hidden">
               {NAV.map((item) => (
                 <Link
                   key={item.to}
                   to={item.to}
                   onClick={() => setOpen(false)}
-                  className="py-2 text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors hover:text-primary"
+                  className="py-2 text-base font-semibold uppercase tracking-normal transition-colors hover:text-primary"
                 >
                   {item.label}
                 </Link>
