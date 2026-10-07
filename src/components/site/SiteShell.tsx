@@ -7,7 +7,6 @@ import { HeadlineTicker } from "@/components/site/HeadlineTicker";
 import { NewsletterSignup } from "@/components/site/NewsletterSignup";
 import { SiteSearch } from "@/components/site/SiteSearch";
 import { ThemeToggle } from "@/components/site/ThemeToggle";
-import logoAsset from "@/assets/the-context-logo.png.asset.json";
 
 const NAV = [
   { to: "/", label: "Home" },
@@ -25,16 +24,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
     <div className="flex min-h-screen flex-col">
       <header className="relative z-40 border-t-4 border-ink bg-paper shadow-[var(--shadow-pixel-sm)]">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="flex min-h-11 items-center justify-between border-b border-border font-editorial-ui text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-            <Link to="/" className="flex items-center gap-3 transition-colors hover:text-primary">
-              <img
-                src={logoAsset.url}
-                alt="The Context logo"
-                className="h-7 w-auto rounded-sm"
-              />
-              <span className="hidden sm:inline">Independent financial publication</span>
-            </Link>
-
+          <div className="flex min-h-11 items-center justify-end border-b border-border font-editorial-ui text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
             <div className="flex items-center gap-1 sm:gap-2">
               <SiteSearch />
               <ThemeToggle />
@@ -120,12 +110,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
       <footer className="mt-20 border-t border-border bg-paper">
         <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 sm:px-6 md:flex-row md:items-start md:justify-between">
           <div className="max-w-sm">
-            <img
-              src={logoAsset.url}
-              alt="The Context logo"
-              className="h-12 w-auto rounded-md"
-            />
-            <p className="mt-3 text-sm text-muted-foreground">{SITE.tagline}</p>
+            <p className="text-sm text-muted-foreground">{SITE.tagline}</p>
           </div>
           <div className="flex flex-col gap-2">
             <span className="pixel-font text-[10px] text-muted-foreground">Explore</span>
