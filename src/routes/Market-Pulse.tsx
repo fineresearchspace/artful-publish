@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { SiteShell } from "@/components/site/SiteShell";
-import MarketPulseNews from "@/components/MarketPulseNews";
+import { RelatedMarketArticles } from "@/components/site/RelatedMarketArticles";
 import { Button } from "@/components/ui/button";
 import { HomeBondSnapshot } from "@/components/site/HomeMarketSnapshot";
 
@@ -194,10 +194,8 @@ function MarketPulsePage() {
         )}
 
         {activeTab !== "bonds" ? <p className="mt-4 text-xs text-muted-foreground">Tap any card for today's drivers, price history and related articles.</p> : null}
+        <RelatedMarketArticles tab={activeTab} />
       </section>
-      <div className="py-14">
-        <MarketPulseNews />
-      </div>
     </SiteShell>
   );
 }
