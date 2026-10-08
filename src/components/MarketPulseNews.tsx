@@ -1,4 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
+import { Link } from "@tanstack/react-router";
+import { RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { recentHeadlines } from "@/lib/headlines";
 
 const NEWS_API_BASE = "/api";
 
@@ -146,7 +150,7 @@ function formatDay(iso: string) {
   return date.toLocaleDateString("en-IN", { weekday: "long", month: "short", day: "numeric" });
 }
 
-export default function MarketPulseNews() {
+export default function MarketPulseNews({ limit, showAllLink = false }: { limit?: number; showAllLink?: boolean }) {
   const [articles, setArticles] = useState<Article[]>([]);
   const [status, setStatus] = useState<"loading" | "ready" | "error" | "empty">("loading");
   const [category, setCategory] = useState("All Categories");
@@ -158,13 +162,12 @@ export default function MarketPulseNews() {
     setStatus("loading");
     try {
       const params = new URLSearchParams();
+      params.set("limit", "100");
       if (cat !== "All Categories") params.set("category", cat);
       const res = await fetch(`${NEWS_API_BASE}/news?${params.toString()}`);
       if (!res.ok) throw new Error(`Request failed: ${res.status}`);
       const data: NewsResponse = await res.json();
-      const sorted = [...data.items].sort(
-        (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
-      );
+      const sorted = recentHeadlines(data.items, limit);
       setArticles(sorted);
       setStatus(sorted.length === 0 ? "empty" : "ready");
       if (data.sourcesFailed?.length) {
@@ -174,7 +177,7 @@ export default function MarketPulseNews() {
       console.error("Failed to load market news:", err);
       setStatus("error");
     }
-  }, []);
+  }, [limit]);
 
   useEffect(() => {
     fetchNews(category);
@@ -210,12 +213,13 @@ export default function MarketPulseNews() {
   };
 
   return (
-    <section className="mx-auto w-full max-w-4xl px-4 sm:px-6">
+    <section className="mx-auto w-full max-w-6xl px-4 sm:px-6" aria-label="Today's headlines">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="pixel-font text-2xl text-ink">Market Pulse</h2>
-        <div className="flex items-center gap-2">
+        <h2 className="display-font text-3xl text-ink">Today's headlines</h2>
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
           <select
             value={category}
+            aria-label="Headline category"
             onChange={(e) => setCategory(e.target.value)}
             className="border border-border bg-paper px-3 py-1.5 text-sm outline-none focus:border-primary"
           >
@@ -223,12 +227,15 @@ export default function MarketPulseNews() {
               <option key={c} value={c}>{c}</option>
             ))}
           </select>
-          <button
+          <Button
+            variant="outline"
+            title="Refresh headlines"
+            disabled={status === "loading"}
             onClick={() => fetchNews(category)}
-            className="pixel-font border border-border bg-paper px-3 py-1.5 text-[10px] uppercase transition-colors hover:bg-accent"
+            className="font-editorial-ui text-sm"
           >
-            Refresh
-          </button>
+            <RefreshCw aria-hidden="true" /> Refresh
+          </Button>
         </div>
       </div>
 
@@ -256,7 +263,7 @@ export default function MarketPulseNews() {
           <div className="relative border-l border-border pl-6 sm:pl-8">
             {articles.map((article, index) => {
               const showDay =
-                index === 0 || dayKey(article.publishedAt) !== dayKey(articles[index - 1]!.publishedAt);
+                index === 0 || dayKey(article.publishedAt) !== dayKey(articles[index - 1]?.publishedAt ?? "");
               return (
                 <div key={article.id}>
                   {showDay && (
@@ -321,13 +328,13 @@ export default function MarketPulseNews() {
 
           {selected.size > 0 && (
             <div className="sticky bottom-4 mt-6 flex justify-center">
-              <button
+              <Button
                 onClick={generateNewsletter}
                 disabled={generating}
                 className="pixel-font border border-border bg-ink px-6 py-2 text-[10px] uppercase text-background shadow-[4px_4px_0_0_var(--color-ink)] disabled:opacity-50"
               >
                 {generating ? "Generating…" : `Generate Daily Wonder (${selected.size} selected)`}
-              </button>
+              </Button>
             </div>
           )}
 
@@ -341,6 +348,13 @@ export default function MarketPulseNews() {
           )}
         </>
       )}
+      {showAllLink ? (
+        <div className="mt-6 border-t border-border pt-5">
+          <Button asChild variant="link" className="px-0 font-editorial-ui text-base">
+            <Link to="/headlines">See all headlines →</Link>
+          </Button>
+        </div>
+      ) : null}
     </section>
   );
 }

@@ -6,6 +6,7 @@ import { PixelArt } from "@/components/PixelArt";
 import { listPublishedArticles } from "@/lib/public-articles.functions";
 import { formatDate } from "@/lib/articles";
 import { SITE } from "@/lib/site";
+import MarketPulseNews from "@/components/MarketPulseNews";
 
 async function loadHomeData() {
   try {
@@ -127,6 +128,10 @@ function Home() {
           ) : null}
         </div>
       </section>
+
+      <div className="py-14">
+        <MarketPulseNews limit={6} showAllLink />
+      </div>
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="pixel-rule" />
