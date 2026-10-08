@@ -1,12 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { useState, type ReactNode } from "react";
-import { Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { type ReactNode } from "react";
 import { SITE } from "@/lib/site";
 import { HeadlineTicker } from "@/components/site/HeadlineTicker";
 import { NewsletterSignup } from "@/components/site/NewsletterSignup";
-import { SiteSearch } from "@/components/site/SiteSearch";
-import { ThemeToggle } from "@/components/site/ThemeToggle";
+import { SiteHeader } from "@/components/site/SiteHeader";
 
 const NAV = [
   { to: "/", label: "Home" },
@@ -18,90 +15,10 @@ const NAV = [
 ] as const;
 
 export function SiteShell({ children }: { children: ReactNode }) {
-  const [open, setOpen] = useState(false);
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="relative z-40 border-t-4 border-ink bg-paper shadow-[var(--shadow-pixel-sm)]">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="flex min-h-11 items-center justify-end border-b border-border font-editorial-ui text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-            <div className="flex items-center gap-1 sm:gap-2">
-              <SiteSearch />
-              <ThemeToggle />
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                aria-label="Toggle menu"
-                aria-expanded={open}
-                onClick={() => setOpen((value) => !value)}
-                className="rounded-full lg:hidden"
-              >
-                {open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
-              </Button>
-            </div>
-          </div>
-
-          <div className="py-5 text-center sm:py-7">
-            <Link to="/" className="inline-block text-ink transition-colors hover:text-primary">
-              <span className="display-font block text-5xl italic leading-none sm:text-6xl lg:text-7xl">
-                The Context
-              </span>
-            </Link>
-            <p className="mt-2 font-serif text-sm italic text-primary sm:text-base">
-              Markets, explained in context.
-            </p>
-          </div>
-
-          <div className="hidden items-center justify-between border-y-2 border-ink py-3 lg:flex">
-            <nav className="flex items-center gap-5 font-editorial-ui lg:gap-7">
-              {NAV.map((item) => (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  className="text-base font-semibold uppercase tracking-normal text-foreground transition-colors hover:text-primary"
-                  activeOptions={{ exact: item.to === "/" }}
-                  activeProps={{ className: "text-base font-semibold uppercase tracking-normal text-primary" }}
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
-            <a
-              href={SITE.substackUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="bg-ink px-6 py-2 font-editorial-ui text-[10px] font-semibold uppercase tracking-[0.14em] text-background shadow-[var(--shadow-pixel-sm)] transition-[transform,opacity] hover:-translate-y-0.5 hover:opacity-90"
-            >
-              Read on Substack →
-            </a>
-          </div>
-
-          {open ? (
-            <nav className="grid grid-cols-2 gap-x-6 gap-y-1 border-t-2 border-ink py-3 font-editorial-ui lg:hidden">
-              {NAV.map((item) => (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  onClick={() => setOpen(false)}
-                  className="py-2 text-base font-semibold uppercase tracking-normal transition-colors hover:text-primary"
-                >
-                  {item.label}
-                </Link>
-              ))}
-              <a
-                href={SITE.substackUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="col-span-2 mt-2 bg-ink px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.14em] text-background"
-              >
-                Read on Substack →
-              </a>
-            </nav>
-          ) : null}
-        </div>
-        <div className="h-4 sm:h-5" aria-hidden="true" />
-      </header>
+      <SiteHeader />
 
       <HeadlineTicker />
 

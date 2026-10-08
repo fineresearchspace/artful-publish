@@ -248,6 +248,33 @@
 
 /* ---------- Headline ticker ---------- */
 
+.header-inner { display: grid; grid-template-areas: "tools" "logo" "nav"; }
+.header-tools { grid-area: tools; min-height: 52px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.header-logo { grid-area: logo; text-align: center; padding: 12px 0; }
+.header-logo span { font-size: 48px; }
+.header-nav { grid-area: nav; display: none; }
+.site-header[data-collapsed="true"] .header-inner { height: 52px; grid-template-areas: "logo tools"; grid-template-columns: minmax(0,1fr) auto; align-items: center; }
+.site-header[data-collapsed="true"] .header-logo { text-align: left; padding: 0; }
+.site-header[data-collapsed="true"] .header-logo span { font-size: 24px; }
+.site-header[data-collapsed="true"] .header-tools { min-height: 0; padding: 0; border: 0; }
+@media (min-width: 768px) {
+  .header-logo { padding: 16px 0; }
+  .header-logo span { font-size: 60px; }
+  .header-nav { display: flex; align-items: center; justify-content: center; gap: 12px; border-block: 2px solid var(--ink); padding: 12px 0; }
+  .site-header[data-collapsed="true"] .header-inner { grid-template-areas: "logo nav tools"; grid-template-columns: 110px minmax(0,1fr) auto; gap: 12px; }
+  .site-header[data-collapsed="true"] .header-nav { display: grid; grid-template-columns: repeat(3, auto); justify-content: center; column-gap: 12px; row-gap: 2px; border: 0; padding: 0; }
+  .site-header[data-collapsed="true"] .header-nav a { line-height: 20px; }
+}
+@media (min-width: 1100px) {
+  .header-logo span { font-size: 72px; }
+  .header-nav { gap: 28px; }
+  .site-header[data-collapsed="true"] .header-inner { grid-template-columns: 140px minmax(0,1fr) auto; }
+  .site-header[data-collapsed="true"] .header-logo span { font-size: 28px; }
+  .site-header[data-collapsed="true"] .header-nav { display: flex; gap: 14px; }
+}
+.market-ticker:hover .ticker-track { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .market-ticker .ticker-track { animation: none; } }
+
 @keyframes ticker-scroll {
   from {
     transform: translateX(0);
