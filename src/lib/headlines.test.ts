@@ -16,7 +16,7 @@ test("related articles shows three most recent matches, excluding unrelated arti
 });
 
 test("each tab matches its own subject rather than falling back to unrelated stories", () => {
-  const titles = { india: "Nifty gains", us: "Nasdaq rises", europe: "ECB weighs outlook", asia: "Nikkei climbs", bonds: "Sovereign yields rise", commodities: "Gold rises", currencies: "Rupee falls" } as const;
+  const titles = { india: "Nifty gains", us: "Nasdaq rises", europe: "ECB weighs outlook", asia: "Nikkei climbs", bonds: "Sovereign yields rise", commodities: "Gold rises", currencies: "Forex markets fluctuate" } as const;
   const items = Object.values(titles).map((title, i) => story(i + 1, title));
   for (const [tab, title] of Object.entries(titles)) {
     assert.deepEqual(relatedHeadlines(items, tab as keyof typeof titles).map((a) => a.title), [title]);

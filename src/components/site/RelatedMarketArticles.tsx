@@ -30,7 +30,6 @@ export function RelatedMarketArticles({ tab }: { tab: MarketNewsTab }) {
             <a key={article.id} href={article.sourceUrl} target="_blank" rel="noopener noreferrer" className="group min-w-0 border-b border-border pb-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
               <p className="font-editorial-ui text-xs text-muted-foreground">{article.source}</p>
               <h3 className="mt-2 font-serif text-lg leading-snug text-ink group-hover:text-primary">{article.title}</h3>
-              <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{article.summary}</p>
             </a>
           ))}
         </div>}
