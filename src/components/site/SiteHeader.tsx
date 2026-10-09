@@ -39,8 +39,8 @@ export function SiteHeader() {
           <Link to="/" className="header-logo text-ink transition-colors hover:text-primary" aria-label="The Context home">
             <span className="display-font italic leading-none">The Context</span>
           </Link>
-          <nav className="header-nav font-editorial-ui" aria-label="Main navigation">
-            {NAV.map((item) => <Link key={item.to} to={item.to} className="whitespace-nowrap text-base font-semibold uppercase tracking-normal text-foreground hover:text-primary" activeOptions={{ exact: item.to === "/" }} activeProps={{ className: "text-primary" }}>{item.label}</Link>)}
+          <nav className="header-nav font-display not-italic" aria-label="Main navigation">
+            {NAV.map((item) => <Link key={item.to} to={item.to} className="whitespace-nowrap text-base font-normal not-italic tracking-normal text-foreground hover:text-primary" activeOptions={{ exact: item.to === "/" }} activeProps={{ className: "text-primary" }}>{item.label}</Link>)}
           </nav>
           <div className="header-tools flex items-center justify-end gap-1 sm:gap-2">
             <SiteSearch />
@@ -49,7 +49,7 @@ export function SiteHeader() {
             <Button variant="ghost" size="icon" aria-label="Toggle menu" aria-expanded={open} aria-controls="header-mobile-nav" onClick={() => setOpen((value) => !value)} className="md:hidden">{open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}</Button>
           </div>
         </div>
-        {open ? <nav id="header-mobile-nav" aria-label="Mobile navigation" className="grid grid-cols-2 gap-x-6 border-t border-border px-4 py-3 font-editorial-ui md:hidden">{NAV.map((item) => <Link key={item.to} to={item.to} onClick={() => setOpen(false)} className="py-2 text-base font-semibold uppercase hover:text-primary">{item.label}</Link>)}</nav> : null}
+        {open ? <nav id="header-mobile-nav" aria-label="Mobile navigation" className="grid grid-cols-2 gap-x-6 border-t border-border px-4 py-3 font-display not-italic md:hidden">{NAV.map((item) => <Link key={item.to} to={item.to} onClick={() => setOpen(false)} className="py-2 text-base font-normal not-italic tracking-normal hover:text-primary">{item.label}</Link>)}</nav> : null}
       </header>
     </div>
   );
