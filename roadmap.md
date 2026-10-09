@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Replace AI market drivers with attributed indicator-matched news and verify across market groups.
 - [x] Move the six latest headlines below the homepage hero with all-headlines access and retain filters/refresh; replace Market Pulse's timeline with three tab-matched articles and verify both pages.
 - [x] Move sovereign yields to the Bonds tab between Asia and Commodities, preserve the table and timestamp, add 10Y spreads vs US, and align tab typography.
 
