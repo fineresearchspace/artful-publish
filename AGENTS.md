@@ -19,3 +19,4 @@
 - Market Pulse uses a categorized delayed-data performance board for indices, commodities, and currencies, with selectable price history and reported volume.
 - The homepage and full headlines route reuse one timeline; a shared chronological selector limits headlines and topic-matches the Market Pulse related-news row without unrelated fallbacks.
 - The shared header owns its scroll-collapse state and preserves its expanded space to prevent scroll jumps; its ticker reads existing quote, FX, and bond feeds independently without inventing missing values.
+- Market detail pages use a news-only server function and a pure symbol-based selector for attributed drivers; no model call or unrelated-news fallback is permitted, so explanations remain grounded in reporting.
