@@ -3,6 +3,12 @@ import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import type { Article, Category } from "./articles";
 import { ARTICLE_LIST_FIELDS } from "./articles";
+import { articlePreviewImage } from "./article-preview-image";
+
+function previewItem(row: ArticleListItem & { content?: string }): ArticleListItem {
+  const { content, ...article } = row;
+  return { ...article, cover_image: articlePreviewImage(article.cover_image, content) };
+}
 
 function publicClient() {
   const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
@@ -37,14 +43,14 @@ export const listPublishedArticles = createServerFn({ method: "GET" }).handler(
     const [articlesRes, categoriesRes] = await Promise.all([
       supabase
         .from("articles")
-        .select(ARTICLE_LIST_FIELDS)
+        .select(`${ARTICLE_LIST_FIELDS},content`)
         .in("status", ["published_web", "exported_substack"])
         .order("published_at", { ascending: false }),
       supabase.from("categories").select("*").order("sort_order"),
     ]);
 
     return {
-      articles: (articlesRes.data ?? []) as unknown as ArticleListItem[],
+      articles: ((articlesRes.data ?? []) as unknown as (ArticleListItem & { content: string })[]).map(previewItem),
       categories: (categoriesRes.data ?? []) as unknown as Category[],
     };
   },
@@ -55,12 +61,12 @@ export const listPublishedCfaArticles = createServerFn({ method: "GET" }).handle
     const supabase = publicClient();
     const { data } = await supabase
       .from("articles")
-      .select(ARTICLE_LIST_FIELDS)
+      .select(`${ARTICLE_LIST_FIELDS},content`)
       .in("status", ["published_web", "exported_substack"])
       .eq("category", "CFA Exam")
       .order("published_at", { ascending: false });
 
-    return { articles: (data ?? []) as unknown as ArticleListItem[] };
+    return { articles: ((data ?? []) as unknown as (ArticleListItem & { content: string })[]).map(previewItem) };
   },
 );
 
@@ -83,7 +89,7 @@ export const getPublishedArticle = createServerFn({ method: "GET" })
 
       const { data: related } = await supabase
         .from("articles")
-        .select(ARTICLE_LIST_FIELDS)
+        .select(`${ARTICLE_LIST_FIELDS},content`)
         .in("status", ["published_web", "exported_substack"])
         .eq("category", (article as Article).category)
         .neq("slug", data)
@@ -92,7 +98,7 @@ export const getPublishedArticle = createServerFn({ method: "GET" })
 
       return {
         article: article as unknown as Article,
-        related: (related ?? []) as unknown as ArticleListItem[],
+        related: ((related ?? []) as unknown as (ArticleListItem & { content: string })[]).map(previewItem),
       };
     },
   );

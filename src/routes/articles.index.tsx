@@ -21,6 +21,7 @@ export const Route = createFileRoute("/articles/")({
         content: "Every The Context article, collected as pixel-art cards.",
       },
       { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { property: "og:url", content: "/articles" },
     ],
     links: [{ rel: "canonical", href: "/articles" }],
