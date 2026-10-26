@@ -21,3 +21,4 @@
 - The shared header owns its scroll-collapse state and preserves its expanded space to prevent scroll jumps; its ticker reads existing quote, FX, and bond feeds independently without inventing missing values.
 - Market detail pages show only the price chart, history and related articles, fed by a news-only server function and a pure symbol-based selector; no model call, no unrelated-news fallback, and no today's-drivers section.
 - Feed copy is entity-decoded before display so escaped anchor markup and bare URLs never reach a summary, while article links keep their URL — only prose is stripped.
+- Public article lists resolve covers from the selected cover or first embedded photo, convert legacy signed article-image URLs to permanent public URLs, and omit body content from list responses so existing posts have previews without resaving.
