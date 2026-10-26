@@ -46,19 +46,29 @@ const NAMED_ENTITIES: Record<string, string> = {
 const codePoint = (code: number) =>
   code > 0 && code < 0x110000 && !(code >= 0xd800 && code <= 0xdfff) ? String.fromCodePoint(code) : " ";
 
-// Feed copy arrives HTML-escaped (&lt;a href="https://…&gt;), so decode first,
-// then drop markup, leftover href fragments and bare URLs: raw link text must
-// never reach the line under a headline.
-export const cleanText = (value: string) =>
-  value
+// Feed copy arrives HTML-escaped (&lt;a href="https://…&gt;) or CDATA-wrapped,
+// so decode first, then drop markup, leftover href fragments and bare URLs: raw
+// link text must never reach the line under a headline.
+const decodeEntities = (value: string) =>
+  value.replace(/<!\[CDATA\[|\]\]>/g, "")
     .replace(/&#(\d+);/g, (_, digits: string) => codePoint(Number(digits)))
     .replace(/&#x([0-9a-f]+);/gi, (_, hex: string) => codePoint(parseInt(hex, 16)))
-    .replace(/&([a-z]+);/gi, (match: string, name: string) => NAMED_ENTITIES[name.toLowerCase()] ?? match)
+    .replace(/&([a-z]+);/gi, (match: string, name: string) => NAMED_ENTITIES[name.toLowerCase()] ?? match);
+
+export const cleanText = (value: string) =>
+  decodeEntities(value)
     .replace(/<[^>]*>/g, " ")
     .replace(/<[^<]*$/g, " ")
     .replace(/href\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, " ")
     .replace(/\b(?:https?|ftp):\/\/\S+/gi, " ")
     .replace(/\s+/g, " ")
+    .trim();
+
+// Article links must keep their URL — unlike prose, a link's whole job is the address.
+const cleanLink = (value: string) =>
+  decodeEntities(value)
+    .replace(/<[^>]*>/g, "")
+    .replace(/\s+/g, "")
     .trim();
 
 const normalizeTitle = (value: string) =>
@@ -206,8 +216,12 @@ type RssItem = { title: string; link: string; description?: string; pubDate?: st
 
 const extractTag = (block: string, tag: string) => {
   const match = block.match(new RegExp(`<${tag}(?:\\s[^>]*)?>([\\s\\S]*?)</${tag}>`, "i"));
-  // CDATA markers are removed before cleaning so their content survives.
-  return match?.[1] ? cleanText(match[1].replace(/<!\[CDATA\[|\]\]>/g, "")) : "";
+  return match?.[1] ? cleanText(match[1]) : "";
+};
+
+const extractLink = (block: string, tag: string) => {
+  const match = block.match(new RegExp(`<${tag}(?:\\s[^>]*)?>([\\s\\S]*?)</${tag}>`, "i"));
+  return match?.[1] ? cleanLink(match[1]) : "";
 };
 
 // Priority: <media:content url> -> <enclosure url type="image/*"> -> <img src> in description
@@ -224,12 +238,12 @@ const extractImage = (block: string) => {
 };
 
 
-const parseRss = (xml: string, source: string): (RssItem & { imageUrl: string | null })[] =>
+export const parseRss = (xml: string, source: string): (RssItem & { imageUrl: string | null })[] =>
   [...xml.matchAll(/<item[\s\S]*?<\/item>/gi)].map((match) => {
     const block = match[0];
     return {
       title: extractTag(block, "title"),
-      link: extractTag(block, "link"),
+      link: extractLink(block, "link"),
       description: extractTag(block, "description"),
       pubDate: extractTag(block, "pubDate"),
       source,
