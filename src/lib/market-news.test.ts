@@ -14,7 +14,8 @@ test('no recent matching reporting means no invented driver or unrelated fallbac
   assert.deepEqual(selectMarketNews([story('Gold rises', '2026-10-05T05:00:00Z'), story('Oil rises')], 'GC=F', 'Gold', now).drivers, []);
 });
 test('every market group matches its own indicator', () => {
-  for (const [symbol, name, title] of [['^NSEI','NIFTY 50','Nifty rises on bank gains'],['^GSPC','S&P 500','S&P 500 falls after inflation report'],['^GDAXI','DAX','DAX rises on earnings'],['^N225','Nikkei 225','Nikkei falls as yen strengthens'],['NG=F','Natural Gas','Natural gas rises on colder weather'],['USDJPY=X','USD/JPY','Yen strengthens after policy decision'],['^CNXPHARMA','NIFTY Pharma','Pharma stocks rise on earnings']]) {
+  const cases: Array<[string, string, string]> = [['^NSEI','NIFTY 50','Nifty rises on bank gains'],['^GSPC','S&P 500','S&P 500 falls after inflation report'],['^GDAXI','DAX','DAX rises on earnings'],['^N225','Nikkei 225','Nikkei falls as yen strengthens'],['NG=F','Natural Gas','Natural gas rises on colder weather'],['USDJPY=X','USD/JPY','Yen strengthens after policy decision'],['^CNXPHARMA','NIFTY Pharma','Pharma stocks rise on earnings']];
+  for (const [symbol, name, title] of cases) {
     assert.equal(selectMarketNews([story(title),story('Gold rises')],symbol,name,now).drivers[0]?.title,title);
   }
 });

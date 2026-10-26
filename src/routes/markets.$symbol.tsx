@@ -67,31 +67,7 @@ function MarketLandingPage() {
           </p>
         )}
 
-        <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:items-start">
-          <div className="min-w-0 [&>div]:mt-0"><MarketHistoryChart symbol={symbol} name={name} /></div>
-
-          <aside className="min-w-0 rounded-md border border-border bg-card p-6">
-            <h2 className="display-font text-2xl text-ink">Today's drivers</h2>
-            {isLoading ? (
-              <div className="mt-4 space-y-2">
-                {[0, 1, 2].map((i) => <div key={i} className="h-4 w-3/4 animate-pulse rounded bg-muted" />)}
-              </div>
-            ) : error || data?.unavailable ? (
-              <p className="mt-3 font-serif text-muted-foreground">Market reporting is temporarily unavailable.</p>
-            ) : data && data.drivers.length > 0 ? (
-              <>
-                <ol className="mt-4 divide-y divide-border">
-                  {data.drivers.map((story) => <li key={story.url} className="py-3 first:pt-0">
-                    <a href={story.url} target="_blank" rel="noreferrer" className="font-serif text-lg leading-snug text-ink hover:text-primary">{story.title}</a>
-                    {story.summary && <p className="mt-2 font-serif text-sm leading-relaxed text-foreground">{story.summary}</p>}
-                    <p className="mt-2 font-editorial-ui text-xs text-muted-foreground">{story.source} · {new Date(story.publishedAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata" })} IST</p>
-                  </li>)}
-                </ol>
-                <p className="mt-3 font-editorial-ui text-xs text-muted-foreground">As of {new Date(data.asOf).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata" })} IST</p>
-              </>
-            ) : <p className="mt-3 font-serif text-muted-foreground">No recent reporting explains {name}'s move yet.</p>}
-          </aside>
-        </div>
+        <MarketHistoryChart symbol={symbol} name={name} />
 
         <section className="mt-10">
           <h2 className="display-font text-2xl text-ink">History of {name}</h2>

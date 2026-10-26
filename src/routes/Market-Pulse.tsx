@@ -193,7 +193,7 @@ function MarketPulsePage() {
           </div>
         )}
 
-        {activeTab !== "bonds" ? <p className="mt-4 text-xs text-muted-foreground">Tap any card for today's drivers, price history and related articles.</p> : null}
+        {activeTab !== "bonds" ? <p className="mt-4 text-xs text-muted-foreground">Tap any card for price history and related articles.</p> : null}
         <RelatedMarketArticles tab={activeTab} />
       </section>
     </SiteShell>
