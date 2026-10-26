@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { fetchAndProcessNews } from "@/lib/news-core";
+import { cleanText, fetchAndProcessNews } from "@/lib/news-core";
 import { marketNewsTerms, selectMarketNews, type MarketStory } from "@/lib/market-news";
 
 const RSS = [
@@ -19,6 +19,17 @@ export type MarketReasons = {
   unavailable: boolean;
 };
 const cache = new Map<string, { at: number; value: MarketReasons }>();
+
+const normalise = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+
+// Publisher copy only, and never a repeat of the headline itself.
+function marketSummary(description: string | null, title: string) {
+  const text = cleanText(description ?? "").slice(0, 360);
+  const head = normalise(title);
+  const body = normalise(text);
+  if (!text || body === head || (head.length > 20 && body.includes(head))) return "";
+  return text;
+}
 
 export const explainMarketMove = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({
@@ -42,7 +53,7 @@ export const explainMarketMove = createServerFn({ method: "POST" })
         url: article.sourceUrl,
         source: article.source,
         // Only publisher text; do not use the generic relevance-summary fallback.
-        summary: (article.description ?? "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 360),
+        summary: marketSummary(article.description, article.title),
         publishedAt: article.publishedAt,
         imageUrl: article.imageUrl,
       }));

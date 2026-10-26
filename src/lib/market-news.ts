@@ -25,6 +25,16 @@ function mentions(text: string, term: string) {
   return new RegExp(`(^|[^a-z0-9])${escaped}($|[^a-z0-9])`, 'i').test(text);
 }
 
+// The publication is India-focused, so "today" means the IST calendar day.
+const IST_OFFSET_MINUTES = 330;
+
+export function isSameDay(publishedAt: string, now = Date.now(), offsetMinutes = IST_OFFSET_MINUTES) {
+  const at = Date.parse(publishedAt);
+  if (Number.isNaN(at)) return false;
+  return Math.floor((at + offsetMinutes * 60_000) / 86_400_000)
+    === Math.floor((now + offsetMinutes * 60_000) / 86_400_000);
+}
+
 export function selectMarketNews(items: MarketStory[], symbol: string, name: string, now = Date.now()) {
   const terms = marketNewsTerms(symbol, name);
   const related = items.filter((item) => {
@@ -33,5 +43,9 @@ export function selectMarketNews(items: MarketStory[], symbol: string, name: str
       && terms.some((term) => mentions(item.title, term));
   }).sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt));
   const unique = related.filter((item, i) => related.findIndex((other) => other.url === item.url || other.title === item.title) === i);
-  return { related: unique.slice(0, 10), drivers: unique.filter((item) => movement.test(item.title)).slice(0, 4) };
+  // Same-day reporting only; when a market has no coverage yet today, keep the
+  // most recent few so the page is never empty.
+  const sameDay = unique.filter((item) => isSameDay(item.publishedAt, now));
+  const kept = sameDay.length > 0 ? sameDay : unique.slice(0, 3);
+  return { related: kept.slice(0, 10), drivers: kept.filter((item) => movement.test(item.title)).slice(0, 4) };
 }

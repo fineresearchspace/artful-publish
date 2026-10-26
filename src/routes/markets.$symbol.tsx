@@ -89,7 +89,9 @@ function MarketLandingPage() {
                     <a href={a.url} target="_blank" rel="noreferrer" className="font-serif text-lg text-ink hover:text-primary">
                       {a.title}
                     </a>
-                    <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{a.summary}</p>
+                    {a.summary && (
+                      <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{a.summary}</p>
+                    )}
                     <p className="mt-1 font-editorial-ui text-[10px] font-semibold uppercase text-muted-foreground">
                       {a.source} · {new Date(a.publishedAt).toLocaleDateString()}
                     </p>
