@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import { strict as assert } from 'node:assert';
-import { cleanText, parseRss, summarizeArticle } from './news-core';
+import { cleanText, classifyCategory, parseRss, summarizeArticle } from './news-core';
 
 test('escaped anchor markup never reaches a summary', () => {
   const description = '&lt;a href="https://news.google.com/rss/articles/CBMi1gJBVV95cUxP"&gt;Nifty support at 22,500: Angel One&lt;/a&gt; The benchmark index held above its support level.';
@@ -24,4 +24,14 @@ test('CDATA-wrapped article links survive cleaning', () => {
   assert.equal(items[0]?.link, 'https://www.livemint.com/markets/nifty-11792980669475.html');
   assert.equal(items[0]?.title, 'Nifty rises on bank gains');
   assert.equal(items[0]?.description, 'Banks lifted the benchmark.');
+});
+
+test('FII and DII flow stories land in Capex & FII/DII', () => {
+  assert.equal(classifyCategory('FIIs pump money into equities as DIIs stay buyers').category, 'Capex & FII/DII');
+  assert.equal(classifyCategory('Foreign institutional investors turn net sellers').category, 'Capex & FII/DII');
+});
+
+test('only Indian company capex stories land in Capex & FII/DII', () => {
+  assert.equal(classifyCategory('Indian steelmaker unveils record capex plan').category, 'Capex & FII/DII');
+  assert.notEqual(classifyCategory('US chipmaker lifts capex guidance').category, 'Capex & FII/DII');
 });
