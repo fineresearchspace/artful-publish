@@ -22,3 +22,5 @@
 - Market detail pages show only the price chart, history and related articles, fed by a news-only server function and a pure symbol-based selector; no model call, no unrelated-news fallback, and no today's-drivers section.
 - Feed copy is entity-decoded before display so escaped anchor markup and bare URLs never reach a summary, while article links keep their URL — only prose is stripped.
 - Public article lists resolve covers from the selected cover or first embedded photo, convert legacy signed article-image URLs to permanent public URLs, and omit body content from list responses so existing posts have previews without resaving.
+- Market Pulse augments the external region feed client-side for symbols the feed lacks (NIFTY Pharma, USD/CNY) by deriving price and change from the same-origin `/api/market-history` delayed feed, with an unavailable-card fallback.
+- The `Capex & FII/DII` news category is India-only: FII/DII institutional-flow terms always qualify, while capex terms qualify only with an Indian market or company context in the copy.
