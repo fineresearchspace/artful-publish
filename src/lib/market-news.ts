@@ -13,6 +13,7 @@ const TOPICS: Record<string, string[]> = {
   'CL=F': ['wti', 'oil prices', 'crude'], 'NG=F': ['natural gas', 'lng'],
   'EURUSD=X': ['eur/usd', 'euro'], 'GBPUSD=X': ['gbp/usd', 'sterling', 'pound'],
   'USDJPY=X': ['usd/jpy', 'yen'], 'USDINR=X': ['usd/inr', 'rupee'], 'EURINR=X': ['eur/inr', 'euro rupee'],
+  'USDCNY=X': ['usd/cny', 'yuan', 'renminbi', 'chinese currency'],
 };
 const movement = /\b(ris(?:e|es|ing)|ros[e]|rall(?:y|ies|ied)|gain(?:s|ed)?|fall(?:s|ing)?|fell|drop(?:s|ped)?|slid(?:e|es)?|slump(?:s|ed)?|surge(?:s|d)?|climb(?:s|ed)?|declin(?:e|es|ed)|rebound(?:s|ed)?|steady|flat|higher|lower|up|down|strengthen(?:s|ed)?|weaken(?:s|ed)?|advance(?:s|d)?|retreat(?:s|ed)?|jump(?:s|ed)?|tumble(?:s|d)?)\b/i;
 

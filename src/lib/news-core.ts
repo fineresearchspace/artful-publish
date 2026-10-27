@@ -185,6 +185,12 @@ export const classifyRelevance = (title: string, description = "") => {
 
 export const classifyCategory = (title: string, description = "") => {
   const text = `${title} ${description}`.toLowerCase();
+  // Capex & FII/DII is India-company focused: institutional-flow terms are
+  // India-specific, and capex stories get this category only when the copy
+  // also signals an Indian company or market context.
+  const indiaContext = /\b(india|indian|nifty|sensex|bse|nse|sebi|rbi|rupee|mumbai|dalal street)\b/.test(text);
+  if (/\b(fiis?|diis?|foreign institutional investors?|domestic institutional investors?)\b/.test(text)) return { category: "Capex & FII/DII", subcategory: "Institutional Flows" };
+  if (/\b(capex|capital expenditure|capacity expansion|greenfield|brownfield)\b/.test(text) && indiaContext) return { category: "Capex & FII/DII", subcategory: "Corporate Capex" };
   if (/\b(rupee|inr|forex|currency|currencies|exchange rate|dollar index|usd\/|eur\/|gbp\/|yen|euro|sterling|greenback)\b/.test(text)) return { category: "Currency", subcategory: "Foreign Exchange" };
   if (text.includes("rbi") || text.includes("central bank") || text.includes("rate")) return { category: "Economy & Policy", subcategory: "RBI / Monetary Policy" };
   if (text.includes("inflation") || text.includes("gdp")) return { category: "Economy & Policy", subcategory: "GDP / Economic Data" };

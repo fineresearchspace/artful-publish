@@ -13,7 +13,7 @@ export type NewsArticle = {
 export type MarketNewsTab = "india" | "us" | "europe" | "asia" | "bonds" | "commodities" | "currencies";
 
 const TAB_TERMS: Record<MarketNewsTab, RegExp> = {
-  india: /\b(india|indian|nifty|sensex|rbi|rupee|dalal|mumbai|sebi)\b/i,
+  india: /\b(india|indian|nifty|sensex|rbi|rupee|dalal|mumbai|sebi|capex|fiis?|diis?)\b/i,
   us: /\b(us|usa|u\.s\.|united states|wall street|nasdaq|s&p|dow|federal reserve|fed|treasury|american)\b/i,
   europe: /\b(europe|european|ecb|eurozone|germany|german|dax|ftse|britain|british|uk|u\.k\.|france|french|stoxx)\b/i,
   asia: /\b(asia|asian|japan|japanese|nikkei|topix|china|chinese|hong kong|hang seng|korea|korean|taiwan|singapore|boj)\b/i,

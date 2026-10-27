@@ -33,6 +33,7 @@ const CATEGORIES = [
   "Global Business",
   "Investing",
   "Currency",
+  "Capex & FII/DII",
 ];
 
 type FxPair = { pair: string; rate: number; changePct: number | null };

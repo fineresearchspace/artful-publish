@@ -41,6 +41,7 @@ const INDEX_SYMBOLS = {
   "USDJPY=X": "USDJPY=X",
   "USDINR=X": "USDINR=X",
   "EURINR=X": "EURINR=X",
+  "USDCNY=X": "USDCNY=X",
 } as const;
 
 const RANGES = {
