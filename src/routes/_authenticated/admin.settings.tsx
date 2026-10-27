@@ -43,7 +43,7 @@ function AdminSettings() {
             <input
               value={settings.substackUrl}
               onChange={(e) => setSettings({ ...settings, substackUrl: e.target.value })}
-              className="mt-1 w-full border-2 border-ink bg-paper px-3 py-2 text-sm outline-none focus:border-primary"
+              className="mt-1 w-full border border-border bg-paper px-3 py-2 text-sm outline-none focus:border-primary"
             />
           </label>
           <label className="block">
@@ -55,7 +55,7 @@ function AdminSettings() {
               onChange={(e) =>
                 setSettings({ ...settings, substackSubscribeUrl: e.target.value })
               }
-              className="mt-1 w-full border-2 border-ink bg-paper px-3 py-2 text-sm outline-none focus:border-primary"
+              className="mt-1 w-full border border-border bg-paper px-3 py-2 text-sm outline-none focus:border-primary"
             />
           </label>
           <button
@@ -74,7 +74,7 @@ function AdminSettings() {
         <p className="pixel-font text-[10px] text-primary">Publishing providers</p>
         <ul className="mt-4 space-y-2 text-sm">
           <li className="flex items-center justify-between gap-4">
-            <span>Weekly Wonders website</span>
+            <span>The Context website</span>
             <span className="pixel-font text-[10px] text-primary">Active</span>
           </li>
           <li className="flex items-center justify-between gap-4">

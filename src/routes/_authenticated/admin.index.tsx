@@ -17,9 +17,9 @@ function Dashboard() {
   const drafts = articles.filter((a) => a.status === "draft");
   const ready = articles.filter((a) => a.status === "ready");
   const published = articles.filter((a) =>
-    ["published_web", "published_substack"].includes(a.status),
+    ["published_web", "exported_substack"].includes(a.status),
   );
-  const onSubstack = articles.filter((a) => a.status === "published_substack");
+  const onSubstack = articles.filter((a) => a.status === "exported_substack");
   const views = articles.reduce((sum, a) => sum + a.view_count, 0);
   const mostRead = [...articles].sort((a, b) => b.view_count - a.view_count)[0];
 
@@ -74,7 +74,7 @@ function Dashboard() {
         {isLoading ? (
           <p className="mt-4 text-sm text-muted-foreground">Loading…</p>
         ) : (
-          <ul className="mt-4 divide-y-2 divide-ink border-2 border-ink bg-paper">
+          <ul className="mt-4 divide-y-2 divide-ink border border-border bg-paper">
             {articles.slice(0, 8).map((a) => (
               <li key={a.id}>
                 <Link

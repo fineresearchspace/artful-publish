@@ -2,7 +2,6 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { SiteShell } from "@/components/site/SiteShell";
 import { ArticleCard } from "@/components/site/ArticleCard";
-import { PixelArt } from "@/components/PixelArt";
 import { Markdown } from "@/components/Markdown";
 import { formatDate } from "@/lib/articles";
 import {
@@ -21,22 +20,29 @@ export const Route = createFileRoute("/articles/$slug")({
     if (!loaderData?.article) {
       return {
         meta: [
-          { title: "Article not found — Weekly Wonders" },
+          { title: "Article not found — The Context" },
           { name: "robots", content: "noindex" },
         ],
       };
     }
     const a = loaderData.article;
     const description = a.excerpt || a.subtitle || SITE.tagline;
+    const imageMeta = a.cover_image?.startsWith("https://")
+      ? [
+          { property: "og:image", content: a.cover_image },
+          { name: "twitter:image", content: a.cover_image },
+        ]
+      : [];
     return {
       meta: [
-        { title: `${a.title} — Weekly Wonders` },
+        { title: `${a.title} — The Context` },
         { name: "description", content: description },
         { property: "og:title", content: a.title },
         { property: "og:description", content: description },
         { property: "og:type", content: "article" },
         { property: "og:url", content: `/articles/${params.slug}` },
         { name: "twitter:card", content: "summary_large_image" },
+        ...imageMeta,
       ],
       links: [{ rel: "canonical", href: `/articles/${params.slug}` }],
       scripts: [
@@ -51,7 +57,7 @@ export const Route = createFileRoute("/articles/$slug")({
             dateModified: a.updated_at,
             articleSection: a.category,
             keywords: (a.tags ?? []).join(", "),
-            author: { "@type": "Person", name: "Weekly Wonders" },
+            author: { "@type": "Person", name: "The Context" },
           }),
         },
       ],
@@ -61,7 +67,7 @@ export const Route = createFileRoute("/articles/$slug")({
   notFoundComponent: () => (
     <SiteShell>
       <div className="mx-auto max-w-2xl px-4 py-24 text-center">
-        <h1 className="pixel-font text-xl">Wonder not found</h1>
+        <h1 className="display-font text-3xl">Wonder not found</h1>
         <p className="mt-4 text-sm text-muted-foreground">
           This article may have been unpublished or moved.
         </p>
@@ -93,7 +99,7 @@ function ArticlePage() {
   return (
     <SiteShell>
       <article>
-        <header className="border-b-2 border-ink bg-paper">
+        <header className="border-b border-border bg-paper">
           <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
             <Link to="/articles" className="pixel-font text-[10px] text-muted-foreground">
               ← Archive
@@ -110,22 +116,17 @@ function ArticlePage() {
             </p>
           </div>
         </header>
-
-        <div className="mx-auto max-w-3xl px-4 sm:px-6">
-          <div className="crt pixel-frame mt-10 aspect-[16/7] overflow-hidden">
-            {article.cover_image ? (
-              <img
-                src={article.cover_image}
-                alt={article.title}
-                className="pixelated size-full object-cover"
-              />
-            ) : (
-              <PixelArt variant={article.pixel_art_image} className="size-full" />
-            )}
-          </div>
-
+        {article.cover_image ? (
+          <figure className="mx-auto max-w-5xl px-4 pt-8 sm:px-6 sm:pt-10">
+            <img
+              src={article.cover_image}
+              alt={`Cover image for ${article.title}`}
+              className="aspect-[16/9] w-full rounded-xl border border-border object-cover shadow-[var(--shadow-pixel)]"
+            />
+          </figure>
+        ) : null}
+        <div className="mx-auto max-w-3xl px-4 sm:px-6">  
           <Markdown content={article.content} className="mt-10" />
-
           {article.tags?.length ? (
             <div className="mt-10 flex flex-wrap gap-2">
               {article.tags.map((tag) => (
@@ -152,7 +153,7 @@ function ArticlePage() {
 
         {related.length ? (
           <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
-            <h2 className="pixel-font text-sm">Related wonders</h2>
+            <h2 className="display-font text-2xl">Related wonders</h2>
             <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((item) => (
                 <ArticleCard key={item.id} article={item} />
