@@ -49,6 +49,7 @@ const CATEGORY_FALLBACK: Record<string, { icon: string; tone: string }> = {
   "Global Business": { icon: "\u25CF", tone: "bg-accent/25" },
   Investing: { icon: "\u25B6", tone: "bg-primary/15" },
   Currency: { icon: "\u20B9", tone: "bg-muted" },
+  "Capex & FII/DII": { icon: "\u25C6", tone: "bg-accent/40" },
 };
 
 function Thumbnail({ article }: { article: Article }) {
