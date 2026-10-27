@@ -92,6 +92,47 @@ async function replaceNiftyAutoWithPharma(markets: MarketData[], signal: AbortSi
   return withoutAuto;
 }
 
+// The external feed has no Chinese yuan pair, so USD/CNY is appended from the
+// same-origin delayed history feed, mirroring the NIFTY Pharma approach.
+async function appendUsdCny(markets: MarketData[], signal: AbortSignal) {
+  if (markets.some((market) => market.symbol === "USDCNY=X")) return markets;
+  try {
+    const response = await fetch("/api/market-history?symbol=USDCNY%3DX&range=1m", { signal });
+    if (!response.ok) throw new Error(`USD/CNY history responded with ${response.status}`);
+    const payload = (await response.json()) as MarketHistoryPayload;
+    const points = payload.points ?? [];
+    const latest = points.at(-1)?.price;
+    const previous = points.at(-2)?.price;
+    if (latest === undefined || previous === undefined) throw new Error("USD/CNY history is incomplete");
+    const change = latest - previous;
+    markets.push({
+      name: "USD/CNY (Chinese Yuan)",
+      symbol: "USDCNY=X",
+      region: "Currencies",
+      latest_price: latest,
+      change,
+      change_percent: previous === 0 ? 0 : (change / previous) * 100,
+      market_status: "Delayed",
+      available: true,
+      error: null,
+    });
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") throw error;
+    markets.push({
+      name: "USD/CNY (Chinese Yuan)",
+      symbol: "USDCNY=X",
+      region: "Currencies",
+      latest_price: null,
+      change: null,
+      change_percent: null,
+      market_status: "Delayed",
+      available: false,
+      error: "Data temporarily unavailable",
+    });
+  }
+  return markets;
+}
+
 function heatClass(change: number | null, available: boolean) {
   if (!available || change === null || Math.abs(change) < 0.05) {
     return "bg-muted text-foreground";
@@ -127,7 +168,9 @@ function MarketPulsePage() {
         const receivedMarkets = data.data ?? [];
         const nextMarkets = activeTab === "india"
           ? await replaceNiftyAutoWithPharma(receivedMarkets, controller.signal)
-          : receivedMarkets;
+          : activeTab === "currencies"
+            ? await appendUsdCny(receivedMarkets, controller.signal)
+            : receivedMarkets;
         setMarkets(nextMarkets);
         setSelectedMarket(nextMarkets.find((market) => market.available) ?? null);
       })
