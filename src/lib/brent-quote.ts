@@ -44,7 +44,7 @@ export function parseTradingEconomicsBrent(html: string): BrentQuote | null {
   const pct = Number(m[4]) * (m[3] === "down" ? -1 : 1);
   if (!Number.isFinite(price) || price <= 0 || !Number.isFinite(pct)) return null;
   const previous = price / (1 + pct / 100);
-  const date = new Date(`${m[2]} UTC`);
+  const date = new Date(`${m[2] ?? ""} UTC`);
   return {
     price,
     change: Math.round((price - previous) * 100) / 100,
