@@ -163,7 +163,7 @@ export function SiteSearch() {
                         <img
                           src={article.cover_image}
                           alt=""
-                          className="h-16 w-20 shrink-0 rounded-md object-cover"
+                          className="h-16 w-20 shrink-0 rounded-md bg-muted object-contain"
                         />
                       ) : null}
                       <span className="min-w-0 flex-1">
