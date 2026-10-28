@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { brentSessionQuote, type BrentQuote } from "@/lib/brent-quote";
 
 const INDEX_SYMBOLS = {
   nifty50: "^NSEI",
@@ -54,7 +55,7 @@ const RANGES = {
 type IndexKey = keyof typeof INDEX_SYMBOLS;
 type RangeKey = keyof typeof RANGES;
 type HistoryPoint = { date: string; price: number; volume: number | null };
-type HistoryPayload = { symbol: IndexKey; range: RangeKey; currency: string; points: HistoryPoint[] };
+type HistoryPayload = { symbol: IndexKey; range: RangeKey; currency: string; points: HistoryPoint[]; quote?: BrentQuote | null };
 
 const CACHE_MS = 15 * 60_000;
 const cache = new Map<string, { at: number; payload: HistoryPayload }>();
@@ -62,7 +63,7 @@ const cache = new Map<string, { at: number; payload: HistoryPayload }>();
 type YahooChart = {
   chart?: {
     result?: Array<{
-      meta?: { currency?: string };
+      meta?: { currency?: string; regularMarketPrice?: number; regularMarketTime?: number; fulldayChange?: number; fulldayChangePercent?: number; regularMarketChangePercent?: number };
       timestamp?: number[];
       indicators?: { quote?: Array<{ close?: Array<number | null>; volume?: Array<number | null> }> };
     }>;
@@ -125,6 +126,7 @@ export const Route = createFileRoute("/api/market-history")({
             range: rangeKey,
             currency: result?.meta?.currency ?? "",
             points,
+            ...(yahooSymbol === "BZ=F" ? { quote: brentSessionQuote(result?.meta) } : {}),
           };
           cache.set(cacheKey, { at: Date.now(), payload });
           return Response.json(payload, { headers });

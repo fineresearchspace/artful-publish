@@ -4,6 +4,7 @@ import { SiteShell } from "@/components/site/SiteShell";
 import { RelatedMarketArticles } from "@/components/site/RelatedMarketArticles";
 import { Button } from "@/components/ui/button";
 import { HomeBondSnapshot } from "@/components/site/HomeMarketSnapshot";
+import { fetchBrentQuote } from "@/lib/brent-quote";
 
 
 export const Route = createFileRoute("/Market-Pulse")({
@@ -171,6 +172,18 @@ function MarketPulsePage() {
           : activeTab === "currencies"
             ? await appendUsdCny(receivedMarkets, controller.signal)
             : receivedMarkets;
+        if (activeTab === "commodities") {
+          const brent = await fetchBrentQuote(controller.signal);
+          for (const market of nextMarkets) {
+            if (market.symbol !== "BZ=F") continue;
+            market.latest_price = brent?.price ?? null;
+            market.change = brent?.change ?? null;
+            market.change_percent = brent?.changePercent ?? null;
+            market.available = brent !== null;
+            market.market_status = brent ? `Delayed · ${new Date(brent.asOf).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Kolkata" })} IST · USD/barrel` : "Data temporarily unavailable";
+          }
+        }
+        if (controller.signal.aborted) return;
         setMarkets(nextMarkets);
         setSelectedMarket(nextMarkets.find((market) => market.available) ?? null);
       })

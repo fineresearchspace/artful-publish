@@ -17,6 +17,7 @@
 - The writing studio is single-owner: the database permits only one `admin` role, while every other account remains a regular user.
 - Historical index charts use the allowlisted same-origin `/api/market-history` route so third-party failures remain isolated from Market Pulse.
 - Market Pulse uses a categorized delayed-data performance board for indices, commodities, and currencies, with selectable price history and reported volume.
+- Brent card and ticker use the history provider's session quote metadata, not continuous-history closes, for daily changes because futures contract rolls can distort close-to-close comparisons; missing session metadata means unavailable.
 - The homepage and full headlines route reuse one timeline; a shared chronological selector limits headlines and topic-matches the Market Pulse related-news row without unrelated fallbacks.
 - The shared header owns its scroll-collapse state and preserves its expanded space to prevent scroll jumps; its ticker reads existing quote, FX, and bond feeds independently without inventing missing values.
 - Market detail pages show only the price chart, history and related articles, fed by a news-only server function and a pure symbol-based selector; no model call, no unrelated-news fallback, and no today's-drivers section.

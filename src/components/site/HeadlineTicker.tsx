@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { yieldChangePercent } from "@/lib/header-rules";
+import { fetchBrentQuote } from "@/lib/brent-quote";
 
 type Tick = { label: string; value: number | null; changePct: number | null; yield?: boolean };
 type Quote = { symbol: string; latest_price: number | null; change_percent: number | null; available: boolean; last_updated?: string };
@@ -23,7 +24,11 @@ export function HeadlineTicker() {
       setTicks((current) => current.map((tick, i) => i === index ? { ...tick, value, changePct } : tick));
     };
     const load = () => {
-      for (const [region, symbols] of [ ["india", [["^NSEI", 0], ["^BSESN", 1]]], ["us", [["^GSPC", 2]]], ["commodities", [["BZ=F", 5], ["GC=F", 6]]] ] as const) {
+      void fetchBrentQuote(controller.signal).then((quote) => {
+        update(5, quote?.price ?? null, quote?.changePercent ?? null);
+        if (quote && !controller.signal.aborted) setAsOf((current) => !current || Date.parse(quote.asOf) < Date.parse(current) ? quote.asOf : current);
+      }).catch(() => {});
+      for (const [region, symbols] of [ ["india", [["^NSEI", 0], ["^BSESN", 1]]], ["us", [["^GSPC", 2]]], ["commodities", [["GC=F", 6]]] ] as const) {
         void read<MarketPayload>(`${MARKET_API}/${region}`).then((payload) => {
           for (const [symbol, index] of symbols) {
             const quote = payload?.data?.find((item) => item.symbol === symbol && item.available);
