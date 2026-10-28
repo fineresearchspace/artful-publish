@@ -180,7 +180,7 @@ function MarketPulsePage() {
             market.change = brent?.change ?? null;
             market.change_percent = brent?.changePercent ?? null;
             market.available = brent !== null;
-            market.market_status = brent ? `Trading Economics · ${new Date(brent.asOf).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Kolkata" })} IST · USD/barrel` : "Data temporarily unavailable";
+            market.market_status = brent ? "Trading Economics · USD/barrel" : "Data temporarily unavailable";
           }
         }
         if (controller.signal.aborted) return;
