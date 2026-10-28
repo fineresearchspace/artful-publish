@@ -7,7 +7,7 @@ import { substackProvider } from "@/lib/publishing/substack";
 import { loadSettings } from "@/lib/site";
 
 /** Copies rich HTML so a paste into the Substack editor keeps all formatting. */
-async function copyRich(html: string, plain: string) {
+export async function copyRich(html: string, plain: string) {
   try {
     if (typeof ClipboardItem !== "undefined" && navigator.clipboard?.write) {
       await navigator.clipboard.write([
