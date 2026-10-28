@@ -3,7 +3,16 @@ import { Copy, Download, ExternalLink } from "lucide-react";
 import type { Article } from "@/lib/articles";
 import { substackProvider } from "@/lib/publishing/substack";
 import { loadSettings } from "@/lib/site";
-import { SubstackSendDialog } from "./SubstackSendDialog";
+import { SubstackSendDialog, copyRich } from "./SubstackSendDialog";
+
+/** Copies formatted text (not HTML code) so pasting into Substack keeps headings, bold, images. */
+async function copyFormatted(html: string) {
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  const plain = (div.innerText || div.textContent || "").trim();
+  if (await copyRich(html, plain)) toast.success("Formatted article copied — paste into Substack");
+  else toast.error("Clipboard unavailable in this browser");
+}
 
 
 function download(filename: string, contents: string, type: string) {
@@ -57,7 +66,7 @@ export function SubstackPanel({
 
       <div className="grid gap-2">
         <button
-          onClick={() => void copy("Formatted article", exported.html)}
+          onClick={() => void copyFormatted(exported.html)}
           className="pixel-font flex items-center gap-2 border border-border bg-accent px-3 py-2 text-[10px] text-accent-foreground"
         >
           <Copy className="size-3.5" /> Copy for Substack
