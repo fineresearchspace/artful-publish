@@ -40,8 +40,8 @@ export async function fetchBrentQuote(signal: AbortSignal): Promise<BrentQuote |
 export function parseTradingEconomicsBrent(html: string): BrentQuote | null {
   const m = html.match(/Brent (?:rose|fell|increased|decreased|traded|was)[^0-9]{0,20}([\d,]+(?:\.\d+)?) USD\/Bbl on ([A-Z][a-z]+ \d{1,2}, \d{4}),? (up|down) ([\d.]+)% from the previous day/);
   if (!m) return null;
-  const price = Number(m[1].replace(/,/g, ""));
-  const pct = Number(m[4]) * (m[3] === "down" ? -1 : 1);
+  const price = Number((m[1] ?? "").replace(/,/g, ""));
+  const pct = Number(m[4] ?? NaN) * (m[3] === "down" ? -1 : 1);
   if (!Number.isFinite(price) || price <= 0 || !Number.isFinite(pct)) return null;
   const previous = price / (1 + pct / 100);
   const date = new Date(`${m[2] ?? ""} UTC`);
