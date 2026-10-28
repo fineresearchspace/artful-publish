@@ -15,7 +15,7 @@ export function ArticleCard({ article }: { article: ArticleListItem }) {
             src={article.cover_image}
             alt={`Cover image for ${article.title}`}
             loading="lazy"
-            className="size-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+            className="block size-full object-contain transition-transform duration-300 group-hover:scale-[1.02]"
             onError={(event) => {
               event.currentTarget.parentElement?.classList.add("hidden");
             }}
