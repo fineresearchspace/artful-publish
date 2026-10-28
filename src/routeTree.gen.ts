@@ -20,6 +20,7 @@ import { Route as HeadlinesRouteImport } from './routes/headlines'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ApiBondsRouteImport } from './routes/api/bonds'
+import { Route as ApiBrentRouteImport } from './routes/api/brent'
 import { Route as ApiFxRouteImport } from './routes/api/fx'
 import { Route as ApiMarketHistoryRouteImport } from './routes/api/market-history'
 import { Route as ApiNewsRouteImport } from './routes/api/news'
@@ -86,6 +87,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
 const ApiBondsRoute = ApiBondsRouteImport.update({
   id: '/api/bonds',
   path: '/api/bonds',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBrentRoute = ApiBrentRouteImport.update({
+  id: '/api/brent',
+  path: '/api/brent',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiFxRoute = ApiFxRouteImport.update({
@@ -170,6 +176,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/api/bonds': typeof ApiBondsRoute
+  '/api/brent': typeof ApiBrentRoute
   '/api/fx': typeof ApiFxRoute
   '/api/market-history': typeof ApiMarketHistoryRoute
   '/api/news': typeof ApiNewsRoute
@@ -194,6 +201,7 @@ export interface FileRoutesByTo {
   '/headlines': typeof HeadlinesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/bonds': typeof ApiBondsRoute
+  '/api/brent': typeof ApiBrentRoute
   '/api/fx': typeof ApiFxRoute
   '/api/market-history': typeof ApiMarketHistoryRoute
   '/api/news': typeof ApiNewsRoute
@@ -221,6 +229,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/api/bonds': typeof ApiBondsRoute
+  '/api/brent': typeof ApiBrentRoute
   '/api/fx': typeof ApiFxRoute
   '/api/market-history': typeof ApiMarketHistoryRoute
   '/api/news': typeof ApiNewsRoute
@@ -248,6 +257,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin'
     | '/api/bonds'
+    | '/api/brent'
     | '/api/fx'
     | '/api/market-history'
     | '/api/news'
@@ -272,6 +282,7 @@ export interface FileRouteTypes {
     | '/headlines'
     | '/sitemap.xml'
     | '/api/bonds'
+    | '/api/brent'
     | '/api/fx'
     | '/api/market-history'
     | '/api/news'
@@ -298,6 +309,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/_authenticated/admin'
     | '/api/bonds'
+    | '/api/brent'
     | '/api/fx'
     | '/api/market-history'
     | '/api/news'
@@ -324,6 +336,7 @@ export interface RootRouteChildren {
   HeadlinesRoute: typeof HeadlinesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiBondsRoute: typeof ApiBondsRoute
+  ApiBrentRoute: typeof ApiBrentRoute
   ApiFxRoute: typeof ApiFxRoute
   ApiMarketHistoryRoute: typeof ApiMarketHistoryRoute
   ApiNewsRoute: typeof ApiNewsRoute
@@ -410,6 +423,13 @@ declare module '@tanstack/react-router' {
       path: '/api/bonds'
       fullPath: '/api/bonds'
       preLoaderRoute: typeof ApiBondsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/brent': {
+      id: '/api/brent'
+      path: '/api/brent'
+      fullPath: '/api/brent'
+      preLoaderRoute: typeof ApiBrentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/fx': {
@@ -549,6 +569,7 @@ const rootRouteChildren: RootRouteChildren = {
   HeadlinesRoute: HeadlinesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiBondsRoute: ApiBondsRoute,
+  ApiBrentRoute: ApiBrentRoute,
   ApiFxRoute: ApiFxRoute,
   ApiMarketHistoryRoute: ApiMarketHistoryRoute,
   ApiNewsRoute: ApiNewsRoute,
