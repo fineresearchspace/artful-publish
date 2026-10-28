@@ -14,3 +14,10 @@ describe("Brent session quote", () => {
     assert.equal(brentSessionQuote({ regularMarketPrice: 111.95, regularMarketTime: 1793201776 }), null);
   });
 });
+import { parseTradingEconomicsBrent } from "./brent-quote";
+test("parses Trading Economics Brent price and signed change", () => {
+  const q = parseTradingEconomicsBrent("Brent rose to 115.95 USD/Bbl on October 28, 2026, up 1.82% from the previous day.");
+  assert.equal(q?.price, 115.95);
+  assert.equal(q?.changePercent, 1.82);
+  assert.equal(parseTradingEconomicsBrent("Brent fell to 100 USD/Bbl on October 28, 2026, down 2% from the previous day.")?.changePercent, -2);
+});
