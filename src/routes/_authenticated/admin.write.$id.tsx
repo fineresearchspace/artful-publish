@@ -278,14 +278,12 @@ function WritePage() {
                 {draft.reading_time || estimateReadingTime(draft.content ?? "")} min read ·{" "}
                 {formatDate(draft.published_at ?? new Date().toISOString())}
               </p>
-              {draft.cover_image && (  
-                <div className="crt pixel-panel mt-5 aspect-[16/7] overflow-hidden">  
-                  <img  
-                    src={draft.cover_image}  
-                    alt=""  
-                    className="pixelated size-full object-cover"  
-                  />  
-                </div>  
+              {draft.cover_image && (
+                <img
+                  src={draft.cover_image}
+                  alt=""
+                  className="mt-5 block h-auto max-h-[70vh] w-full rounded-xl border border-border bg-muted object-contain"
+                />
               )}
               <Markdown content={draft.content ?? ""} className="mt-6" />
             </div>

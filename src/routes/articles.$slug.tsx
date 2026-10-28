@@ -121,7 +121,7 @@ function ArticlePage() {
             <img
               src={article.cover_image}
               alt={`Cover image for ${article.title}`}
-              className="aspect-[16/9] w-full rounded-xl border border-border object-cover shadow-[var(--shadow-pixel)]"
+              className="block h-auto max-h-[80vh] w-full rounded-xl border border-border bg-muted object-contain shadow-[var(--shadow-pixel)]"
             />
           </figure>
         ) : null}

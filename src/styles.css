@@ -360,9 +360,13 @@
     font-style: italic;
   }
   & img {
+    display: block;
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
+    width: auto;
     max-width: 100%;
+    height: auto;
+    margin: 1.5rem auto;
   }
   & hr {
     border: 0;
