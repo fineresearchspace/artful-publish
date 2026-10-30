@@ -20,6 +20,7 @@ const INDEX_SYMBOLS = {
   "^CNXIT": "^CNXIT",
   "^CNXAUTO": "^CNXAUTO",
   "^CNXPHARMA": "^CNXPHARMA",
+  "^CNXSC": "^CNXSC",
   "^INDIAVIX": "^INDIAVIX",
   "^GSPC": "^GSPC",
   "^NDX": "^NDX",
