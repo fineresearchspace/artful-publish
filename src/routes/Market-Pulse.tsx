@@ -90,7 +90,28 @@ async function replaceNiftyAutoWithPharma(markets: MarketData[], signal: AbortSi
       error: "Data temporarily unavailable",
     });
   }
-  return withoutAuto;
+  return appendNiftySmallcap(withoutAuto, signal);
+}
+
+// NIFTY Smallcap 100 is missing from the external feed; derive it from delayed history.
+async function appendNiftySmallcap(markets: MarketData[], signal: AbortSignal) {
+  if (markets.some((market) => market.symbol === "^CNXSC")) return markets;
+  const base = { name: "NIFTY Smallcap 100", symbol: "^CNXSC", region: "India", market_status: "Delayed" };
+  try {
+    const response = await fetch("/api/market-history?symbol=%5ECNXSC&range=1m", { signal });
+    if (!response.ok) throw new Error(`Smallcap history responded with ${response.status}`);
+    const payload = (await response.json()) as MarketHistoryPayload;
+    const points = payload.points ?? [];
+    const latest = points.at(-1)?.price;
+    const previous = points.at(-2)?.price;
+    if (latest === undefined || previous === undefined) throw new Error("Smallcap history is incomplete");
+    const change = latest - previous;
+    markets.push({ ...base, latest_price: latest, change, change_percent: previous === 0 ? 0 : (change / previous) * 100, available: true, error: null });
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") throw error;
+    markets.push({ ...base, latest_price: null, change: null, change_percent: null, available: false, error: "Data temporarily unavailable" });
+  }
+  return markets;
 }
 
 // The external feed has no Chinese yuan pair, so USD/CNY is appended from the

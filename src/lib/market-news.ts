@@ -4,6 +4,7 @@ const TOPICS: Record<string, string[]> = {
   '^NSEI': ['nifty 50', 'nifty', 'sensex'], '^BSESN': ['sensex', 'nifty'],
   '^NSEBANK': ['bank nifty', 'nifty bank', 'banking stocks'], '^CNXIT': ['nifty it', 'it stocks', 'indian technology stocks'],
   '^CNXPHARMA': ['nifty pharma', 'pharma stocks', 'pharmaceutical stocks'],
+  '^CNXSC': ['smallcap', 'small-cap', 'small cap'],
   '^NSMIDCP': ['nifty next 50'], '^NSEMDCP50': ['nifty midcap', 'midcap stocks'], '^CRSLDX': ['nifty smallcap', 'smallcap stocks'],
   '^INDIAVIX': ['india vix'], '^GSPC': ['s&p 500', 's&p', 'wall street'], '^NDX': ['nasdaq'],
   '^DJI': ['dow jones', 'dow'], '^RUT': ['russell 2000', 'us small caps'], '^VIX': ['vix', 'fear gauge'],
