@@ -5,14 +5,14 @@ const STYLES: Record<ArticleStatus, string> = {
   draft: "bg-muted text-muted-foreground",
   ready: "bg-accent text-accent-foreground",
   published_web: "bg-primary text-primary-foreground",
-  published_substack: "bg-ink text-background",
+  exported_substack: "bg-ink text-background",
   failed: "bg-destructive text-destructive-foreground",
 };
 
 export function StatusBadge({ status }: { status: ArticleStatus }) {
   return (
     <span
-      className={`pixel-font border-2 border-ink px-2 py-1 text-[9px] ${STYLES[status]}`}
+      className={`pixel-font border border-border px-2 py-1 text-[9px] ${STYLES[status]}`}
     >
       {STATUS_SHORT[status]}
     </span>
