@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { brentSessionQuote, type BrentQuote } from "@/lib/brent-quote";
+import { indexSessionQuote, type IndexQuote } from "@/lib/index-quote";
 
 const INDEX_SYMBOLS = {
   nifty50: "^NSEI",
@@ -56,7 +57,7 @@ const RANGES = {
 type IndexKey = keyof typeof INDEX_SYMBOLS;
 type RangeKey = keyof typeof RANGES;
 type HistoryPoint = { date: string; price: number; volume: number | null };
-type HistoryPayload = { symbol: IndexKey; range: RangeKey; currency: string; points: HistoryPoint[]; quote?: BrentQuote | null };
+type HistoryPayload = { symbol: IndexKey; range: RangeKey; currency: string; points: HistoryPoint[]; quote?: BrentQuote | IndexQuote | null };
 
 const CACHE_MS = 15 * 60_000;
 const cache = new Map<string, { at: number; payload: HistoryPayload }>();
@@ -95,17 +96,23 @@ export const Route = createFileRoute("/api/market-history")({
         const query = RANGES[rangeKey];
         const yahooSymbol = INDEX_SYMBOLS[indexKey];
         try {
-          const response = await fetch(
-            `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yahooSymbol)}?range=${query.range}&interval=${query.interval}&events=history`,
-            {
-              headers: { "user-agent": "Mozilla/5.0" },
-              signal: AbortSignal.timeout(10_000),
-            },
-          );
-          if (!response.ok) throw new Error(`Historical feed HTTP ${response.status}`);
-
-          const body = (await response.json()) as YahooChart;
-          const result = body.chart?.result?.[0];
+          let body: YahooChart | null = null;
+          for (const host of ["query1.finance.yahoo.com", "query2.finance.yahoo.com"]) {
+            try {
+              const response = await fetch(
+                `https://${host}/v8/finance/chart/${encodeURIComponent(yahooSymbol)}?range=${query.range}&interval=${query.interval}&events=history`,
+                { headers: { "user-agent": "Mozilla/5.0" }, signal: AbortSignal.timeout(10_000) },
+              );
+              if (!response.ok) throw new Error(`Historical feed HTTP ${response.status}`);
+              const candidate = (await response.json()) as YahooChart;
+              if (!candidate.chart?.result?.[0]?.timestamp?.length) throw new Error("Historical feed returned no data");
+              body = candidate;
+              break;
+            } catch (error) {
+              if (host === "query2.finance.yahoo.com") throw error;
+            }
+          }
+          const result = body?.chart?.result?.[0];
           const timestamps = result?.timestamp ?? [];
           const quote = result?.indicators?.quote?.[0];
           const closes = quote?.close ?? [];
@@ -128,6 +135,7 @@ export const Route = createFileRoute("/api/market-history")({
             currency: result?.meta?.currency ?? "",
             points,
             ...(yahooSymbol === "BZ=F" ? { quote: brentSessionQuote(result?.meta) } : {}),
+            ...(["^NSEI", "^CNXSC"].includes(yahooSymbol) ? { quote: indexSessionQuote(result?.meta) } : {}),
           };
           cache.set(cacheKey, { at: Date.now(), payload });
           return Response.json(payload, { headers });

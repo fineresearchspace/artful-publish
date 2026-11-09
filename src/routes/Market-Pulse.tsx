@@ -5,6 +5,7 @@ import { RelatedMarketArticles } from "@/components/site/RelatedMarketArticles";
 import { Button } from "@/components/ui/button";
 import { HomeBondSnapshot } from "@/components/site/HomeMarketSnapshot";
 import { fetchBrentQuote } from "@/lib/brent-quote";
+import type { IndexQuote } from "@/lib/index-quote";
 
 
 export const Route = createFileRoute("/Market-Pulse")({
@@ -52,6 +53,7 @@ type MarketData = {
 
 type MarketHistoryPayload = {
   points?: Array<{ date: string; price: number }>;
+  quote?: IndexQuote | null;
 };
 
 async function replaceNiftyAutoWithPharma(markets: MarketData[], signal: AbortSignal) {
@@ -90,27 +92,36 @@ async function replaceNiftyAutoWithPharma(markets: MarketData[], signal: AbortSi
       error: "Data temporarily unavailable",
     });
   }
-  return appendNiftySmallcap(withoutAuto, signal);
+  return restoreNiftyQuotes(withoutAuto, signal);
 }
 
-// NIFTY Smallcap 100 is missing from the external feed; derive it from delayed history.
-async function appendNiftySmallcap(markets: MarketData[], signal: AbortSignal) {
-  if (markets.some((market) => market.symbol === "^CNXSC")) return markets;
-  const base = { name: "NIFTY Smallcap 100", symbol: "^CNXSC", region: "India", market_status: "Delayed" };
-  try {
-    const response = await fetch("/api/market-history?symbol=%5ECNXSC&range=1m", { signal });
-    if (!response.ok) throw new Error(`Smallcap history responded with ${response.status}`);
-    const payload = (await response.json()) as MarketHistoryPayload;
-    const points = payload.points ?? [];
-    const latest = points.at(-1)?.price;
-    const previous = points.at(-2)?.price;
-    if (latest === undefined || previous === undefined) throw new Error("Smallcap history is incomplete");
-    const change = latest - previous;
-    markets.push({ ...base, latest_price: latest, change, change_percent: previous === 0 ? 0 : (change / previous) * 100, available: true, error: null });
-  } catch (error) {
-    if (error instanceof DOMException && error.name === "AbortError") throw error;
-    markets.push({ ...base, latest_price: null, change: null, change_percent: null, available: false, error: "Data temporarily unavailable" });
-  }
+// Repair missing Nifty quotes independently; Smallcap history may contain only today's point.
+async function restoreNiftyQuotes(markets: MarketData[], signal: AbortSignal) {
+  await Promise.all([
+    { symbol: "^NSEI", name: "NIFTY 50" },
+    { symbol: "^CNXSC", name: "NIFTY Smallcap 100" },
+  ].map(async ({ symbol, name }) => {
+    const existing = markets.find((market) => market.symbol === symbol);
+    if (existing?.available && existing.latest_price !== null && symbol !== "^CNXSC") return;
+    const base = { name, symbol, region: "India", market_status: "Delayed" };
+    let replacement: MarketData;
+    try {
+      const response = await fetch(`/api/market-history?symbol=${encodeURIComponent(symbol)}&range=1m`, { signal });
+      if (!response.ok) throw new Error(`Index feed responded with ${response.status}`);
+      const payload = (await response.json()) as MarketHistoryPayload;
+      const quote = payload.quote;
+      if (!quote) throw new Error("Index session quote is incomplete");
+      replacement = { ...base, latest_price: quote.price, change: quote.change, change_percent: quote.changePercent,
+        market_status: quote.asOf ? `Delayed · ${new Date(quote.asOf).toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit" })} IST` : "Delayed",
+        available: true, error: null };
+    } catch (error) {
+      if (signal.aborted) throw error;
+      if (existing?.available) return;
+      replacement = { ...base, latest_price: null, change: null, change_percent: null, available: false, error: "Data temporarily unavailable" };
+    }
+    if (existing) Object.assign(existing, replacement);
+    else markets.push(replacement);
+  }));
   return markets;
 }
 
