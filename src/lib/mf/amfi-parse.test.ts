@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 const expect = (v: unknown) => ({ toBe: (e: unknown) => assert.equal(v, e), toBeNull: () => assert.equal(v, null) });
-import { parseAmfiNavAll, amfiDate, dmyDate } from "./amfi-parse";
+import { parseAmfiNavAll, amfiDate, dmyDate, normalizeCategory } from "./amfi-parse";
 
 const sample = `Scheme Code;ISIN Div Payout/ ISIN Growth;ISIN Div Reinvestment;Scheme Name;Plan;Option;Net Asset Value;Date
 
@@ -27,4 +27,7 @@ test("missing NAV stays null, not invented", () => {
 test("dates", () => {
   expect(amfiDate("01-Jan-2020")).toBe("2020-01-01");
   expect(dmyDate("19-11-2026")).toBe("2026-11-19");
+});
+test("singular/plural categories merge", () => {
+  expect(normalizeCategory("Equity Schemes - Flexi Cap Fund")).toBe("Equity Scheme - Flexi Cap Fund");
 });

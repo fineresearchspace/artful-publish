@@ -105,10 +105,17 @@ export const getMfOverview = createServerFn({ method: "GET" })
       sb.from("mf_schemes").select("*", { count: "exact", head: true }),
       sb.from("mf_schemes").select("*", { count: "exact", head: true }).gt("history_points", 0),
       sb.from("mf_sync_runs").select("*").order("created_at", { ascending: false }).limit(8),
-      sb.from("mf_schemes").select("category").not("category", "is", null).limit(20000),
+      Promise.resolve({ data: null }),
     ]);
+    const all: { category: string }[] = [];
+    for (let from = 0; from < 30000; from += 1000) {
+      const { data: page } = await sb.from("mf_schemes").select("category").not("category", "is", null).range(from, from + 999);
+      all.push(...(page ?? []));
+      if (!page || page.length < 1000) break;
+    }
     const counts = new Map<string, number>();
-    for (const c of cats ?? []) counts.set(c.category, (counts.get(c.category) ?? 0) + 1);
+    void cats;
+    for (const c of all) counts.set(c.category, (counts.get(c.category) ?? 0) + 1);
     const categories = [...counts.entries()].map(([name, n]) => ({ name, n })).sort((a, b) => a.name.localeCompare(b.name));
     const { data: synced } = await sb.from("mf_schemes")
       .select("scheme_code, scheme_name, fund_house, category, latest_nav, nav_date, history_points, history_start, history_synced_at")

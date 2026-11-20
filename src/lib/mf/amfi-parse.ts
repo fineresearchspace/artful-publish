@@ -44,7 +44,7 @@ export function parseAmfiNavAll(text: string): AmfiScheme[] {
     if (!line || line.startsWith("Scheme Code")) continue;
     if (!line.includes(";")) {
       const sec = /^(.*?Schemes?)\s*\((.*)\)$/.exec(line);
-      if (sec) { schemeType = sec[1]?.trim() ?? null; category = sec[2]?.trim() ?? null; house = null; }
+      if (sec) { schemeType = sec[1]?.trim() ?? null; category = normalizeCategory(sec[2]); house = null; }
       else house = line;
       continue;
     }
@@ -68,4 +68,10 @@ export function parseAmfiNavAll(text: string): AmfiScheme[] {
   }
   // de-dupe by code (keep last)
   return [...new Map(out.map((s) => [s.scheme_code, s])).values()];
+}
+
+/** AMFI mixes "Equity Scheme -" and "Equity Schemes -"; unify to the singular form. */
+export function normalizeCategory(raw: string | undefined): string | null {
+  const t = (raw ?? "").trim().replace(/\s+/g, " ");
+  return t ? t.replace(/^(\w+) Schemes\s*-\s*/i, "$1 Scheme - ") : null;
 }
