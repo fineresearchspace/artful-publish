@@ -25,3 +25,4 @@
 - Public article lists resolve covers from the selected cover or first embedded photo, convert legacy signed article-image URLs to permanent public URLs, and omit body content from list responses so existing posts have previews without resaving.
 - Market Pulse augments missing region-feed symbols via `/api/market-history`; Nifty 50 recovery and Smallcap 100 use reported session quote metadata, not two historical closes, since Smallcap may have only one point. History requests retry the alternate provider host before showing unavailable.
 - The `Capex & FII/DII` news category is India-only: FII/DII institutional-flow terms always qualify, while capex terms qualify only with an Indian market or company context in the copy.
+- Mutual fund research data (mf_* tables) is admin-read-only; AMFI NAVAll feeds the scheme master and mfapi.in feeds NAV history, written only through admin-verified server functions in src/lib/mf.

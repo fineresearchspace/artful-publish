@@ -110,6 +110,113 @@ export type Database = {
         }
         Relationships: []
       }
+      mf_nav_history: {
+        Row: {
+          nav: number
+          nav_date: string
+          scheme_code: number
+        }
+        Insert: {
+          nav: number
+          nav_date: string
+          scheme_code: number
+        }
+        Update: {
+          nav?: number
+          nav_date?: string
+          scheme_code?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mf_nav_history_scheme_code_fkey"
+            columns: ["scheme_code"]
+            isOneToOne: false
+            referencedRelation: "mf_schemes"
+            referencedColumns: ["scheme_code"]
+          },
+        ]
+      }
+      mf_schemes: {
+        Row: {
+          category: string | null
+          fund_house: string | null
+          history_points: number
+          history_start: string | null
+          history_synced_at: string | null
+          isin_growth: string | null
+          isin_reinvest: string | null
+          latest_nav: number | null
+          nav_date: string | null
+          option_type: string | null
+          plan: string | null
+          scheme_code: number
+          scheme_name: string
+          scheme_type: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          fund_house?: string | null
+          history_points?: number
+          history_start?: string | null
+          history_synced_at?: string | null
+          isin_growth?: string | null
+          isin_reinvest?: string | null
+          latest_nav?: number | null
+          nav_date?: string | null
+          option_type?: string | null
+          plan?: string | null
+          scheme_code: number
+          scheme_name: string
+          scheme_type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          fund_house?: string | null
+          history_points?: number
+          history_start?: string | null
+          history_synced_at?: string | null
+          isin_growth?: string | null
+          isin_reinvest?: string | null
+          latest_nav?: number | null
+          nav_date?: string | null
+          option_type?: string | null
+          plan?: string | null
+          scheme_code?: number
+          scheme_name?: string
+          scheme_type?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      mf_sync_runs: {
+        Row: {
+          created_at: string
+          detail: string
+          id: string
+          kind: string
+          ok: boolean
+          rows_written: number
+        }
+        Insert: {
+          created_at?: string
+          detail?: string
+          id?: string
+          kind: string
+          ok?: boolean
+          rows_written?: number
+        }
+        Update: {
+          created_at?: string
+          detail?: string
+          id?: string
+          kind?: string
+          ok?: boolean
+          rows_written?: number
+        }
+        Relationships: []
+      }
       newsletter_sends: {
         Row: {
           article_id: string | null

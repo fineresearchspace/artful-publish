@@ -30,6 +30,7 @@ import { Route as MarketsSymbolRouteImport } from './routes/markets.$symbol'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminArticlesRouteImport } from './routes/_authenticated/admin.articles'
 import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_authenticated/admin.categories'
+import { Route as AuthenticatedAdminMfDataRouteImport } from './routes/_authenticated/admin.mf-data'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminSubscribersRouteImport } from './routes/_authenticated/admin.subscribers'
 import { Route as ApiNewsletterGenerateRouteImport } from './routes/api/newsletter/generate'
@@ -141,6 +142,12 @@ const AuthenticatedAdminCategoriesRoute =
     path: '/categories',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminMfDataRoute =
+  AuthenticatedAdminMfDataRouteImport.update({
+    id: '/mf-data',
+    path: '/mf-data',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminSettingsRoute =
   AuthenticatedAdminSettingsRouteImport.update({
     id: '/settings',
@@ -185,6 +192,7 @@ export interface FileRoutesByFullPath {
   '/articles/': typeof ArticlesIndexRoute
   '/admin/articles': typeof AuthenticatedAdminArticlesRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
+  '/admin/mf-data': typeof AuthenticatedAdminMfDataRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
   '/api/newsletter/generate': typeof ApiNewsletterGenerateRoute
@@ -210,6 +218,7 @@ export interface FileRoutesByTo {
   '/articles': typeof ArticlesIndexRoute
   '/admin/articles': typeof AuthenticatedAdminArticlesRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
+  '/admin/mf-data': typeof AuthenticatedAdminMfDataRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
   '/api/newsletter/generate': typeof ApiNewsletterGenerateRoute
@@ -238,6 +247,7 @@ export interface FileRoutesById {
   '/articles/': typeof ArticlesIndexRoute
   '/_authenticated/admin/articles': typeof AuthenticatedAdminArticlesRoute
   '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
+  '/_authenticated/admin/mf-data': typeof AuthenticatedAdminMfDataRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
   '/api/newsletter/generate': typeof ApiNewsletterGenerateRoute
@@ -266,6 +276,7 @@ export interface FileRouteTypes {
     | '/articles/'
     | '/admin/articles'
     | '/admin/categories'
+    | '/admin/mf-data'
     | '/admin/settings'
     | '/admin/subscribers'
     | '/api/newsletter/generate'
@@ -291,6 +302,7 @@ export interface FileRouteTypes {
     | '/articles'
     | '/admin/articles'
     | '/admin/categories'
+    | '/admin/mf-data'
     | '/admin/settings'
     | '/admin/subscribers'
     | '/api/newsletter/generate'
@@ -318,6 +330,7 @@ export interface FileRouteTypes {
     | '/articles/'
     | '/_authenticated/admin/articles'
     | '/_authenticated/admin/categories'
+    | '/_authenticated/admin/mf-data'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/subscribers'
     | '/api/newsletter/generate'
@@ -495,6 +508,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCategoriesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/mf-data': {
+      id: '/_authenticated/admin/mf-data'
+      path: '/mf-data'
+      fullPath: '/admin/mf-data'
+      preLoaderRoute: typeof AuthenticatedAdminMfDataRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/settings': {
       id: '/_authenticated/admin/settings'
       path: '/settings'
@@ -529,6 +549,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminArticlesRoute: typeof AuthenticatedAdminArticlesRoute
   AuthenticatedAdminCategoriesRoute: typeof AuthenticatedAdminCategoriesRoute
+  AuthenticatedAdminMfDataRoute: typeof AuthenticatedAdminMfDataRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminSubscribersRoute: typeof AuthenticatedAdminSubscribersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -538,6 +559,7 @@ interface AuthenticatedAdminRouteChildren {
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminArticlesRoute: AuthenticatedAdminArticlesRoute,
   AuthenticatedAdminCategoriesRoute: AuthenticatedAdminCategoriesRoute,
+  AuthenticatedAdminMfDataRoute: AuthenticatedAdminMfDataRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminSubscribersRoute: AuthenticatedAdminSubscribersRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,

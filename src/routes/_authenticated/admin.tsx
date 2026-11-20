@@ -9,6 +9,7 @@ import {
   Users,
   LogOut,
   Menu,
+  Database,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -50,6 +51,7 @@ const NAV = [
   { to: "/admin/articles", label: "Articles", icon: FileText },
   { to: "/admin/categories", label: "Categories", icon: FolderCog },
   { to: "/admin/subscribers", label: "Subscribers", icon: Users },
+  { to: "/admin/mf-data", label: "MF Data", icon: Database },
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ] as const;
 
