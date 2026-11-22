@@ -31,9 +31,11 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminArticlesRouteImport } from './routes/_authenticated/admin.articles'
 import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_authenticated/admin.categories'
 import { Route as AuthenticatedAdminMfDataRouteImport } from './routes/_authenticated/admin.mf-data'
+import { Route as AuthenticatedAdminMfScreenerRouteImport } from './routes/_authenticated/admin.mf-screener'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminSubscribersRouteImport } from './routes/_authenticated/admin.subscribers'
 import { Route as ApiNewsletterGenerateRouteImport } from './routes/api/newsletter/generate'
+import { Route as AuthenticatedAdminMfFundCodeRouteImport } from './routes/_authenticated/admin.mf-fund.$code'
 import { Route as AuthenticatedAdminWriteIdRouteImport } from './routes/_authenticated/admin.write.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -148,6 +150,12 @@ const AuthenticatedAdminMfDataRoute =
     path: '/mf-data',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminMfScreenerRoute =
+  AuthenticatedAdminMfScreenerRouteImport.update({
+    id: '/mf-screener',
+    path: '/mf-screener',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminSettingsRoute =
   AuthenticatedAdminSettingsRouteImport.update({
     id: '/settings',
@@ -165,6 +173,12 @@ const ApiNewsletterGenerateRoute = ApiNewsletterGenerateRouteImport.update({
   path: '/api/newsletter/generate',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminMfFundCodeRoute =
+  AuthenticatedAdminMfFundCodeRouteImport.update({
+    id: '/mf-fund/$code',
+    path: '/mf-fund/$code',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminWriteIdRoute =
   AuthenticatedAdminWriteIdRouteImport.update({
     id: '/write/$id',
@@ -193,10 +207,12 @@ export interface FileRoutesByFullPath {
   '/admin/articles': typeof AuthenticatedAdminArticlesRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/mf-data': typeof AuthenticatedAdminMfDataRoute
+  '/admin/mf-screener': typeof AuthenticatedAdminMfScreenerRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
   '/api/newsletter/generate': typeof ApiNewsletterGenerateRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/mf-fund/$code': typeof AuthenticatedAdminMfFundCodeRoute
   '/admin/write/$id': typeof AuthenticatedAdminWriteIdRoute
 }
 export interface FileRoutesByTo {
@@ -219,10 +235,12 @@ export interface FileRoutesByTo {
   '/admin/articles': typeof AuthenticatedAdminArticlesRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/mf-data': typeof AuthenticatedAdminMfDataRoute
+  '/admin/mf-screener': typeof AuthenticatedAdminMfScreenerRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
   '/api/newsletter/generate': typeof ApiNewsletterGenerateRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/mf-fund/$code': typeof AuthenticatedAdminMfFundCodeRoute
   '/admin/write/$id': typeof AuthenticatedAdminWriteIdRoute
 }
 export interface FileRoutesById {
@@ -248,10 +266,12 @@ export interface FileRoutesById {
   '/_authenticated/admin/articles': typeof AuthenticatedAdminArticlesRoute
   '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/_authenticated/admin/mf-data': typeof AuthenticatedAdminMfDataRoute
+  '/_authenticated/admin/mf-screener': typeof AuthenticatedAdminMfScreenerRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
   '/api/newsletter/generate': typeof ApiNewsletterGenerateRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/mf-fund/$code': typeof AuthenticatedAdminMfFundCodeRoute
   '/_authenticated/admin/write/$id': typeof AuthenticatedAdminWriteIdRoute
 }
 export interface FileRouteTypes {
@@ -277,10 +297,12 @@ export interface FileRouteTypes {
     | '/admin/articles'
     | '/admin/categories'
     | '/admin/mf-data'
+    | '/admin/mf-screener'
     | '/admin/settings'
     | '/admin/subscribers'
     | '/api/newsletter/generate'
     | '/admin/'
+    | '/admin/mf-fund/$code'
     | '/admin/write/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -303,10 +325,12 @@ export interface FileRouteTypes {
     | '/admin/articles'
     | '/admin/categories'
     | '/admin/mf-data'
+    | '/admin/mf-screener'
     | '/admin/settings'
     | '/admin/subscribers'
     | '/api/newsletter/generate'
     | '/admin'
+    | '/admin/mf-fund/$code'
     | '/admin/write/$id'
   id:
     | '__root__'
@@ -331,10 +355,12 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/articles'
     | '/_authenticated/admin/categories'
     | '/_authenticated/admin/mf-data'
+    | '/_authenticated/admin/mf-screener'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/subscribers'
     | '/api/newsletter/generate'
     | '/_authenticated/admin/'
+    | '/_authenticated/admin/mf-fund/$code'
     | '/_authenticated/admin/write/$id'
   fileRoutesById: FileRoutesById
 }
@@ -515,6 +541,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminMfDataRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/mf-screener': {
+      id: '/_authenticated/admin/mf-screener'
+      path: '/mf-screener'
+      fullPath: '/admin/mf-screener'
+      preLoaderRoute: typeof AuthenticatedAdminMfScreenerRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/settings': {
       id: '/_authenticated/admin/settings'
       path: '/settings'
@@ -536,6 +569,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiNewsletterGenerateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/mf-fund/$code': {
+      id: '/_authenticated/admin/mf-fund/$code'
+      path: '/mf-fund/$code'
+      fullPath: '/admin/mf-fund/$code'
+      preLoaderRoute: typeof AuthenticatedAdminMfFundCodeRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/write/$id': {
       id: '/_authenticated/admin/write/$id'
       path: '/write/$id'
@@ -550,9 +590,11 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminArticlesRoute: typeof AuthenticatedAdminArticlesRoute
   AuthenticatedAdminCategoriesRoute: typeof AuthenticatedAdminCategoriesRoute
   AuthenticatedAdminMfDataRoute: typeof AuthenticatedAdminMfDataRoute
+  AuthenticatedAdminMfScreenerRoute: typeof AuthenticatedAdminMfScreenerRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminSubscribersRoute: typeof AuthenticatedAdminSubscribersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminMfFundCodeRoute: typeof AuthenticatedAdminMfFundCodeRoute
   AuthenticatedAdminWriteIdRoute: typeof AuthenticatedAdminWriteIdRoute
 }
 
@@ -560,9 +602,11 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminArticlesRoute: AuthenticatedAdminArticlesRoute,
   AuthenticatedAdminCategoriesRoute: AuthenticatedAdminCategoriesRoute,
   AuthenticatedAdminMfDataRoute: AuthenticatedAdminMfDataRoute,
+  AuthenticatedAdminMfScreenerRoute: AuthenticatedAdminMfScreenerRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminSubscribersRoute: AuthenticatedAdminSubscribersRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedAdminMfFundCodeRoute: AuthenticatedAdminMfFundCodeRoute,
   AuthenticatedAdminWriteIdRoute: AuthenticatedAdminWriteIdRoute,
 }
 

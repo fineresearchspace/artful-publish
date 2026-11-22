@@ -110,6 +110,190 @@ export type Database = {
         }
         Relationships: []
       }
+      mf_factsheets: {
+        Row: {
+          as_of: string
+          aum_cr: number | null
+          avg_maturity_yrs: number | null
+          benchmark: string | null
+          beta: number | null
+          cash_pct: number | null
+          created_at: string
+          debt_pct: number | null
+          equity_pct: number | null
+          exit_load: string | null
+          expense_ratio: number | null
+          id: string
+          inception_date: string | null
+          large_cap_pct: number | null
+          macaulay_duration: number | null
+          mid_cap_pct: number | null
+          min_investment: number | null
+          modified_duration: number | null
+          notes: string
+          other_pct: number | null
+          pb: number | null
+          pe: number | null
+          rating_mix: Json
+          scheme_code: number
+          sharpe: number | null
+          small_cap_pct: number | null
+          source: string
+          std_dev: number | null
+          turnover_ratio: number | null
+          ytm: number | null
+        }
+        Insert: {
+          as_of: string
+          aum_cr?: number | null
+          avg_maturity_yrs?: number | null
+          benchmark?: string | null
+          beta?: number | null
+          cash_pct?: number | null
+          created_at?: string
+          debt_pct?: number | null
+          equity_pct?: number | null
+          exit_load?: string | null
+          expense_ratio?: number | null
+          id?: string
+          inception_date?: string | null
+          large_cap_pct?: number | null
+          macaulay_duration?: number | null
+          mid_cap_pct?: number | null
+          min_investment?: number | null
+          modified_duration?: number | null
+          notes?: string
+          other_pct?: number | null
+          pb?: number | null
+          pe?: number | null
+          rating_mix?: Json
+          scheme_code: number
+          sharpe?: number | null
+          small_cap_pct?: number | null
+          source?: string
+          std_dev?: number | null
+          turnover_ratio?: number | null
+          ytm?: number | null
+        }
+        Update: {
+          as_of?: string
+          aum_cr?: number | null
+          avg_maturity_yrs?: number | null
+          benchmark?: string | null
+          beta?: number | null
+          cash_pct?: number | null
+          created_at?: string
+          debt_pct?: number | null
+          equity_pct?: number | null
+          exit_load?: string | null
+          expense_ratio?: number | null
+          id?: string
+          inception_date?: string | null
+          large_cap_pct?: number | null
+          macaulay_duration?: number | null
+          mid_cap_pct?: number | null
+          min_investment?: number | null
+          modified_duration?: number | null
+          notes?: string
+          other_pct?: number | null
+          pb?: number | null
+          pe?: number | null
+          rating_mix?: Json
+          scheme_code?: number
+          sharpe?: number | null
+          small_cap_pct?: number | null
+          source?: string
+          std_dev?: number | null
+          turnover_ratio?: number | null
+          ytm?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mf_factsheets_scheme_code_fkey"
+            columns: ["scheme_code"]
+            isOneToOne: false
+            referencedRelation: "mf_schemes"
+            referencedColumns: ["scheme_code"]
+          },
+        ]
+      }
+      mf_holdings: {
+        Row: {
+          as_of: string
+          asset_type: string | null
+          id: string
+          instrument: string
+          isin: string | null
+          market_value_cr: number | null
+          quantity: number | null
+          rating: string | null
+          scheme_code: number
+          sector: string | null
+          weight_pct: number
+        }
+        Insert: {
+          as_of: string
+          asset_type?: string | null
+          id?: string
+          instrument: string
+          isin?: string | null
+          market_value_cr?: number | null
+          quantity?: number | null
+          rating?: string | null
+          scheme_code: number
+          sector?: string | null
+          weight_pct?: number
+        }
+        Update: {
+          as_of?: string
+          asset_type?: string | null
+          id?: string
+          instrument?: string
+          isin?: string | null
+          market_value_cr?: number | null
+          quantity?: number | null
+          rating?: string | null
+          scheme_code?: number
+          sector?: string | null
+          weight_pct?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mf_holdings_scheme_code_fkey"
+            columns: ["scheme_code"]
+            isOneToOne: false
+            referencedRelation: "mf_schemes"
+            referencedColumns: ["scheme_code"]
+          },
+        ]
+      }
+      mf_managers: {
+        Row: {
+          bio: string
+          created_at: string
+          experience_years: number | null
+          id: string
+          name: string
+          qualifications: string
+        }
+        Insert: {
+          bio?: string
+          created_at?: string
+          experience_years?: number | null
+          id?: string
+          name: string
+          qualifications?: string
+        }
+        Update: {
+          bio?: string
+          created_at?: string
+          experience_years?: number | null
+          id?: string
+          name?: string
+          qualifications?: string
+        }
+        Relationships: []
+      }
       mf_nav_history: {
         Row: {
           nav: number
@@ -129,6 +313,181 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "mf_nav_history_scheme_code_fkey"
+            columns: ["scheme_code"]
+            isOneToOne: false
+            referencedRelation: "mf_schemes"
+            referencedColumns: ["scheme_code"]
+          },
+        ]
+      }
+      mf_news: {
+        Row: {
+          author: string | null
+          fetched_at: string
+          fund_house: string | null
+          id: string
+          published_at: string | null
+          scheme_code: number | null
+          source_name: string
+          source_type: string
+          summary: string
+          title: string
+          url: string
+        }
+        Insert: {
+          author?: string | null
+          fetched_at?: string
+          fund_house?: string | null
+          id?: string
+          published_at?: string | null
+          scheme_code?: number | null
+          source_name?: string
+          source_type: string
+          summary?: string
+          title: string
+          url: string
+        }
+        Update: {
+          author?: string | null
+          fetched_at?: string
+          fund_house?: string | null
+          id?: string
+          published_at?: string | null
+          scheme_code?: number | null
+          source_name?: string
+          source_type?: string
+          summary?: string
+          title?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mf_news_scheme_code_fkey"
+            columns: ["scheme_code"]
+            isOneToOne: false
+            referencedRelation: "mf_schemes"
+            referencedColumns: ["scheme_code"]
+          },
+        ]
+      }
+      mf_return_metrics: {
+        Row: {
+          as_of: string
+          computed_at: string
+          max_drawdown: number | null
+          r_10y: number | null
+          r_1m: number | null
+          r_1y: number | null
+          r_3m: number | null
+          r_3y: number | null
+          r_5y: number | null
+          r_6m: number | null
+          r_since: number | null
+          rolling_1y_avg: number | null
+          rolling_1y_max: number | null
+          rolling_1y_min: number | null
+          rolling_1y_pos_pct: number | null
+          rolling_3y_avg: number | null
+          rolling_3y_max: number | null
+          rolling_3y_min: number | null
+          scheme_code: number
+          sharpe_3y: number | null
+          sortino_3y: number | null
+          volatility_1y: number | null
+        }
+        Insert: {
+          as_of: string
+          computed_at?: string
+          max_drawdown?: number | null
+          r_10y?: number | null
+          r_1m?: number | null
+          r_1y?: number | null
+          r_3m?: number | null
+          r_3y?: number | null
+          r_5y?: number | null
+          r_6m?: number | null
+          r_since?: number | null
+          rolling_1y_avg?: number | null
+          rolling_1y_max?: number | null
+          rolling_1y_min?: number | null
+          rolling_1y_pos_pct?: number | null
+          rolling_3y_avg?: number | null
+          rolling_3y_max?: number | null
+          rolling_3y_min?: number | null
+          scheme_code: number
+          sharpe_3y?: number | null
+          sortino_3y?: number | null
+          volatility_1y?: number | null
+        }
+        Update: {
+          as_of?: string
+          computed_at?: string
+          max_drawdown?: number | null
+          r_10y?: number | null
+          r_1m?: number | null
+          r_1y?: number | null
+          r_3m?: number | null
+          r_3y?: number | null
+          r_5y?: number | null
+          r_6m?: number | null
+          r_since?: number | null
+          rolling_1y_avg?: number | null
+          rolling_1y_max?: number | null
+          rolling_1y_min?: number | null
+          rolling_1y_pos_pct?: number | null
+          rolling_3y_avg?: number | null
+          rolling_3y_max?: number | null
+          rolling_3y_min?: number | null
+          scheme_code?: number
+          sharpe_3y?: number | null
+          sortino_3y?: number | null
+          volatility_1y?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mf_return_metrics_scheme_code_fkey"
+            columns: ["scheme_code"]
+            isOneToOne: true
+            referencedRelation: "mf_schemes"
+            referencedColumns: ["scheme_code"]
+          },
+        ]
+      }
+      mf_scheme_managers: {
+        Row: {
+          end_date: string | null
+          id: string
+          manager_id: string
+          role: string
+          scheme_code: number
+          start_date: string | null
+        }
+        Insert: {
+          end_date?: string | null
+          id?: string
+          manager_id: string
+          role?: string
+          scheme_code: number
+          start_date?: string | null
+        }
+        Update: {
+          end_date?: string | null
+          id?: string
+          manager_id?: string
+          role?: string
+          scheme_code?: number
+          start_date?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mf_scheme_managers_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "mf_managers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mf_scheme_managers_scheme_code_fkey"
             columns: ["scheme_code"]
             isOneToOne: false
             referencedRelation: "mf_schemes"
@@ -189,6 +548,35 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      mf_sector_allocation: {
+        Row: {
+          as_of: string
+          scheme_code: number
+          sector: string
+          weight_pct: number
+        }
+        Insert: {
+          as_of: string
+          scheme_code: number
+          sector: string
+          weight_pct?: number
+        }
+        Update: {
+          as_of?: string
+          scheme_code?: number
+          sector?: string
+          weight_pct?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mf_sector_allocation_scheme_code_fkey"
+            columns: ["scheme_code"]
+            isOneToOne: false
+            referencedRelation: "mf_schemes"
+            referencedColumns: ["scheme_code"]
+          },
+        ]
       }
       mf_sync_runs: {
         Row: {

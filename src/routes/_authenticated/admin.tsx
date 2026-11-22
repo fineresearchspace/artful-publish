@@ -52,6 +52,7 @@ const NAV = [
   { to: "/admin/categories", label: "Categories", icon: FolderCog },
   { to: "/admin/subscribers", label: "Subscribers", icon: Users },
   { to: "/admin/mf-data", label: "MF Data", icon: Database },
+  { to: "/admin/mf-screener", label: "MF Screener", icon: Database },
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ] as const;
 
