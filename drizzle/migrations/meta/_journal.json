@@ -15,6 +15,13 @@
       "when": 1795354255887,
       "tag": "0001_mf_research_backend",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795542318367,
+      "tag": "0002_mf_research_depository",
+      "breakpoints": true
     }
   ]
 }

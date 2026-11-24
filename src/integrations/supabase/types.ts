@@ -110,6 +110,179 @@ export type Database = {
         }
         Relationships: []
       }
+      mf_amfi_industry_monthly: {
+        Row: {
+          month: string
+          net_inflow_cr: number | null
+          notes: string
+          sip_accounts: number | null
+          sip_aum_cr: number | null
+          sip_contribution_cr: number | null
+          total_aum_cr: number | null
+          total_folios: number | null
+        }
+        Insert: {
+          month: string
+          net_inflow_cr?: number | null
+          notes?: string
+          sip_accounts?: number | null
+          sip_aum_cr?: number | null
+          sip_contribution_cr?: number | null
+          total_aum_cr?: number | null
+          total_folios?: number | null
+        }
+        Update: {
+          month?: string
+          net_inflow_cr?: number | null
+          notes?: string
+          sip_accounts?: number | null
+          sip_aum_cr?: number | null
+          sip_contribution_cr?: number | null
+          total_aum_cr?: number | null
+          total_folios?: number | null
+        }
+        Relationships: []
+      }
+      mf_amfi_monthly: {
+        Row: {
+          aum_cr: number | null
+          avg_aum_cr: number | null
+          category: string
+          created_at: string
+          folios: number | null
+          funds_mobilized_cr: number | null
+          month: string
+          net_inflow_cr: number | null
+          redemption_cr: number | null
+          schemes: number | null
+        }
+        Insert: {
+          aum_cr?: number | null
+          avg_aum_cr?: number | null
+          category: string
+          created_at?: string
+          folios?: number | null
+          funds_mobilized_cr?: number | null
+          month: string
+          net_inflow_cr?: number | null
+          redemption_cr?: number | null
+          schemes?: number | null
+        }
+        Update: {
+          aum_cr?: number | null
+          avg_aum_cr?: number | null
+          category?: string
+          created_at?: string
+          folios?: number | null
+          funds_mobilized_cr?: number | null
+          month?: string
+          net_inflow_cr?: number | null
+          redemption_cr?: number | null
+          schemes?: number | null
+        }
+        Relationships: []
+      }
+      mf_category_guide: {
+        Row: {
+          asset_class: string
+          benchmark_name: string | null
+          benchmark_proxy_query: string | null
+          category_key: string
+          debt_max: number | null
+          debt_min: number | null
+          equity_max: number | null
+          equity_min: number | null
+          explainer: string
+          match_terms: string[]
+          sebi_definition: string
+        }
+        Insert: {
+          asset_class: string
+          benchmark_name?: string | null
+          benchmark_proxy_query?: string | null
+          category_key: string
+          debt_max?: number | null
+          debt_min?: number | null
+          equity_max?: number | null
+          equity_min?: number | null
+          explainer?: string
+          match_terms?: string[]
+          sebi_definition?: string
+        }
+        Update: {
+          asset_class?: string
+          benchmark_name?: string | null
+          benchmark_proxy_query?: string | null
+          category_key?: string
+          debt_max?: number | null
+          debt_min?: number | null
+          equity_max?: number | null
+          equity_min?: number | null
+          explainer?: string
+          match_terms?: string[]
+          sebi_definition?: string
+        }
+        Relationships: []
+      }
+      mf_daily_fund_watch: {
+        Row: {
+          as_of: string
+          aum_cr: number | null
+          avg_maturity_yrs: number | null
+          launch_date: string | null
+          macaulay_duration: number | null
+          modified_duration: number | null
+          nav: number | null
+          plan: string
+          returns: Json
+          scheme_code: number | null
+          scheme_name: string
+          sheet_category: string
+          source: string
+          ytm: number | null
+        }
+        Insert: {
+          as_of: string
+          aum_cr?: number | null
+          avg_maturity_yrs?: number | null
+          launch_date?: string | null
+          macaulay_duration?: number | null
+          modified_duration?: number | null
+          nav?: number | null
+          plan?: string
+          returns?: Json
+          scheme_code?: number | null
+          scheme_name: string
+          sheet_category: string
+          source?: string
+          ytm?: number | null
+        }
+        Update: {
+          as_of?: string
+          aum_cr?: number | null
+          avg_maturity_yrs?: number | null
+          launch_date?: string | null
+          macaulay_duration?: number | null
+          modified_duration?: number | null
+          nav?: number | null
+          plan?: string
+          returns?: Json
+          scheme_code?: number | null
+          scheme_name?: string
+          sheet_category?: string
+          source?: string
+          ytm?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mf_daily_fund_watch_scheme_code_fkey"
+            columns: ["scheme_code"]
+            isOneToOne: false
+            referencedRelation: "mf_schemes"
+            referencedColumns: ["scheme_code"]
+          },
+        ]
+      }
       mf_factsheets: {
         Row: {
           as_of: string
