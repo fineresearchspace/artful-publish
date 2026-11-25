@@ -22,7 +22,7 @@ export const substackProvider: PublishingProvider = {
     canExport: true,
   },
   statusNote:
-    "Substack has no official public publishing API. Weekly Wonders therefore uses a one-click export/copy workflow — the article is prepared so it can be pasted into the Substack editor with essentially no cleanup. The integration slot is wired and ready if an official API appears.",
+    "Substack has no official public publishing API. The Context therefore uses a one-click export/copy workflow — the article is prepared so it can be pasted into the Substack editor with essentially no cleanup. The integration slot is wired and ready if an official API appears.",
 
   exportPost(article: Article) {
     const frontMatterless = article.content.trim();

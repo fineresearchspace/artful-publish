@@ -1,7 +1,14 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
+import { z } from "zod";
 import type { Article, Category } from "./articles";
 import { ARTICLE_LIST_FIELDS } from "./articles";
+import { articlePreviewImage } from "./article-preview-image";
+
+function previewItem(row: ArticleListItem & { content?: string }): ArticleListItem {
+  const { content, ...article } = row;
+  return { ...article, cover_image: articlePreviewImage(article.cover_image, content) };
+}
 
 function publicClient() {
   const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
@@ -21,6 +28,13 @@ function publicClient() {
   });
 }
 
+// Input validation schemas
+const slugSchema = z
+  .string()
+  .min(1)
+  .max(200)
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Invalid slug format");
+
 export type ArticleListItem = Omit<Article, "content" | "created_at" | "substack_post_id">;
 
 export const listPublishedArticles = createServerFn({ method: "GET" }).handler(
@@ -29,55 +43,72 @@ export const listPublishedArticles = createServerFn({ method: "GET" }).handler(
     const [articlesRes, categoriesRes] = await Promise.all([
       supabase
         .from("articles")
-        .select(ARTICLE_LIST_FIELDS)
-        .in("status", ["published_web", "published_substack"])
+        .select(`${ARTICLE_LIST_FIELDS},content`)
+        .in("status", ["published_web", "exported_substack"])
         .order("published_at", { ascending: false }),
       supabase.from("categories").select("*").order("sort_order"),
     ]);
 
     return {
-      articles: (articlesRes.data ?? []) as unknown as ArticleListItem[],
+      articles: ((articlesRes.data ?? []) as unknown as (ArticleListItem & { content: string })[]).map(previewItem),
       categories: (categoriesRes.data ?? []) as unknown as Category[],
     };
   },
 );
 
+export const listPublishedCfaArticles = createServerFn({ method: "GET" }).handler(
+  async (): Promise<{ articles: ArticleListItem[] }> => {
+    const supabase = publicClient();
+    const { data } = await supabase
+      .from("articles")
+      .select(`${ARTICLE_LIST_FIELDS},content`)
+      .in("status", ["published_web", "exported_substack"])
+      .eq("category", "CFA Exam")
+      .order("published_at", { ascending: false });
+
+    return { articles: ((data ?? []) as unknown as (ArticleListItem & { content: string })[]).map(previewItem) };
+  },
+);
+
 export const getPublishedArticle = createServerFn({ method: "GET" })
-  .inputValidator((data: { slug: string }) => data)
+  .validator((data: { slug: string }) => {
+    // Validate input with Zod before processing
+    return slugSchema.parse(data.slug);
+  })
   .handler(
-    async ({
-      data,
-    }): Promise<{ article: Article | null; related: ArticleListItem[] }> => {
+    async ({ data }): Promise<{ article: Article | null; related: ArticleListItem[] }> => {
       const supabase = publicClient();
       const { data: article } = await supabase
         .from("articles")
         .select("*")
-        .eq("slug", data.slug)
-        .in("status", ["published_web", "published_substack"])
+        .eq("slug", data)
+        .in("status", ["published_web", "exported_substack"])
         .maybeSingle();
 
       if (!article) return { article: null, related: [] };
 
       const { data: related } = await supabase
         .from("articles")
-        .select(ARTICLE_LIST_FIELDS)
-        .in("status", ["published_web", "published_substack"])
+        .select(`${ARTICLE_LIST_FIELDS},content`)
+        .in("status", ["published_web", "exported_substack"])
         .eq("category", (article as Article).category)
-        .neq("slug", data.slug)
+        .neq("slug", data)
         .order("published_at", { ascending: false })
         .limit(3);
 
       return {
         article: article as unknown as Article,
-        related: (related ?? []) as unknown as ArticleListItem[],
+        related: ((related ?? []) as unknown as (ArticleListItem & { content: string })[]).map(previewItem),
       };
     },
   );
 
 export const registerArticleView = createServerFn({ method: "POST" })
-  .inputValidator((data: { slug: string }) => data)
+  .validator((data: { slug: string }) => {
+    return slugSchema.parse(data.slug);
+  })
   .handler(async ({ data }) => {
     const supabase = publicClient();
-    await supabase.rpc("increment_article_view", { _slug: data.slug });
+    await supabase.rpc("increment_article_view", { _slug: data });
     return { ok: true };
   });

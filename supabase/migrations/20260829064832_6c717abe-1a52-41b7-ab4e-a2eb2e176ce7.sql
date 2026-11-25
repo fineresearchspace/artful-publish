@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.set_market_news_updated_at() FROM anon, authenticated, public;

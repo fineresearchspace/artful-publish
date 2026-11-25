@@ -10,23 +10,42 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MarketPulseRouteImport } from './routes/Market-Pulse'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CategoriesRouteImport } from './routes/categories'
+import { Route as CfaExamRouteImport } from './routes/cfa-exam'
+import { Route as HeadlinesRouteImport } from './routes/headlines'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as ApiBondsRouteImport } from './routes/api/bonds'
+import { Route as ApiBrentRouteImport } from './routes/api/brent'
+import { Route as ApiFxRouteImport } from './routes/api/fx'
+import { Route as ApiMarketHistoryRouteImport } from './routes/api/market-history'
+import { Route as ApiNewsRouteImport } from './routes/api/news'
 import { Route as ArticlesIndexRouteImport } from './routes/articles.index'
 import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
+import { Route as MarketsSymbolRouteImport } from './routes/markets.$symbol'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminArticlesRouteImport } from './routes/_authenticated/admin.articles'
 import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_authenticated/admin.categories'
+import { Route as AuthenticatedAdminMfDataRouteImport } from './routes/_authenticated/admin.mf-data'
+import { Route as AuthenticatedAdminMfScreenerRouteImport } from './routes/_authenticated/admin.mf-screener'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
+import { Route as AuthenticatedAdminSubscribersRouteImport } from './routes/_authenticated/admin.subscribers'
+import { Route as ApiNewsletterGenerateRouteImport } from './routes/api/newsletter/generate'
+import { Route as AuthenticatedAdminMfFundCodeRouteImport } from './routes/_authenticated/admin.mf-fund.$code'
 import { Route as AuthenticatedAdminWriteIdRouteImport } from './routes/_authenticated/admin.write.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketPulseRoute = MarketPulseRouteImport.update({
+  id: '/Market-Pulse',
+  path: '/Market-Pulse',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -48,6 +67,16 @@ const CategoriesRoute = CategoriesRouteImport.update({
   path: '/categories',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CfaExamRoute = CfaExamRouteImport.update({
+  id: '/cfa-exam',
+  path: '/cfa-exam',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HeadlinesRoute = HeadlinesRouteImport.update({
+  id: '/headlines',
+  path: '/headlines',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -58,6 +87,31 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiBondsRoute = ApiBondsRouteImport.update({
+  id: '/api/bonds',
+  path: '/api/bonds',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBrentRoute = ApiBrentRouteImport.update({
+  id: '/api/brent',
+  path: '/api/brent',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiFxRoute = ApiFxRouteImport.update({
+  id: '/api/fx',
+  path: '/api/fx',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMarketHistoryRoute = ApiMarketHistoryRouteImport.update({
+  id: '/api/market-history',
+  path: '/api/market-history',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiNewsRoute = ApiNewsRouteImport.update({
+  id: '/api/news',
+  path: '/api/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ArticlesIndexRoute = ArticlesIndexRouteImport.update({
   id: '/articles/',
   path: '/articles/',
@@ -66,6 +120,11 @@ const ArticlesIndexRoute = ArticlesIndexRouteImport.update({
 const ArticlesSlugRoute = ArticlesSlugRouteImport.update({
   id: '/articles/$slug',
   path: '/articles/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketsSymbolRoute = MarketsSymbolRouteImport.update({
+  id: '/markets/$symbol',
+  path: '/markets/$symbol',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
@@ -85,10 +144,39 @@ const AuthenticatedAdminCategoriesRoute =
     path: '/categories',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminMfDataRoute =
+  AuthenticatedAdminMfDataRouteImport.update({
+    id: '/mf-data',
+    path: '/mf-data',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminMfScreenerRoute =
+  AuthenticatedAdminMfScreenerRouteImport.update({
+    id: '/mf-screener',
+    path: '/mf-screener',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminSettingsRoute =
   AuthenticatedAdminSettingsRouteImport.update({
     id: '/settings',
     path: '/settings',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminSubscribersRoute =
+  AuthenticatedAdminSubscribersRouteImport.update({
+    id: '/subscribers',
+    path: '/subscribers',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const ApiNewsletterGenerateRoute = ApiNewsletterGenerateRouteImport.update({
+  id: '/api/newsletter/generate',
+  path: '/api/newsletter/generate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminMfFundCodeRoute =
+  AuthenticatedAdminMfFundCodeRouteImport.update({
+    id: '/mf-fund/$code',
+    path: '/mf-fund/$code',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminWriteIdRoute =
@@ -100,107 +188,201 @@ const AuthenticatedAdminWriteIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/Market-Pulse': typeof MarketPulseRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
+  '/cfa-exam': typeof CfaExamRoute
+  '/headlines': typeof HeadlinesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/api/bonds': typeof ApiBondsRoute
+  '/api/brent': typeof ApiBrentRoute
+  '/api/fx': typeof ApiFxRoute
+  '/api/market-history': typeof ApiMarketHistoryRoute
+  '/api/news': typeof ApiNewsRoute
   '/articles/$slug': typeof ArticlesSlugRoute
+  '/markets/$symbol': typeof MarketsSymbolRoute
   '/articles/': typeof ArticlesIndexRoute
   '/admin/articles': typeof AuthenticatedAdminArticlesRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
+  '/admin/mf-data': typeof AuthenticatedAdminMfDataRoute
+  '/admin/mf-screener': typeof AuthenticatedAdminMfScreenerRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
+  '/api/newsletter/generate': typeof ApiNewsletterGenerateRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/mf-fund/$code': typeof AuthenticatedAdminMfFundCodeRoute
   '/admin/write/$id': typeof AuthenticatedAdminWriteIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/Market-Pulse': typeof MarketPulseRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
+  '/cfa-exam': typeof CfaExamRoute
+  '/headlines': typeof HeadlinesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/bonds': typeof ApiBondsRoute
+  '/api/brent': typeof ApiBrentRoute
+  '/api/fx': typeof ApiFxRoute
+  '/api/market-history': typeof ApiMarketHistoryRoute
+  '/api/news': typeof ApiNewsRoute
   '/articles/$slug': typeof ArticlesSlugRoute
+  '/markets/$symbol': typeof MarketsSymbolRoute
   '/articles': typeof ArticlesIndexRoute
   '/admin/articles': typeof AuthenticatedAdminArticlesRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
+  '/admin/mf-data': typeof AuthenticatedAdminMfDataRoute
+  '/admin/mf-screener': typeof AuthenticatedAdminMfScreenerRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
+  '/api/newsletter/generate': typeof ApiNewsletterGenerateRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/mf-fund/$code': typeof AuthenticatedAdminMfFundCodeRoute
   '/admin/write/$id': typeof AuthenticatedAdminWriteIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/Market-Pulse': typeof MarketPulseRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
+  '/cfa-exam': typeof CfaExamRoute
+  '/headlines': typeof HeadlinesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/api/bonds': typeof ApiBondsRoute
+  '/api/brent': typeof ApiBrentRoute
+  '/api/fx': typeof ApiFxRoute
+  '/api/market-history': typeof ApiMarketHistoryRoute
+  '/api/news': typeof ApiNewsRoute
   '/articles/$slug': typeof ArticlesSlugRoute
+  '/markets/$symbol': typeof MarketsSymbolRoute
   '/articles/': typeof ArticlesIndexRoute
   '/_authenticated/admin/articles': typeof AuthenticatedAdminArticlesRoute
   '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
+  '/_authenticated/admin/mf-data': typeof AuthenticatedAdminMfDataRoute
+  '/_authenticated/admin/mf-screener': typeof AuthenticatedAdminMfScreenerRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/_authenticated/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
+  '/api/newsletter/generate': typeof ApiNewsletterGenerateRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/mf-fund/$code': typeof AuthenticatedAdminMfFundCodeRoute
   '/_authenticated/admin/write/$id': typeof AuthenticatedAdminWriteIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/Market-Pulse'
     | '/about'
     | '/auth'
     | '/categories'
+    | '/cfa-exam'
+    | '/headlines'
     | '/sitemap.xml'
     | '/admin'
+    | '/api/bonds'
+    | '/api/brent'
+    | '/api/fx'
+    | '/api/market-history'
+    | '/api/news'
     | '/articles/$slug'
+    | '/markets/$symbol'
     | '/articles/'
     | '/admin/articles'
     | '/admin/categories'
+    | '/admin/mf-data'
+    | '/admin/mf-screener'
     | '/admin/settings'
+    | '/admin/subscribers'
+    | '/api/newsletter/generate'
     | '/admin/'
+    | '/admin/mf-fund/$code'
     | '/admin/write/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/Market-Pulse'
     | '/about'
     | '/auth'
     | '/categories'
+    | '/cfa-exam'
+    | '/headlines'
     | '/sitemap.xml'
+    | '/api/bonds'
+    | '/api/brent'
+    | '/api/fx'
+    | '/api/market-history'
+    | '/api/news'
     | '/articles/$slug'
+    | '/markets/$symbol'
     | '/articles'
     | '/admin/articles'
     | '/admin/categories'
+    | '/admin/mf-data'
+    | '/admin/mf-screener'
     | '/admin/settings'
+    | '/admin/subscribers'
+    | '/api/newsletter/generate'
     | '/admin'
+    | '/admin/mf-fund/$code'
     | '/admin/write/$id'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/Market-Pulse'
     | '/about'
     | '/auth'
     | '/categories'
+    | '/cfa-exam'
+    | '/headlines'
     | '/sitemap.xml'
     | '/_authenticated/admin'
+    | '/api/bonds'
+    | '/api/brent'
+    | '/api/fx'
+    | '/api/market-history'
+    | '/api/news'
     | '/articles/$slug'
+    | '/markets/$symbol'
     | '/articles/'
     | '/_authenticated/admin/articles'
     | '/_authenticated/admin/categories'
+    | '/_authenticated/admin/mf-data'
+    | '/_authenticated/admin/mf-screener'
     | '/_authenticated/admin/settings'
+    | '/_authenticated/admin/subscribers'
+    | '/api/newsletter/generate'
     | '/_authenticated/admin/'
+    | '/_authenticated/admin/mf-fund/$code'
     | '/_authenticated/admin/write/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  MarketPulseRoute: typeof MarketPulseRoute
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
   CategoriesRoute: typeof CategoriesRoute
+  CfaExamRoute: typeof CfaExamRoute
+  HeadlinesRoute: typeof HeadlinesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ApiBondsRoute: typeof ApiBondsRoute
+  ApiBrentRoute: typeof ApiBrentRoute
+  ApiFxRoute: typeof ApiFxRoute
+  ApiMarketHistoryRoute: typeof ApiMarketHistoryRoute
+  ApiNewsRoute: typeof ApiNewsRoute
   ArticlesSlugRoute: typeof ArticlesSlugRoute
+  MarketsSymbolRoute: typeof MarketsSymbolRoute
   ArticlesIndexRoute: typeof ArticlesIndexRoute
+  ApiNewsletterGenerateRoute: typeof ApiNewsletterGenerateRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -210,6 +392,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/Market-Pulse': {
+      id: '/Market-Pulse'
+      path: '/Market-Pulse'
+      fullPath: '/Market-Pulse'
+      preLoaderRoute: typeof MarketPulseRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -240,6 +429,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cfa-exam': {
+      id: '/cfa-exam'
+      path: '/cfa-exam'
+      fullPath: '/cfa-exam'
+      preLoaderRoute: typeof CfaExamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/headlines': {
+      id: '/headlines'
+      path: '/headlines'
+      fullPath: '/headlines'
+      preLoaderRoute: typeof HeadlinesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -254,6 +457,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/bonds': {
+      id: '/api/bonds'
+      path: '/api/bonds'
+      fullPath: '/api/bonds'
+      preLoaderRoute: typeof ApiBondsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/brent': {
+      id: '/api/brent'
+      path: '/api/brent'
+      fullPath: '/api/brent'
+      preLoaderRoute: typeof ApiBrentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/fx': {
+      id: '/api/fx'
+      path: '/api/fx'
+      fullPath: '/api/fx'
+      preLoaderRoute: typeof ApiFxRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/market-history': {
+      id: '/api/market-history'
+      path: '/api/market-history'
+      fullPath: '/api/market-history'
+      preLoaderRoute: typeof ApiMarketHistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/news': {
+      id: '/api/news'
+      path: '/api/news'
+      fullPath: '/api/news'
+      preLoaderRoute: typeof ApiNewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/articles/': {
       id: '/articles/'
       path: '/articles'
@@ -266,6 +504,13 @@ declare module '@tanstack/react-router' {
       path: '/articles/$slug'
       fullPath: '/articles/$slug'
       preLoaderRoute: typeof ArticlesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/markets/$symbol': {
+      id: '/markets/$symbol'
+      path: '/markets/$symbol'
+      fullPath: '/markets/$symbol'
+      preLoaderRoute: typeof MarketsSymbolRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/': {
@@ -289,11 +534,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCategoriesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/mf-data': {
+      id: '/_authenticated/admin/mf-data'
+      path: '/mf-data'
+      fullPath: '/admin/mf-data'
+      preLoaderRoute: typeof AuthenticatedAdminMfDataRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/mf-screener': {
+      id: '/_authenticated/admin/mf-screener'
+      path: '/mf-screener'
+      fullPath: '/admin/mf-screener'
+      preLoaderRoute: typeof AuthenticatedAdminMfScreenerRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/settings': {
       id: '/_authenticated/admin/settings'
       path: '/settings'
       fullPath: '/admin/settings'
       preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/subscribers': {
+      id: '/_authenticated/admin/subscribers'
+      path: '/subscribers'
+      fullPath: '/admin/subscribers'
+      preLoaderRoute: typeof AuthenticatedAdminSubscribersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/api/newsletter/generate': {
+      id: '/api/newsletter/generate'
+      path: '/api/newsletter/generate'
+      fullPath: '/api/newsletter/generate'
+      preLoaderRoute: typeof ApiNewsletterGenerateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin/mf-fund/$code': {
+      id: '/_authenticated/admin/mf-fund/$code'
+      path: '/mf-fund/$code'
+      fullPath: '/admin/mf-fund/$code'
+      preLoaderRoute: typeof AuthenticatedAdminMfFundCodeRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/write/$id': {
@@ -309,16 +589,24 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminArticlesRoute: typeof AuthenticatedAdminArticlesRoute
   AuthenticatedAdminCategoriesRoute: typeof AuthenticatedAdminCategoriesRoute
+  AuthenticatedAdminMfDataRoute: typeof AuthenticatedAdminMfDataRoute
+  AuthenticatedAdminMfScreenerRoute: typeof AuthenticatedAdminMfScreenerRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
+  AuthenticatedAdminSubscribersRoute: typeof AuthenticatedAdminSubscribersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminMfFundCodeRoute: typeof AuthenticatedAdminMfFundCodeRoute
   AuthenticatedAdminWriteIdRoute: typeof AuthenticatedAdminWriteIdRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminArticlesRoute: AuthenticatedAdminArticlesRoute,
   AuthenticatedAdminCategoriesRoute: AuthenticatedAdminCategoriesRoute,
+  AuthenticatedAdminMfDataRoute: AuthenticatedAdminMfDataRoute,
+  AuthenticatedAdminMfScreenerRoute: AuthenticatedAdminMfScreenerRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
+  AuthenticatedAdminSubscribersRoute: AuthenticatedAdminSubscribersRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedAdminMfFundCodeRoute: AuthenticatedAdminMfFundCodeRoute,
   AuthenticatedAdminWriteIdRoute: AuthenticatedAdminWriteIdRoute,
 }
 
@@ -339,12 +627,22 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  MarketPulseRoute: MarketPulseRoute,
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
   CategoriesRoute: CategoriesRoute,
+  CfaExamRoute: CfaExamRoute,
+  HeadlinesRoute: HeadlinesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ApiBondsRoute: ApiBondsRoute,
+  ApiBrentRoute: ApiBrentRoute,
+  ApiFxRoute: ApiFxRoute,
+  ApiMarketHistoryRoute: ApiMarketHistoryRoute,
+  ApiNewsRoute: ApiNewsRoute,
   ArticlesSlugRoute: ArticlesSlugRoute,
+  MarketsSymbolRoute: MarketsSymbolRoute,
   ArticlesIndexRoute: ArticlesIndexRoute,
+  ApiNewsletterGenerateRoute: ApiNewsletterGenerateRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -8,3 +8,22 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Newsletter subscriptions enter through a validated server function using privileged access; the subscriber table stays unreadable to public visitors to protect email addresses.
+- Public appearance preference is stored under `the-context-theme` and applied before rendering to prevent a light/dark flash.
+- Market heatmaps, historical charts, and sovereign bond yields belong exclusively on Market Pulse; the homepage stays focused on editorial content.
+- The Bonds tab reuses the sovereign yield table and its existing feed; a pure helper calculates US-relative spreads without inventing missing yields.
+- CFA Exam editorial content uses the `CFA Exam` article category and is surfaced separately at `/cfa-exam`.
+- The writing studio is single-owner: the database permits only one `admin` role, while every other account remains a regular user.
+- Historical index charts use the allowlisted same-origin `/api/market-history` route so third-party failures remain isolated from Market Pulse.
+- Market Pulse uses a categorized delayed-data performance board for indices, commodities, and currencies, with selectable price history and reported volume.
+- Brent card and ticker use the history provider's session quote metadata, not continuous-history closes, for daily changes because futures contract rolls can distort close-to-close comparisons; missing session metadata means unavailable.
+- The homepage and full headlines route reuse one timeline; a shared chronological selector limits headlines and topic-matches the Market Pulse related-news row without unrelated fallbacks.
+- The shared header owns its scroll-collapse state and preserves its expanded space to prevent scroll jumps; its ticker reads existing quote, FX, and bond feeds independently without inventing missing values.
+- Market detail pages show only the price chart, history and related articles, fed by a news-only server function and a pure symbol-based selector; no model call, no unrelated-news fallback, and no today's-drivers section.
+- Feed copy is entity-decoded before display so escaped anchor markup and bare URLs never reach a summary, while article links keep their URL — only prose is stripped.
+- Public article lists resolve covers from the selected cover or first embedded photo, convert legacy signed article-image URLs to permanent public URLs, and omit body content from list responses so existing posts have previews without resaving.
+- Market Pulse augments missing region-feed symbols via `/api/market-history`; Nifty 50 recovery and Smallcap 100 use reported session quote metadata, not two historical closes, since Smallcap may have only one point. History requests retry the alternate provider host before showing unavailable.
+- The `Capex & FII/DII` news category is India-only: FII/DII institutional-flow terms always qualify, while capex terms qualify only with an Indian market or company context in the copy.
+- Mutual fund research data (mf_* tables) is admin-read-only; AMFI NAVAll feeds the scheme master and mfapi.in feeds NAV history, written only through admin-verified server functions in src/lib/mf.
+- Fund research (screener, factsheets, managers, holdings, sectors, return metrics, fund news) lives in admin-only mf_* tables; return math is a pure tested module (src/lib/mf/returns.ts) and fund news comes from Google News RSS, Reddit search and the X connector when linked — keeps calculations verifiable and data private.
