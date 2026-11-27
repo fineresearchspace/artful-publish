@@ -22,3 +22,4 @@
 - [x] Add selectable price-history and volume charts to every supported Market Pulse tile.
 - [x] Remove the heatmap from the homepage and keep it exclusively on Market Pulse.
 - [x] Keep indicator article lists to same-day reporting and stop raw link text appearing under headlines.
+- [ ] Complete AMFI and fund-report intake: preview AMFI monthly reports and capture every supported performance, ranking, debt, risk, allocation, rating, instrument, sector and exit-load field from AMC workbooks.
