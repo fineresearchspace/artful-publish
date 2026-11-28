@@ -101,11 +101,13 @@ export const getMfOverview = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const sb = (context as Ctx).supabase;
-    const [{ count: schemes }, { count: withHistory }, { data: runs }, { data: cats }] = await Promise.all([
+    const [{ count: schemes }, { count: withHistory }, { data: runs }, { data: cats }, { count: reportRows }, { data: reportDate }] = await Promise.all([
       sb.from("mf_schemes").select("*", { count: "exact", head: true }),
       sb.from("mf_schemes").select("*", { count: "exact", head: true }).gt("history_points", 0),
       sb.from("mf_sync_runs").select("*").order("created_at", { ascending: false }).limit(8),
       Promise.resolve({ data: null }),
+      sb.from("mf_daily_fund_watch").select("*", { count: "exact", head: true }),
+      sb.from("mf_daily_fund_watch").select("as_of").order("as_of", { ascending: false }).limit(1),
     ]);
     const all: { category: string }[] = [];
     for (let from = 0; from < 30000; from += 1000) {
@@ -120,5 +122,6 @@ export const getMfOverview = createServerFn({ method: "GET" })
     const { data: synced } = await sb.from("mf_schemes")
       .select("scheme_code, scheme_name, fund_house, category, latest_nav, nav_date, history_points, history_start, history_synced_at")
       .gt("history_points", 0).order("history_synced_at", { ascending: false }).limit(50);
-    return { schemes: schemes ?? 0, withHistory: withHistory ?? 0, runs: runs ?? [], categories, synced: synced ?? [] };
+    return { schemes: schemes ?? 0, withHistory: withHistory ?? 0, reportRows: reportRows ?? 0,
+      reportAsOf: reportDate.data?.[0]?.as_of ?? null, runs: runs ?? [], categories, synced: synced ?? [] };
   });

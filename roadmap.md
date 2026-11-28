@@ -22,4 +22,6 @@
 - [x] Add selectable price-history and volume charts to every supported Market Pulse tile.
 - [x] Remove the heatmap from the homepage and keep it exclusively on Market Pulse.
 - [x] Keep indicator article lists to same-day reporting and stop raw link text appearing under headlines.
-- [ ] Complete AMFI and fund-report intake: preview AMFI monthly reports and capture every supported performance, ranking, debt, risk, allocation, rating, instrument, sector and exit-load field from AMC workbooks.
+- [ ] Import the uploaded Kotak report into the private fund-data store and expose its performance, rankings, debt, risk and allocation fields.
+- [ ] Expand NAV-history and calculated-return coverage in bounded batches, reporting coverage honestly.
+- [ ] Build a complete private fund-analysis flow with rolling returns, CAGRs, manager history, portfolio allocation and clear missing-data states.

@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { parseFundWatchSheet } from "./fund-watch-parse";
+import { parseFundWatchSheet, fundWatchSchemeMatchKey } from "./fund-watch-parse";
 import { parseAmfiMonthly } from "./amfi-monthly-parse";
 import { rollingVsBenchmark } from "./benchmark";
 import type { NavPoint } from "./returns";
@@ -65,14 +65,38 @@ export const importFundWatch = createServerFn({ method: "POST" })
     }
     if (!asOf) return { ok: false, written: 0, asOf: null, error: "The report date could not be found in its headers" };
     const rows = all.filter((r) => r.as_of ?? asOf).map((r) => ({ ...r, as_of: r.as_of ?? asOf, source: data.fileName }));
-    if (!rows.length) return { ok: false, written: 0, asOf, error: "No fund rows were found in this workbook" };
+    if (!rows.length) return { ok: false, written: 0, matched: 0, unmatched: 0, asOf, error: "No fund rows were found in this workbook" };
     const seen = new Set<string>(); const uniq = rows.filter((r) => { const k = `${r.sheet_category}|${r.plan}|${r.scheme_name}`; if (seen.has(k)) return false; seen.add(k); return true; });
-    for (let i = 0; i < uniq.length; i += 500) {
-      const { error } = await admin.from("mf_daily_fund_watch").upsert(uniq.slice(i, i + 500), { onConflict: "as_of,sheet_category,plan,scheme_name" });
-      if (error) return { ok: false, written: i, asOf, error: error.message };
+    const schemes: { scheme_code: number; scheme_name: string; plan: string | null; option_type: string | null }[] = [];
+    for (let from = 0; from < 20000; from += 1000) {
+      const { data: page, error } = await admin.from("mf_schemes").select("scheme_code, scheme_name, plan, option_type").range(from, from + 999);
+      if (error) return { ok: false, written: 0, matched: 0, unmatched: uniq.length, asOf, error: "Could not match report rows to the AMFI scheme list" };
+      schemes.push(...(page ?? []));
+      if (!page || page.length < 1000) break;
     }
-    await admin.from("mf_sync_runs").insert({ kind: "fund_watch", rows_written: uniq.length, detail: `${data.fileName} as of ${asOf}` });
-    return { ok: true, written: uniq.length, asOf, error: null };
+    const codeByKey = new Map<string, number[]>();
+    for (const scheme of schemes) {
+      const isGrowth = /growth/i.test(`${scheme.option_type ?? ""} ${scheme.scheme_name}`) && !/idcw|dividend/i.test(`${scheme.option_type ?? ""} ${scheme.scheme_name}`);
+      if (!isGrowth) continue;
+      const key = fundWatchSchemeMatchKey(scheme.scheme_name, scheme.plan ?? "");
+      if (key.endsWith("|")) continue;
+      const codes = codeByKey.get(key) ?? [];
+      codes.push(scheme.scheme_code);
+      codeByKey.set(key, codes);
+    }
+    let matched = 0;
+    const linked = uniq.map((row) => {
+      const candidates = codeByKey.get(fundWatchSchemeMatchKey(row.scheme_name, row.plan)) ?? [];
+      const schemeCode = candidates.length === 1 ? candidates[0] : null;
+      if (schemeCode) matched += 1;
+      return { ...row, scheme_code: schemeCode };
+    });
+    for (let i = 0; i < linked.length; i += 500) {
+      const { error } = await admin.from("mf_daily_fund_watch").upsert(linked.slice(i, i + 500), { onConflict: "as_of,sheet_category,plan,scheme_name" });
+      if (error) return { ok: false, written: i, matched, unmatched: linked.length - matched, asOf, error: error.message };
+    }
+    await admin.from("mf_sync_runs").insert({ kind: "fund_watch", rows_written: linked.length, detail: `${data.fileName} as of ${asOf}; ${matched} matched, ${linked.length - matched} unlinked` });
+    return { ok: true, written: linked.length, matched, unmatched: linked.length - matched, asOf, error: null };
   });
 
 /** Reviews category rows in an AMFI monthly workbook before import. */

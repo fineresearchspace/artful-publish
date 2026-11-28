@@ -11,6 +11,18 @@ async function assertAdmin(ctx: Ctx) {
   return supabaseAdmin as any;
 }
 const r2 = (x: number | null) => (x == null || !Number.isFinite(x) ? null : Math.round(x * 100) / 100);
+const asRecord = (value: unknown): Record<string, unknown> => typeof value === "object" && value !== null && !Array.isArray(value)
+  ? value as Record<string, unknown> : {};
+function reportNumber(returns: unknown, groupNames: string[], periodNames: string[]): number | null {
+  const root = asRecord(returns);
+  for (const group of groupNames) {
+    const values = asRecord(root[group]);
+    for (const [key, value] of Object.entries(values)) {
+      if (periodNames.includes(key.toLowerCase()) && typeof value === "number" && Number.isFinite(value)) return value;
+    }
+  }
+  return null;
+}
 
 async function loadNav(sb: any, code: number): Promise<NavPoint[]> {
   const out: NavPoint[] = [];
@@ -103,16 +115,51 @@ export const getScreener = createServerFn({ method: "POST" })
     sort: z.enum(["r_1y", "r_3y", "r_5y", "rolling_3y_avg", "sharpe_3y", "max_drawdown", "volatility_1y"]).default("r_3y") }).parse(d))
   .handler(async ({ context, data }) => {
     const sb = (context as Ctx).supabase;
-    let q = sb.from("mf_return_metrics").select("*, mf_schemes!inner(scheme_name, fund_house, category, latest_nav, nav_date)")
-      .order(data.sort, { ascending: data.sort === "volatility_1y", nullsFirst: false }).limit(200);
-    if (data.category) q = q.eq("mf_schemes.category", data.category);
-    if (data.search) q = q.ilike("mf_schemes.scheme_name", `%${data.search}%`);
-    const { data: rows, error } = await q;
-    if (error) return { rows: [], error: error.message };
-    const codes = (rows ?? []).map((r: any) => r.scheme_code);
-    const { data: fs } = codes.length ? await sb.from("mf_factsheets").select("scheme_code, as_of, aum_cr, expense_ratio, benchmark, ytm, modified_duration").in("scheme_code", codes).order("as_of", { ascending: false }) : { data: [] };
-    const latest = new Map<number, any>(); for (const f of fs ?? []) if (!latest.has(f.scheme_code)) latest.set(f.scheme_code, f);
-    return { rows: (rows ?? []).map((r: any) => ({ ...r, factsheet: latest.get(r.scheme_code) ?? null })), error: null };
+    const { data: dateRows } = await sb.from("mf_daily_fund_watch").select("as_of").order("as_of", { ascending: false }).limit(1);
+    const asOf = dateRows?.[0]?.as_of ?? null;
+    if (!asOf) return { rows: [], categories: [], asOf: null, total: 0, error: null };
+    let query = sb.from("mf_daily_fund_watch").select("scheme_code, as_of, sheet_category, scheme_name, plan, aum_cr, nav, ytm, avg_maturity_yrs, modified_duration, macaulay_duration, returns, source, mf_schemes!inner(scheme_name, fund_house, category, latest_nav, nav_date)", { count: "exact" })
+      .eq("as_of", asOf).not("scheme_code", "is", null);
+    if (data.category) query = query.eq("sheet_category", data.category);
+    if (data.search?.trim()) query = query.ilike("scheme_name", `%${data.search.trim()}%`);
+    const [{ data: reportRows, count, error }, { data: categoryRows }] = await Promise.all([
+      query.order("aum_cr", { ascending: false, nullsFirst: false }).limit(500),
+      sb.from("mf_daily_fund_watch").select("sheet_category").eq("as_of", asOf).order("sheet_category").limit(5000),
+    ]);
+    if (error) return { rows: [], categories: [], asOf, total: count ?? 0, error: error.message };
+    const categories = [...new Set((categoryRows ?? []).map((r: any) => r.sheet_category).filter((v: unknown): v is string => typeof v === "string" && Boolean(v.trim())))];
+    const codes = (reportRows ?? []).map((r: any) => r.scheme_code as number);
+    const [metricResponse, factsheetResponse] = codes.length ? await Promise.all([
+      sb.from("mf_return_metrics").select("*").in("scheme_code", codes),
+      sb.from("mf_factsheets").select("scheme_code, as_of, aum_cr, expense_ratio, benchmark, ytm, modified_duration").in("scheme_code", codes).order("as_of", { ascending: false }),
+    ]) : [{ data: [] }, { data: [] }];
+    const metrics = new Map<number, any>((metricResponse.data ?? []).map((r: any) => [r.scheme_code, r]));
+    const factsheets = new Map<number, any>();
+    for (const row of factsheetResponse.data ?? []) if (!factsheets.has(row.scheme_code)) factsheets.set(row.scheme_code, row);
+    const rows = (reportRows ?? []).map((report: any) => {
+      const computed = metrics.get(report.scheme_code);
+      const returnSource = report.returns;
+      const group = asRecord(asRecord(returnSource).field_groups);
+      const risk = asRecord(group["Risk Measures"]);
+      const metric = {
+        ...(computed ?? {}),
+        r_1y: computed?.r_1y ?? reportNumber(returnSource, ["annualized_returns", ""], ["1 year"]),
+        r_3y: computed?.r_3y ?? reportNumber(returnSource, ["annualized_returns", ""], ["3 years"]),
+        r_5y: computed?.r_5y ?? reportNumber(returnSource, ["annualized_returns", ""], ["5 years"]),
+        rolling_3y_avg: computed?.rolling_3y_avg ?? null,
+        sharpe_3y: computed?.sharpe_3y ?? (typeof risk.Sharpe === "number" ? risk.Sharpe : null),
+        max_drawdown: computed?.max_drawdown ?? null,
+      };
+      const savedFactsheet = factsheets.get(report.scheme_code);
+      return { ...metric, scheme_code: report.scheme_code, as_of: report.as_of, sheet_category: report.sheet_category,
+        mf_schemes: report.mf_schemes, report, factsheet: savedFactsheet ?? { aum_cr: report.aum_cr, expense_ratio: null, benchmark: null, report_as_of: report.as_of } };
+    });
+    rows.sort((a: any, b: any) => {
+      const left = a[data.sort] as number | null | undefined; const right = b[data.sort] as number | null | undefined;
+      if (left == null) return 1; if (right == null) return -1;
+      return (data.sort === "volatility_1y" ? 1 : -1) * (left - right);
+    });
+    return { rows, categories, asOf, total: count ?? rows.length, error: null };
   });
 
 /** Everything for one fund: scheme, metrics, factsheets, managers, latest holdings/sectors, news, NAV series. */
@@ -127,6 +174,7 @@ export const getFundDetail = createServerFn({ method: "POST" })
       sb.from("mf_factsheets").select("*").eq("scheme_code", code).order("as_of", { ascending: false }).limit(24),
       sb.from("mf_scheme_managers").select("start_date, end_date, role, mf_managers(name, experience_years, qualifications)").eq("scheme_code", code).order("start_date", { ascending: false }),
       sb.from("mf_news").select("*").eq("scheme_code", code).order("published_at", { ascending: false, nullsFirst: false }).limit(60),
+      sb.from("mf_daily_fund_watch").select("*").eq("scheme_code", code).order("as_of", { ascending: false }).limit(1).maybeSingle(),
     ]);
     const asOf = factsheets.data?.[0]?.as_of ?? null;
     const [holdings, sectors] = asOf ? await Promise.all([
@@ -135,7 +183,7 @@ export const getFundDetail = createServerFn({ method: "POST" })
     ]) : [{ data: [] }, { data: [] }];
     const nav = await loadNav(sb, code);
     return { scheme: scheme.data, metrics: metrics.data, factsheets: factsheets.data ?? [], managers: managers.data ?? [],
-      holdings: holdings.data ?? [], sectors: sectors.data ?? [], news: news.data ?? [], nav };
+      holdings: holdings.data ?? [], sectors: sectors.data ?? [], news: news.data ?? [], watch: arguments[0], nav };
   });
 
 // ---------- News feeder: news sites (Google News RSS), Reddit, Twitter/X ----------

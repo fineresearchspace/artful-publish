@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseFundWatchSheet, parseAsOf } from "./fund-watch-parse";
+import { parseFundWatchSheet, parseAsOf, fundWatchSchemeMatchKey } from "./fund-watch-parse";
 import { parseAmfiMonthly } from "./amfi-monthly-parse";
 import { rollingVsBenchmark } from "./benchmark";
 
@@ -37,6 +37,11 @@ test("Fund Watch keeps return rankings separate and captures grouped portfolio f
   assert.equal(groups["Ratings"]?.["Sovereign"], 20);
   assert.equal(groups["Market Capitalisation"]?.["Large Cap"], 90);
   assert.equal(groups["Exit Load"]?.["Exit Load"], "1% up to 1 year");
+});
+test("Kotak report names link to the matching AMFI plan without mixing Direct and Regular", () => {
+  assert.equal(fundWatchSchemeMatchKey("Kotak Mid Cap Fund - Reg - Growth", "Regular"), fundWatchSchemeMatchKey("Kotak Midcap Fund", "Regular Plan"));
+  assert.equal(fundWatchSchemeMatchKey("Kotak Mid Cap Fund - Dir - Growth", "Direct"), fundWatchSchemeMatchKey("Kotak Midcap Fund", "Direct Plan"));
+  assert.notEqual(fundWatchSchemeMatchKey("Kotak Mid Cap Fund", "Direct"), fundWatchSchemeMatchKey("Kotak Midcap Fund", "Regular"));
 });
 test("AMFI monthly parser reads category flows and AUM", () => {
   const r = parseAmfiMonthly([["Sr", "Scheme Name", "No. of Schemes", "No. of Folios", "Funds Mobilized for the month (INR in crore)", "Repurchase/Redemption for the month (INR in crore)", "Net Inflow (+ve)/Outflow (-ve) for the month (INR in crore)", "Net Assets Under Management as on (INR in crore)", "Average Net Assets Under Management (INR in crore)"],

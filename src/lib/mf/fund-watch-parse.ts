@@ -43,6 +43,20 @@ function toDate(value: unknown): string | null {
   return null;
 }
 
+/** Stable exact-match key for connecting AMC report names to AMFI growth schemes. */
+export function fundWatchSchemeMatchKey(name: string, plan: string): string {
+  const normalizedName = name.toLowerCase()
+    .replace(/\b(multi)\s*cap\b/g, "multicap")
+    .replace(/\b(mid)\s*cap\b/g, "midcap")
+    .replace(/\b(small)\s*cap\b/g, "smallcap")
+    .replace(/\b(large)\s*cap\b/g, "largecap")
+    .replace(/\b(flexi)\s*cap\b/g, "flexicap")
+    .replace(/\b(direct|regular|reg|growth|gr|idcw|dividend|option|plan|payout|reinvestment)\b/g, " ")
+    .replace(/[^a-z0-9]+/g, " ").trim().replace(/\s+/g, " ");
+  const planKey = /\bdirect\b/i.test(plan) ? "direct" : /\b(regular|reg)\b/i.test(plan) ? "regular" : "";
+  return `${normalizedName}|${planKey}`;
+}
+
 const MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
 
 /** Converts a report caption such as "(As on October 15,2026)" to an ISO date. */
