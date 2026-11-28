@@ -20,6 +20,24 @@ test("fund watch row captures AUM, YTM, durations and period returns", () => {
   assert.deepEqual([rows[0]!.aum_cr, rows[0]!.ytm, rows[0]!.modified_duration, rows[0]!.macaulay_duration], [77480.91, 6.27, 0.09, 0.1]);
   assert.equal(rows[0]!.returns["1 year"], 6.46); assert.equal(rows[0]!.plan, "Direct"); assert.equal(rows[1]!.plan, "Regular");
 });
+test("Fund Watch keeps return rankings separate and captures grouped portfolio fields", () => {
+  const rows = [
+    ["Sample Fund", "Launch Date", "AUM (Cr)", "NAV", "1 Year", "1 Year", "Measures", "Ratings", "Ratings", "Market Capitalisation", "Exit Load"],
+    ["", "", "", "", "Annualized Return", "Return Ranking", "YTM", "AAA / A1+", "Sovereign", "Large Cap", "Exit Load"],
+    ["Sample Direct Growth", new Date(Date.UTC(2020, 0, 1)), 1200, 24, 12.5, 4, 7.1, 80, 20, 90, "1% up to 1 year"],
+  ];
+  const result = parseFundWatchSheet("Sample", rows).rows[0];
+  assert.ok(result);
+  assert.equal(result.returns["1 year"], 12.5);
+  assert.deepEqual(result.returns["return_rankings"], { "1 year": 4 });
+  const fieldGroups = result.returns["field_groups"];
+  assert.ok(fieldGroups && typeof fieldGroups === "object");
+  const groups = fieldGroups as Record<string, Record<string, unknown>>;
+  assert.equal(groups["Ratings"]?.["AAA / A1+"], 80);
+  assert.equal(groups["Ratings"]?.["Sovereign"], 20);
+  assert.equal(groups["Market Capitalisation"]?.["Large Cap"], 90);
+  assert.equal(groups["Exit Load"]?.["Exit Load"], "1% up to 1 year");
+});
 test("AMFI monthly parser reads category flows and AUM", () => {
   const r = parseAmfiMonthly([["Sr", "Scheme Name", "No. of Schemes", "No. of Folios", "Funds Mobilized for the month (INR in crore)", "Repurchase/Redemption for the month (INR in crore)", "Net Inflow (+ve)/Outflow (-ve) for the month (INR in crore)", "Net Assets Under Management as on (INR in crore)", "Average Net Assets Under Management (INR in crore)"],
     ["1", "Flexi Cap Fund", 40, "1,20,000", 9000, 4000, 5000, 400000, 390000]]);

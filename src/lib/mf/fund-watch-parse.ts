@@ -196,7 +196,7 @@ export function parseFundWatchSheet(name: string, rows: unknown[][]): { asOf: st
 
     const returns: Record<string, unknown> = { ...legacyReturns };
     for (const [group, values] of Object.entries(periodGroups)) returns[group] = values;
-    if (Object.keys(reportFields).length) returns.field_groups = reportFields;
+    if (Object.keys(reportFields).length) returns["field_groups"] = reportFields;
 
     const fieldNumber = (index: number) => (index >= 0 ? numeric(row[index]) : null);
     output.push({

@@ -198,7 +198,13 @@ export const getFundWatchRows = createServerFn({ method: "POST" })
       query.order("aum_cr", { ascending: false, nullsFirst: false }).order("scheme_name").range(data.page * 50, data.page * 50 + 49),
       sb.from("mf_daily_fund_watch").select("sheet_category").eq("as_of", asOf).order("sheet_category").limit(5000),
     ]);
-    const categories = [...new Set((categoryRows ?? []).map((row: { sheet_category: string }) => row.sheet_category))];
+    const categoryNames = new Set<string>();
+    for (const row of categoryRows ?? []) {
+      if (typeof row !== "object" || row === null || !("sheet_category" in row)) continue;
+      const category = row.sheet_category;
+      if (typeof category === "string" && category.trim()) categoryNames.add(category);
+    }
+    const categories = [...categoryNames];
     return { asOf, total: count ?? 0, categories, rows: rows ?? [] };
   });
 
